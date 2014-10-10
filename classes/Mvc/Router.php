@@ -53,7 +53,7 @@ class Router {
 
     // If the class does not exist throw an exception
     if (!class_exists($responder_class, TRUE)) {
-      throw new InvalidHttpResponderException('Handler class ' . $responder_class . ' for uri ' . $uri . ' not found!');
+      throw new InvalidHttpResponderException('Controller ' . $responder_class . ' for uri ' . $uri . ' not found!');
     }
     $this->responder_class = $responder_class;
     $this->parameters = $parameters;

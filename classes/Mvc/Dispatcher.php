@@ -66,14 +66,14 @@ class Dispatcher {
         $response->set_template_name($default_template_name);
       }
 
-      /** @var BaseHttpHandler $request_handler */
-      $request_handler = new $responder_class($request, $response);
-      if (!method_exists($request_handler, $this->request_method)) {
+      /** @var AbstractController $contoller */
+      $contoller = new $responder_class($request, $response);
+      if (!method_exists($contoller, $this->request_method)) {
         // Send HTTP 405 response
-        $request_handler->handle_not_supported_method($this->request_method);
+        $contoller->handle_not_supported_method($this->request_method);
       }
-      $request_handler->initialize($parameters);
-      $output = $request_handler->{$this->request_method}($parameters);
+      $contoller->initialize($parameters);
+      $output = $contoller->{$this->request_method}($parameters);
       if (is_null($output)) {
         $output = $response->render();
       }
@@ -109,7 +109,7 @@ class Dispatcher {
    * @return string
    */
   protected function determineDefaultTemplateName($responder_class) {
-    if (preg_match('|\\\\([a-zA-Z0-9]{2,50})Handler$|', $responder_class, $matches)) {
+    if (preg_match('|\\\\([a-zA-Z0-9]{2,50})Controller$|', $responder_class, $matches)) {
       return $matches[1];
     }
     return NULL;

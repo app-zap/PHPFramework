@@ -4,7 +4,7 @@ namespace AppZap\PHPFramework\Mvc;
 use AppZap\PHPFramework\Authentication\BaseHttpAuthentication;
 use AppZap\PHPFramework\Mvc\View\AbstractView;
 
-abstract class BaseHttpHandler {
+abstract class AbstractController {
 
   /**
    * @var BaseHttpRequest

@@ -46,7 +46,7 @@ Inside your application directory use this structure:
 
 * `classes/` - Starting point for your [PSR-4](http://www.php-fig.org/psr/psr-4/) autoloadable classes
 * `templates/` - Your [twig](http://twig.sensiolabs.org/) templates
-* `routes.php` - Returns an array with regular expression routes mapping to handler class names
+* `routes.php` - Returns an array with regular expression routes mapping to controller class names
 
 # Configuration
 The PHPFramework supports configuration via ini files. Create the file `settings.ini` in your application directory to set options for the framework or your application.

@@ -1,7 +1,7 @@
 <?php
 namespace AppZap\PHPFramework\Tests\Mvc;
 
-use AppZap\PHPFramework\Mvc\BaseHttpHandler;
+use AppZap\PHPFramework\Mvc\AbstractController;
 use AppZap\PHPFramework\Mvc\BaseHttpRequest;
 use AppZap\PHPFramework\Mvc\View\AbstractView;
 
@@ -10,7 +10,7 @@ class TestResponse extends AbstractView {
   }
 }
 
-class TestHandler extends BaseHttpHandler {
+class TestController extends AbstractController {
 
   /**
    * @return array
@@ -24,22 +24,22 @@ class TestHandler extends BaseHttpHandler {
 
 }
 
-class BaseHttpHandlerTest extends \PHPUnit_Framework_TestCase {
+class AbstractControllerTest extends \PHPUnit_Framework_TestCase {
 
   /**
-   * @var TestHandler
+   * @var TestController
    */
-  protected $testHandler;
+  protected $testController;
 
   public function setUp() {
-    $this->testHandler = new TestHandler(new BaseHttpRequest('cli'), new TestResponse());
+    $this->testController = new TestController(new BaseHttpRequest('cli'), new TestResponse());
   }
 
   /**
    * @test
    */
   public function implementedMethods() {
-    $implementedMethods = $this->testHandler->_get_implemented_methods();
+    $implementedMethods = $this->testController->_get_implemented_methods();
     $this->assertTrue(is_array($implementedMethods));
     $this->assertTrue(in_array('get', $implementedMethods));
     $this->assertSame(1, count($implementedMethods));
