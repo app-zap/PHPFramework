@@ -3,13 +3,14 @@ namespace AppZap\PHPFramework\Domain\Repository;
 
 use AppZap\PHPFramework\Domain\Collection\AbstractModelCollection;
 use AppZap\PHPFramework\Domain\Model\AbstractModel;
-use AppZap\PHPFramework\SingletonException;
+use AppZap\PHPFramework\Singleton;
 use AppZap\PHPFramework\Utility\Nomenclature;
 use AppZap\PHPFramework\Orm\EntityMapper;
 use AppZap\PHPFramework\Persistence\DatabaseConnection;
 use AppZap\PHPFramework\Persistence\StaticDatabaseConnection;
 
 abstract class AbstractDomainRepository {
+  use Singleton;
 
   /**
    * @var EntityMapper
@@ -39,23 +40,6 @@ abstract class AbstractDomainRepository {
   }
 
   /**
-   * @return AbstractDomainRepository
-   */
-  public static function get_instance() {
-    static $_instance = NULL;
-    $class = get_called_class();
-    return $_instance ?: $_instance = new $class;
-  }
-
-  public function __clone() {
-    throw new SingletonException('Cloning ' . __CLASS__ . ' is not allowed.', 1412682071);
-  }
-
-  public function __wakeup() {
-    throw new SingletonException('Unserializing ' . __CLASS__ . ' is not allowed.', 1412682075);
-  }
-
-  /**
    * @param int $id
    * @return AbstractModel
    */
@@ -63,7 +47,7 @@ abstract class AbstractDomainRepository {
     $item = $this->known_items->get_by_id($id);
     if (is_null($item)) {
       $model = $this->create_identity_model($id);
-      $item = $this->entity_mapper->map_record_to_object($this->db->row($this->tablename, '*', ['id' => (int)$id]), $model);
+      $item = $this->entity_mapper->record_to_object($this->db->row($this->tablename, '*', ['id' => (int)$id]), $model);
       $this->known_items->set_item($item);
     }
     return $item;
@@ -139,7 +123,7 @@ abstract class AbstractDomainRepository {
    * @return AbstractModel
    */
   protected function record_to_object($record) {
-    return $this->entity_mapper->map_record_to_object($record, $this->create_empty_model());
+    return $this->entity_mapper->record_to_object($record, $this->create_empty_model());
   }
 
   /**

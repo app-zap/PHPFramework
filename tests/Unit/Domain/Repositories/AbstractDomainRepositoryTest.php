@@ -83,7 +83,7 @@ class AbstractDomainRepositoryTest extends \PHPUnit_Framework_TestCase {
   /**
    * @test
    * @expectedException \AppZap\PHPFramework\SingletonException
-   * @expectedExceptionCode 1412682071
+   * @expectedExceptionCode 1412682006
    */
   public function cloneException() {
     return clone $this->repository;
@@ -92,7 +92,7 @@ class AbstractDomainRepositoryTest extends \PHPUnit_Framework_TestCase {
   /**
    * @test
    * @expectedException \AppZap\PHPFramework\SingletonException
-   * @expectedExceptionCode 1412682075
+   * @expectedExceptionCode 1412682032
    */
   public function wakeupException() {
     $this->repository->__wakeup();

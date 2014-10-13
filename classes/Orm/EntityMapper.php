@@ -9,10 +9,10 @@ class EntityMapper {
 
   /**
    * @param array $record
-   * @param $object
+   * @param AbstractModel $object
    * @return AbstractModel
    */
-  public function map_record_to_object($record, $object) {
+  public function record_to_object($record, AbstractModel $object) {
     if (!is_array($record)) {
       return NULL;
     }
@@ -45,15 +45,15 @@ class EntityMapper {
 
   /**
    * @param $value
-   * @return int
+   * @return string
    */
   public function scalarize_value($value) {
     if ($value instanceof AbstractModel) {
-      $value = $value->get_id();
+      $value = (string) $value->get_id();
     } elseif ($value instanceof \DateTime) {
-      $value = $value->getTimestamp();
+      $value = (string) $value->getTimestamp();
     }
-    return $value;
+    return (string) $value;
   }
 
 }
