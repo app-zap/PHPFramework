@@ -9,9 +9,11 @@ class Dispatcher {
   protected static $slots;
 
   public static function emitSignal($signalName) {
+    $arguments = func_get_args();
+    array_shift($arguments); // first argument is $signalName
     if (isset(self::$slots[$signalName])) {
       foreach (self::$slots[$signalName] as $callable) {
-        call_user_func($callable, func_get_args());
+        call_user_func_array($callable, $arguments);
       }
     }
   }
