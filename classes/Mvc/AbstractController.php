@@ -7,6 +7,9 @@ use AppZap\PHPFramework\SignalSlot\Dispatcher as SignalSlotDispatcher;
 
 abstract class AbstractController {
 
+  const SIGNAL_INIT_REQUEST = 1413325732;
+  const SIGNAL_INIT_RESPONSE = 1413325748;
+
   /**
    * @var BaseHttpRequest
    */
@@ -27,8 +30,8 @@ abstract class AbstractController {
    * @param AbstractView $response
    */
   public function __construct(BaseHttpRequest $request, AbstractView $response) {
-    SignalSlotDispatcher::emitSignal('\AppZap\PHPFramework\Mvc\AbstractController\initializeRequest', $request);
-    SignalSlotDispatcher::emitSignal('\AppZap\PHPFramework\Mvc\AbstractController\initializeResponse', $response);
+    SignalSlotDispatcher::emitSignal(self::SIGNAL_INIT_REQUEST, $request);
+    SignalSlotDispatcher::emitSignal(self::SIGNAL_INIT_RESPONSE, $response);
     $this->request = $request;
     $this->response = $response;
   }
