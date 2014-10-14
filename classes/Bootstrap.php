@@ -15,6 +15,7 @@ class Bootstrap {
    */
   public static function bootstrap($application) {
     self::initializeConfiguration($application);
+    self::loadPlugins();
     self::checkForRequiredApplicationParts();
     self::setErrorReporting();
     self::initializeExceptionLogging();
@@ -28,6 +29,24 @@ class Bootstrap {
    */
   protected static function initializeConfiguration($application) {
     IniParser::init($application);
+  }
+
+  /**
+   *
+   */
+  protected static function loadPlugins() {
+    $plugins = Configuration::getSection('phpframework_plugins');
+    if ($plugins) {
+      foreach ($plugins as $namespace => $enabled) {
+        if ($enabled) {
+          $pluginLoaderClassname = $namespace . '\PluginLoader';
+          if (!class_exists($pluginLoaderClassname)) {
+            throw new \Exception('Plugin ' . $namespace . ' could not be loaded. Class ' . $pluginLoaderClassname . ' was not found.', 1413322791);
+          }
+          new $pluginLoaderClassname();
+        }
+      }
+    }
   }
 
   /**
