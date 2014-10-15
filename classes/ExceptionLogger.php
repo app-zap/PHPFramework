@@ -15,7 +15,7 @@ class ExceptionLogger {
    */
   public static function initialize() {
     $airbrake_ini = Configuration::getSection('airbrake');
-    if (!is_null($airbrake_ini)) {
+    if (!is_null($airbrake_ini) && Configuration::get('airbrake', 'enable', FALSE)) {
       $apiKey = $airbrake_ini['api_key'];
       $airbrake_environment = isset($airbrake_ini['environment']) ? $airbrake_ini['environment'] : 'NO_ENVIRONMENT_SET';
       $options = [
