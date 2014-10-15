@@ -58,27 +58,31 @@ class Dispatcher {
 
     if (is_null($output)) {
       $router = $this->getRouter($uri);
-      $responder_class = $router->get_responder_class();
+      $responder = $router->get_responder();
       $parameters = $router->get_parameters();
 
-      $request = new BaseHttpRequest($this->request_method);
-      $response = new TwigView();
+      if (is_callable($responder)) {
+        $output = call_user_func($responder, $parameters);
+      } else {
+        $request = new BaseHttpRequest($this->request_method);
+        $response = new TwigView();
 
-      $default_template_name = $this->determineDefaultTemplateName($responder_class);
-      if ($default_template_name) {
-        $response->set_template_name($default_template_name);
-      }
+        $default_template_name = $this->determineDefaultTemplateName($responder);
+        if ($default_template_name) {
+          $response->set_template_name($default_template_name);
+        }
 
-      /** @var AbstractController $contoller */
-      $contoller = new $responder_class($request, $response);
-      if (!method_exists($contoller, $this->request_method)) {
-        // Send HTTP 405 response
-        $contoller->handle_not_supported_method($this->request_method);
-      }
-      $contoller->initialize($parameters);
-      $output = $contoller->{$this->request_method}($parameters);
-      if (is_null($output)) {
-        $output = $response->render();
+        /** @var AbstractController $contoller */
+        $contoller = new $responder($request, $response);
+        if (!method_exists($contoller, $this->request_method)) {
+          // Send HTTP 405 response
+          $contoller->handle_not_supported_method($this->request_method);
+        }
+        $contoller->initialize($parameters);
+        $output = $contoller->{$this->request_method}($parameters);
+        if (is_null($output)) {
+          $output = $response->render();
+        }
       }
 
     };
@@ -122,7 +126,7 @@ class Dispatcher {
 
   /**
    * @param $uri
-   * @return mixed|NULL
+   * @return Router
    */
   protected function getRouter($uri) {
     $router = $this->cache->load('router_' . $uri . '_' . $this->request_method, function () use ($uri) {

@@ -11,9 +11,9 @@ class Router {
   protected $parameters;
 
   /**
-   * @var string
+   * @var mixed
    */
-  protected $responder_class;
+  protected $responder;
 
   /**
    * @return array
@@ -23,10 +23,10 @@ class Router {
   }
 
   /**
-   * @return string
+   * @return mixed
    */
-  public function get_responder_class() {
-    return $this->responder_class;
+  public function get_responder() {
+    return $this->responder;
   }
 
   /**
@@ -39,11 +39,11 @@ class Router {
 
     $uri = preg_replace('/\?.*$/', '', $uri);
 
-    $responder_class = NULL;
+    $responder = NULL;
     $parameters = [];
     foreach ($routes as $regex => $class) {
       if (preg_match($regex, $uri, $matches)) {
-        $responder_class = $class;
+        $responder = $class;
         for ($i = 1; $i < count($matches); $i++) {
           $parameters[] = $matches[$i];
         }
@@ -52,10 +52,10 @@ class Router {
     }
 
     // If the class does not exist throw an exception
-    if (!class_exists($responder_class, TRUE)) {
-      throw new InvalidHttpResponderException('Controller ' . $responder_class . ' for uri ' . $uri . ' not found!');
+    if (is_string($responder) && !class_exists($responder, TRUE)) {
+      throw new InvalidHttpResponderException('Controller ' . $responder . ' for uri ' . $uri . ' not found!');
     }
-    $this->responder_class = $responder_class;
+    $this->responder = $responder;
     $this->parameters = $parameters;
   }
 }
