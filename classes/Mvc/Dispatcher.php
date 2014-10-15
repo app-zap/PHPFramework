@@ -5,6 +5,7 @@ use AppZap\PHPFramework\Cache\CacheFactory;
 use AppZap\PHPFramework\Configuration\Configuration;
 use AppZap\PHPFramework\Cache\Cache;
 use AppZap\PHPFramework\Mvc\View\TwigView;
+use AppZap\PHPFramework\SignalSlot\Dispatcher as SignalSlotDispatcher;
 
 /**
  * Main entrance class for the framework / application
@@ -12,6 +13,8 @@ use AppZap\PHPFramework\Mvc\View\TwigView;
  * @author Knut Ahlers
  */
 class Dispatcher {
+
+  const SIGNAL_OUTPUT_READY = 1413366871;
 
   /**
    * @var \Nette\Caching\Cache
@@ -79,6 +82,8 @@ class Dispatcher {
       }
 
     };
+
+    SignalSlotDispatcher::emitSignal(self::SIGNAL_OUTPUT_READY, $output);
 
     if (Configuration::get('cache', 'full_output_cache', FALSE) && $this->request_method === 'get') {
       $this->cache->save('output_' . $uri, $output, [
