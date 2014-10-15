@@ -6,6 +6,7 @@ use AppZap\PHPFramework\Configuration\Parser\IniParser;
 use AppZap\PHPFramework\Mvc\ApplicationPartMissingException;
 use AppZap\PHPFramework\Mvc\Dispatcher;
 use AppZap\PHPFramework\Persistence\SimpleMigrator;
+use AppZap\PHPFramework\SignalSlot\Dispatcher as SignalSlotDispatcher;
 
 class Bootstrap {
 
@@ -16,6 +17,7 @@ class Bootstrap {
   public static function bootstrap($application) {
     self::initializeConfiguration($application);
     self::loadPlugins();
+    self::registerCoreSlots();
     self::checkForRequiredApplicationParts();
     self::setErrorReporting();
     self::initializeExceptionLogging();
@@ -47,6 +49,10 @@ class Bootstrap {
         }
       }
     }
+  }
+
+  protected static function registerCoreSlots() {
+    SignalSlotDispatcher::registerSlot(Dispatcher::SIGNAL_OUTPUT_READY, ['AppZap\PHPFramework\SignalSlot\CoreSlots', 'addFrameworkSignatureToOutput']);
   }
 
   /**
