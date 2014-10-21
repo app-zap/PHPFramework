@@ -1,8 +1,8 @@
 {
   "name": "app-zap/phpframework",
   "require": {
-    "airbrake/airbrake-php": "dev-master",
     "nette/caching": "2.2.*",
+    "nodrew/php-airbrake": "1.0.0",
     "twig/twig": "1.16.*"
   },
   "require-dev": {
