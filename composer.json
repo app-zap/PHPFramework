@@ -3,7 +3,7 @@
   "require": {
     "airbrake/airbrake-php": "dev-master",
     "nette/caching": "2.2.*",
-    "twig/twig": "1.15.*"
+    "twig/twig": "1.16.*"
   },
   "require-dev": {
     "phpunit/dbunit": "1.3.*"
