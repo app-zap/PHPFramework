@@ -29,7 +29,7 @@ Your project `composer.json` file might look like this:
     {
       "name": "vendor/myproject",
       "require": {
-        "appzap/phpframework": "dev-develop",
+        "appzap/phpframework": "dev-develop"
       },
       "autoload": {
         "psr-4": {
