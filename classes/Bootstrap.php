@@ -37,7 +37,7 @@ class Bootstrap {
    *
    */
   protected static function loadPlugins() {
-    $plugins = Configuration::getSection('phpframework_plugins');
+    $plugins = Configuration::getSection('phpframework', 'plugins');
     if ($plugins) {
       foreach ($plugins as $namespace => $enabled) {
         if ($enabled) {
@@ -71,7 +71,7 @@ class Bootstrap {
    *
    */
   protected static function setErrorReporting() {
-    if (Configuration::get('debug', 'debug_mode')) {
+    if (Configuration::get('phpframework', 'debug_mode')) {
       error_reporting(E_ALL);
     }
   }
@@ -87,7 +87,7 @@ class Bootstrap {
    *
    */
   protected static function invokeDatabaseMigrator() {
-    if (Configuration::get('db', 'enable_migrator')) {
+    if (Configuration::get('phpframework', 'db.migrator.enable')) {
       (new SimpleMigrator())->migrate();
     }
   }

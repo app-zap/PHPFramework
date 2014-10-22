@@ -25,10 +25,10 @@ class DatabaseConnectionTest extends \PHPUnit_Extensions_Database_TestCase {
     $host = '127.0.0.1';
     $password = '';
     $user = 'travis';
-    Configuration::set('db', 'mysql.database', $database);
-    Configuration::set('db', 'mysql.host', $host);
-    Configuration::set('db', 'mysql.password', $password);
-    Configuration::set('db', 'mysql.user', $user);
+    Configuration::set('phpframework', 'db.mysql.database', $database);
+    Configuration::set('phpframework', 'db.mysql.host', $host);
+    Configuration::set('phpframework', 'db.mysql.password', $password);
+    Configuration::set('phpframework', 'db.mysql.user', $user);
     $this->pdo = new \PDO('mysql:host=' . $host . ';dbname=' . $database . ';port=3306', $user, $password);
     StaticDatabaseConnection::reset();
     $this->fixture = StaticDatabaseConnection::getInstance();
@@ -67,7 +67,7 @@ class DatabaseConnectionTest extends \PHPUnit_Extensions_Database_TestCase {
    * @expectedException \PDOException
    */
   public function db_connection_exception() {
-    Configuration::set('db', 'mysql.host', 'non_existing_host');
+    Configuration::set('phpframework', 'db.mysql.host', 'non_existing_host');
     $this->fixture->connect();
   }
 
@@ -75,7 +75,7 @@ class DatabaseConnectionTest extends \PHPUnit_Extensions_Database_TestCase {
    * @test
    */
   public function set_charset() {
-    Configuration::set('db', 'charset', 'utf8');
+    Configuration::set('phpframework', 'db.charset', 'utf8');
     $this->fixture->connect();
   }
 

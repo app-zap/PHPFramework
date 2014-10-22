@@ -19,9 +19,9 @@ class BaseCryptCookieSession implements BaseSessionInterface {
    * @throws BaseCryptCookieSessionException
    */
   public function __construct() {
-    $this->cookie_name = Configuration::get('application', 'cookie.name', 'SecureSessionCookie');;
+    $this->cookie_name = Configuration::get('phpframework', 'authentication.cookie.name', 'SecureSessionCookie');;
 
-    if(Configuration::get('application', 'cookie.encrypt_key')) {
+    if(Configuration::get('phpframework', 'authentication.cookie.encrypt_key')) {
       throw new BaseCryptCookieSessionException('Config key "cookie.encrypt_key" must be set!');
     }
 
@@ -51,7 +51,7 @@ class BaseCryptCookieSession implements BaseSessionInterface {
    *
    */
   protected function decodeCryptCookie() {
-    $sSecretKey = Configuration::get('application', 'cookie.encrypt_key');
+    $sSecretKey = Configuration::get('phpframework', 'authentication.cookie.encrypt_key');
     if(!array_key_exists($this->cookie_name, $_COOKIE)) {
       return;
     }
@@ -64,7 +64,7 @@ class BaseCryptCookieSession implements BaseSessionInterface {
    *
    */
   protected function encodeCryptCookie() {
-    $sSecretKey = Configuration::get('application', 'cookie.encrypt_key');
+    $sSecretKey = Configuration::get('phpframework', 'authentication.cookie.encrypt_key');
     $sDecrypted = json_encode($this->store);
     $data = trim(base64_encode(mcrypt_encrypt(MCRYPT_RIJNDAEL_256, $sSecretKey, $sDecrypted, MCRYPT_MODE_ECB, mcrypt_create_iv(mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB), MCRYPT_RAND))));
     setcookie($this->cookie_name, $data, time() + 31 * 86400, '/');

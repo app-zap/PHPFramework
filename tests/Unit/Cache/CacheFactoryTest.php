@@ -26,8 +26,8 @@ class CacheFactoryTest extends \PHPUnit_Framework_TestCase {
    */
   public function returnFileStorage() {
     Configuration::reset();
-    Configuration::set('cache', 'enable', TRUE);
-    Configuration::set('cache', 'cache_folder', './tests/Unit/Cache/_cachefolder');
+    Configuration::set('phpframework', 'cache.enable', TRUE);
+    Configuration::set('phpframework', 'cache.folder', './tests/Unit/Cache/_cachefolder');
     $cache = CacheFactory::getCache();
     $this->assertTrue($cache->getStorage() instanceof FileStorage);
   }
@@ -37,8 +37,8 @@ class CacheFactoryTest extends \PHPUnit_Framework_TestCase {
    */
   public function writeCacheFolder() {
     Configuration::reset();
-    Configuration::set('cache', 'enable', TRUE);
-    Configuration::set('cache', 'cache_folder', './tests/Unit/Cache/_cachefolder/tempfolder');
+    Configuration::set('phpframework', 'cache.enable', TRUE);
+    Configuration::set('phpframework', 'cache.folder', './tests/Unit/Cache/_cachefolder/tempfolder');
     $cache = CacheFactory::getCache();
     $this->assertTrue($cache->getStorage() instanceof FileStorage);
     rmdir('./tests/Unit/Cache/_cachefolder/tempfolder');
@@ -51,8 +51,8 @@ class CacheFactoryTest extends \PHPUnit_Framework_TestCase {
    */
   public function cacheFolderCanNotBeWritten() {
     Configuration::reset();
-    Configuration::set('cache', 'enable', TRUE);
-    Configuration::set('cache', 'cache_folder', '/_cachefolder');
+    Configuration::set('phpframework', 'cache.enable', TRUE);
+    Configuration::set('phpframework', 'cache.folder', '/_cachefolder');
     $cache = CacheFactory::getCache();
     $this->assertTrue($cache->getStorage() instanceof FileStorage);
   }
@@ -64,8 +64,8 @@ class CacheFactoryTest extends \PHPUnit_Framework_TestCase {
    */
   public function cacheFolderNotWritable() {
     Configuration::reset();
-    Configuration::set('cache', 'enable', TRUE);
-    Configuration::set('cache', 'cache_folder', '/');
+    Configuration::set('phpframework', 'cache.enable', TRUE);
+    Configuration::set('phpframework', 'cache.folder', '/');
     $cache = CacheFactory::getCache();
     $this->assertTrue($cache->getStorage() instanceof FileStorage);
   }

@@ -89,9 +89,9 @@ class Dispatcher {
 
     SignalSlotDispatcher::emitSignal(self::SIGNAL_OUTPUT_READY, $output);
 
-    if (Configuration::get('cache', 'full_output_cache', FALSE) && $this->request_method === 'get') {
+    if (Configuration::get('phpframework', 'cache.full_output', FALSE) && $this->request_method === 'get') {
       $this->cache->save('output_' . $uri, $output, [
-        Cache::EXPIRE => Configuration::get('cache', 'full_output_expiration', '20 Minutes'),
+        Cache::EXPIRE => Configuration::get('phpframework', 'cache.full_output_expiration', '20 Minutes'),
       ]);
     }
 

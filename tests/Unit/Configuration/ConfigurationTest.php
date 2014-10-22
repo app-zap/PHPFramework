@@ -60,6 +60,28 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase {
   /**
    * @test
    */
+  public function get_section_namespace() {
+    Configuration::reset();
+    Configuration::set('test', 'key1', FALSE);
+    Configuration::set('test', 'ns1.key1', TRUE);
+    Configuration::set('test', 'ns1.key2', FALSE);
+    Configuration::set('test', 'ns2.key1', FALSE);
+    Configuration::set('test', 'ns2.key2', FALSE);
+    Configuration::set('test', 'ns3.subspace1.key1', TRUE);
+    Configuration::set('test', 'ns3.key1', FALSE);
+    Configuration::set('othersection', 'key1', FALSE);
+    Configuration::set('othersection', 'ns1.key1', FALSE);
+    Configuration::set('othersection', 'ns1.key2', FALSE);
+    $test_section = Configuration::getSection('test', 'ns1');
+    $this->assertTrue($test_section['key1']);
+    $this->assertFalse($test_section['key2']);
+    $test_section = Configuration::getSection('test', 'ns3.subspace1');
+    $this->assertTrue($test_section['key1']);
+  }
+
+  /**
+   * @test
+   */
   public function get_non_existing_section() {
     Configuration::reset();
     $this->assertNull(Configuration::getSection('not_existing'));

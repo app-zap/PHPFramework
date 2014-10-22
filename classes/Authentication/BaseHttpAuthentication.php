@@ -35,7 +35,7 @@ class BaseHttpAuthentication {
    * @throws \Exception
    */
   public function check_authentication() {
-    $http_authentication = Configuration::getSection('http_authentication');
+    $http_authentication = Configuration::getSection('phpframework', 'authentication.http');
     if (is_array($http_authentication) && !$this->is_authenticated()) {
       HttpStatus::set_status(HttpStatus::STATUS_401_UNAUTHORIZED);
       header('WWW-Authenticate: Basic realm="Login"');
@@ -48,7 +48,7 @@ class BaseHttpAuthentication {
    * @return bool
    */
   protected function is_authenticated() {
-    $http_authentication = Configuration::getSection('http_authentication');
+    $http_authentication = Configuration::getSection('phpframework', 'authentication.http');
     return
         $this->name !== NULL &&
         $this->password !== NULL &&
