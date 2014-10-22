@@ -5,6 +5,7 @@ use AppZap\PHPFramework\Cache\CacheFactory;
 use AppZap\PHPFramework\Configuration\Configuration;
 use AppZap\PHPFramework\Cache\Cache;
 use AppZap\PHPFramework\Mvc\View\TwigView;
+use AppZap\PHPFramework\SignalSlot\Dispatcher as SignalSlotDispatcher;
 
 /**
  * Main entrance class for the framework / application
@@ -12,6 +13,8 @@ use AppZap\PHPFramework\Mvc\View\TwigView;
  * @author Knut Ahlers
  */
 class Dispatcher {
+
+  const SIGNAL_OUTPUT_READY = 1413366871;
 
   /**
    * @var \Nette\Caching\Cache
@@ -55,34 +58,40 @@ class Dispatcher {
 
     if (is_null($output)) {
       $router = $this->getRouter($uri);
-      $responder_class = $router->get_responder_class();
+      $responder = $router->get_responder();
       $parameters = $router->get_parameters();
 
-      $request = new BaseHttpRequest($this->request_method);
-      $response = new TwigView();
+      if (is_callable($responder)) {
+        $output = call_user_func($responder, $parameters);
+      } else {
+        $request = new BaseHttpRequest($this->request_method);
+        $response = new TwigView();
 
-      $default_template_name = $this->determineDefaultTemplateName($responder_class);
-      if ($default_template_name) {
-        $response->set_template_name($default_template_name);
-      }
+        $default_template_name = $this->determineDefaultTemplateName($responder);
+        if ($default_template_name) {
+          $response->set_template_name($default_template_name);
+        }
 
-      /** @var BaseHttpHandler $request_handler */
-      $request_handler = new $responder_class($request, $response);
-      if (!method_exists($request_handler, $this->request_method)) {
-        // Send HTTP 405 response
-        $request_handler->handle_not_supported_method($this->request_method);
-      }
-      $request_handler->initialize($parameters);
-      $output = $request_handler->{$this->request_method}($parameters);
-      if (is_null($output)) {
-        $output = $response->render();
+        /** @var AbstractController $contoller */
+        $contoller = new $responder($request, $response);
+        if (!method_exists($contoller, $this->request_method)) {
+          // Send HTTP 405 response
+          $contoller->handle_not_supported_method($this->request_method);
+        }
+        $contoller->initialize($parameters);
+        $output = $contoller->{$this->request_method}($parameters);
+        if (is_null($output)) {
+          $output = $response->render();
+        }
       }
 
     };
 
-    if (Configuration::get('cache', 'full_output_cache', FALSE) && $this->request_method === 'get') {
+    SignalSlotDispatcher::emitSignal(self::SIGNAL_OUTPUT_READY, $output);
+
+    if (Configuration::get('phpframework', 'cache.full_output', FALSE) && $this->request_method === 'get') {
       $this->cache->save('output_' . $uri, $output, [
-        Cache::EXPIRE => Configuration::get('cache', 'full_output_expiration', '20 Minutes'),
+        Cache::EXPIRE => Configuration::get('phpframework', 'cache.full_output_expiration', '20 Minutes'),
       ]);
     }
 
@@ -109,7 +118,7 @@ class Dispatcher {
    * @return string
    */
   protected function determineDefaultTemplateName($responder_class) {
-    if (preg_match('|\\\\([a-zA-Z0-9]{2,50})Handler$|', $responder_class, $matches)) {
+    if (preg_match('|\\\\([a-zA-Z0-9]{2,50})Controller$|', $responder_class, $matches)) {
       return $matches[1];
     }
     return NULL;
@@ -117,7 +126,7 @@ class Dispatcher {
 
   /**
    * @param $uri
-   * @return mixed|NULL
+   * @return Router
    */
   protected function getRouter($uri) {
     $router = $this->cache->load('router_' . $uri . '_' . $this->request_method, function () use ($uri) {

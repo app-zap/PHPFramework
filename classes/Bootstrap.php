@@ -6,6 +6,7 @@ use AppZap\PHPFramework\Configuration\Parser\IniParser;
 use AppZap\PHPFramework\Mvc\ApplicationPartMissingException;
 use AppZap\PHPFramework\Mvc\Dispatcher;
 use AppZap\PHPFramework\Persistence\SimpleMigrator;
+use AppZap\PHPFramework\SignalSlot\Dispatcher as SignalSlotDispatcher;
 
 class Bootstrap {
 
@@ -15,6 +16,8 @@ class Bootstrap {
    */
   public static function bootstrap($application) {
     self::initializeConfiguration($application);
+    self::loadPlugins();
+    self::registerCoreSlots();
     self::checkForRequiredApplicationParts();
     self::setErrorReporting();
     self::initializeExceptionLogging();
@@ -28,6 +31,28 @@ class Bootstrap {
    */
   protected static function initializeConfiguration($application) {
     IniParser::init($application);
+  }
+
+  /**
+   *
+   */
+  protected static function loadPlugins() {
+    $plugins = Configuration::getSection('phpframework', 'plugins');
+    if ($plugins) {
+      foreach ($plugins as $namespace => $enabled) {
+        if ($enabled) {
+          $pluginLoaderClassname = $namespace . '\PluginLoader';
+          if (!class_exists($pluginLoaderClassname)) {
+            throw new \Exception('Plugin ' . $namespace . ' could not be loaded. Class ' . $pluginLoaderClassname . ' was not found.', 1413322791);
+          }
+          new $pluginLoaderClassname();
+        }
+      }
+    }
+  }
+
+  protected static function registerCoreSlots() {
+    SignalSlotDispatcher::registerSlot(Dispatcher::SIGNAL_OUTPUT_READY, ['AppZap\PHPFramework\SignalSlot\CoreSlots', 'addFrameworkSignatureToOutput']);
   }
 
   /**
@@ -46,7 +71,7 @@ class Bootstrap {
    *
    */
   protected static function setErrorReporting() {
-    if (Configuration::get('debug', 'debug_mode')) {
+    if (Configuration::get('phpframework', 'debug_mode')) {
       error_reporting(E_ALL);
     }
   }
@@ -62,7 +87,7 @@ class Bootstrap {
    *
    */
   protected static function invokeDatabaseMigrator() {
-    if (Configuration::get('db', 'enable_migrator')) {
+    if (Configuration::get('phpframework', 'db.migrator.enable')) {
       (new SimpleMigrator())->migrate();
     }
   }

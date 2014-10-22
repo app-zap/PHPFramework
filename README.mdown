@@ -29,7 +29,7 @@ Your project `composer.json` file might look like this:
     {
       "name": "vendor/myproject",
       "require": {
-        "appzap/phpframework": "dev-develop",
+        "appzap/phpframework": "dev-develop"
       },
       "autoload": {
         "psr-4": {
@@ -46,16 +46,13 @@ Inside your application directory use this structure:
 
 * `classes/` - Starting point for your [PSR-4](http://www.php-fig.org/psr/psr-4/) autoloadable classes
 * `templates/` - Your [twig](http://twig.sensiolabs.org/) templates
-* `routes.php` - Returns an array with regular expression routes mapping to handler class names
+* `routes.php` - Returns an array with regular expression routes mapping to controller class names
 
-# Configuration
-The PHPFramework supports configuration via ini files. Create the file `settings.ini` in your application directory to set options for the framework or your application.
-These options can be overridden with a `settings_local.ini`.
+If you need a `.gitignore` start here:
 
-Whereever you need to access the Configuration put
-
-    use AppZap\PHPFramework\Configuration\Configuration;
-
-on top of the file and use `Configuration::get()` or `Configuration::getSection()` in your code.
+    .DS_Store
+    .idea/
+    vendor/
+    settings_local.ini
 
 [![Build Status](https://travis-ci.org/app-zap/PHPFramework.svg?branch=develop)](https://travis-ci.org/app-zap/PHPFramework)

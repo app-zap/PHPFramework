@@ -1,4 +1,4 @@
 <?php
 return [
-  '|(.*)|' => '\\AppZap\\PHPFramework\\Tests\\Functional\\Testapp\\Handler\\IndexHandler',
+  '|(.*)|' => '\\AppZap\\PHPFramework\\Tests\\Functional\\Testapp\\Controller\\IndexController',
 ];

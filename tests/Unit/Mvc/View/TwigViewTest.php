@@ -13,7 +13,7 @@ class TwigViewTest extends \PHPUnit_Framework_TestCase {
 
   public function setUp() {
     Configuration::set('application', 'templates_directory', dirname(__FILE__) . '/../_templates');
-    Configuration::set('cache', 'enable', TRUE);
+    Configuration::set('phpframework', 'cache.enable', TRUE);
     $this->reponse = new TwigView();
   }
 

@@ -34,10 +34,10 @@ class AbstractDomainRepositoryTest extends \PHPUnit_Framework_TestCase {
     $host = '127.0.0.1';
     $password = '';
     $user = 'travis';
-    Configuration::set('db', 'mysql.database', $database);
-    Configuration::set('db', 'mysql.host', $host);
-    Configuration::set('db', 'mysql.password', $password);
-    Configuration::set('db', 'mysql.user', $user);
+    Configuration::set('phpframework', 'db.mysql.database', $database);
+    Configuration::set('phpframework', 'db.mysql.host', $host);
+    Configuration::set('phpframework', 'db.mysql.password', $password);
+    Configuration::set('phpframework', 'db.mysql.user', $user);
     $this->repository = ItemRepository::get_instance();
   }
 

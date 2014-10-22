@@ -23,7 +23,7 @@ class DatabaseConnection {
    */
   public function connect() {
     if (!($this->connection instanceof \PDO)) {
-      $db_configuration = Configuration::getSection('db');
+      $db_configuration = Configuration::getSection('phpframework', 'db');
       $dsn = 'mysql:host=' . $db_configuration['mysql.host'] . ';dbname=' . $db_configuration['mysql.database'];
       $this->connection = new \PDO($dsn, $db_configuration['mysql.user'], $db_configuration['mysql.password']);
       if (isset($db_configuration['charset'])) {
