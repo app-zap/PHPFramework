@@ -26,7 +26,7 @@ class IniParser {
     Configuration::set('application', 'migration_directory', $application_directory . '_sql/');
     Configuration::set('application', 'routes_file', $application_directory . 'routes.php');
     Configuration::set('application', 'templates_directory', $application_directory . 'templates/');
-    Configuration::set('phpframework', 'version', '1.3-dev');
+    Configuration::set('phpframework', 'version', '1.3');
     self::parse($config_file_path, $overwrite_file_path);
   }
 
