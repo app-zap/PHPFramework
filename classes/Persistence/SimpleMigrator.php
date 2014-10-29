@@ -19,7 +19,7 @@ class SimpleMigrator {
    * @throws SimpleMigratorException
    */
   public function __construct() {
-    $migration_directory = Configuration::get('application', 'migration_directory');
+    $migration_directory = Configuration::get('phpframework', 'db.migrator.directory');
 
     $this->db = StaticDatabaseConnection::getInstance();
     $this->migration_directory = $migration_directory;
