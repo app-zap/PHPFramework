@@ -2,6 +2,7 @@
 namespace AppZap\PHPFramework\Mvc\View;
 
 use AppZap\PHPFramework\Configuration\Configuration;
+use AppZap\PHPFramework\Mvc\HttpStatus;
 
 abstract class AbstractView {
 
@@ -120,10 +121,12 @@ abstract class AbstractView {
    * @see \AppZap\PHPFramework\Mvc\HttpStatus
    */
   public function redirect($target, $http_code = HttpStatus::STATUS_307_TEMPORARY_REDIRECT) {
-    HttpStatus::set_status($http_code, [
-      HttpStatus::HEADER_FIELD_LOCATION => $target
-    ]);
-    HttpStatus::send_headers();
+    if (php_sapi_name() !== 'cli') {
+      HttpStatus::set_status($http_code, [
+          HttpStatus::HEADER_FIELD_LOCATION => $target
+      ]);
+      HttpStatus::send_headers();
+    }
   }
 
   /**

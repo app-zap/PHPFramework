@@ -44,4 +44,11 @@ class AbstractViewTest extends \PHPUnit_Framework_TestCase {
     $this->assertSame('bar', ob_get_clean());
   }
 
+  /**
+   * @test
+   */
+  public function redirect() {
+    $this->view->redirect('/');
+  }
+
 }
