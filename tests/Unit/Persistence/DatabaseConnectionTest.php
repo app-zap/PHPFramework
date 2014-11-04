@@ -38,7 +38,7 @@ class DatabaseConnectionTest extends \PHPUnit_Extensions_Database_TestCase {
   /**
    * Returns the test database connection.
    *
-   * @return PHPUnit_Extensions_Database_DB_IDatabaseConnection
+   * @return \PHPUnit_Extensions_Database_DB_IDatabaseConnection
    */
   protected function getConnection() {
     return $this->createDefaultDBConnection($this->pdo);

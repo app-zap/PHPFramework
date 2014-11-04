@@ -5,7 +5,7 @@ use AppZap\PHPFramework\Configuration\Configuration;
 use AppZap\PHPFramework\Configuration\Parser\IniParser;
 use AppZap\PHPFramework\Mvc\ApplicationPartMissingException;
 use AppZap\PHPFramework\Mvc\Dispatcher;
-use AppZap\PHPFramework\Persistence\SimpleMigrator;
+use AppZap\PHPFramework\Persistence\DatabaseMigrator;
 use AppZap\PHPFramework\SignalSlot\Dispatcher as SignalSlotDispatcher;
 
 class Bootstrap {
@@ -21,7 +21,6 @@ class Bootstrap {
     self::checkForRequiredApplicationParts();
     self::setErrorReporting();
     self::initializeExceptionLogging();
-    self::invokeDatabaseMigrator();
     return self::invokeDispatcher();
   }
 
@@ -51,7 +50,11 @@ class Bootstrap {
     }
   }
 
+  /**
+   * 
+   */
   protected static function registerCoreSlots() {
+    SignalSlotDispatcher::registerSlot(Dispatcher::SIGNAL_CONSTRUCT, ['AppZap\PHPFramework\SignalSlot\CoreSlots', 'invokeDatabaseMigrator']);
     SignalSlotDispatcher::registerSlot(Dispatcher::SIGNAL_OUTPUT_READY, ['AppZap\PHPFramework\SignalSlot\CoreSlots', 'addFrameworkSignatureToOutput']);
   }
 
@@ -81,15 +84,6 @@ class Bootstrap {
    */
   protected static function initializeExceptionLogging() {
     ExceptionLogger::initialize();
-  }
-
-  /**
-   *
-   */
-  protected static function invokeDatabaseMigrator() {
-    if (Configuration::get('phpframework', 'db.migrator.enable')) {
-      (new SimpleMigrator())->migrate();
-    }
   }
 
   /**

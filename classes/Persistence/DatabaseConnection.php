@@ -217,7 +217,6 @@ class DatabaseConnection {
    * @param string $field Name of the field to return
    * @param array $where Selector for the datasets to select
    * @param string $order Already escaped content of order clause
-   * @internal param string $column Name of column to retrieve
    * @return mixed
    */
   public function field($table, $field, $where = NULL, $order = NULL) {

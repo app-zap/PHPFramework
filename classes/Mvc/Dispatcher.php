@@ -14,6 +14,7 @@ use AppZap\PHPFramework\SignalSlot\Dispatcher as SignalSlotDispatcher;
  */
 class Dispatcher {
 
+  const SIGNAL_CONSTRUCT = 1415092297;
   const SIGNAL_OUTPUT_READY = 1413366871;
 
   /**
@@ -35,6 +36,7 @@ class Dispatcher {
    * @throws ApplicationPartMissingException
    */
   public function __construct() {
+    SignalSlotDispatcher::emitSignal(self::SIGNAL_CONSTRUCT);
     $this->cache = CacheFactory::getCache();
     $this->determineRequestMethod();
   }
