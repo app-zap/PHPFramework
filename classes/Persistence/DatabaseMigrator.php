@@ -16,6 +16,11 @@ class DatabaseMigrator {
   protected $migration_directory;
 
   /**
+   * @var int
+   */
+  protected $last_executed_version = 0;
+
+  /**
    * @throws DatabaseMigratorException
    */
   public function __construct() {
@@ -30,6 +35,8 @@ class DatabaseMigrator {
       throw new DatabaseMigratorException('Migration directory "' . $this->migration_directory . '" does not exist or is not a directory.', 1415085126);
     }
 
+    $this->last_executed_version = $this->get_last_executed_version();
+
   }
 
   /**
@@ -37,18 +44,27 @@ class DatabaseMigrator {
    * @throws DatabaseMigratorException
    */
   public function migrate() {
-    $migration_files = $this->get_migration_files();
-    do {
-      $next_migration = $this->get_current_migration_version() + 1;
-      if(!array_key_exists($next_migration, $migration_files)) {
-        break;
+    foreach ($this->get_migration_files() as $version => $file) {
+      if ($version > $this->last_executed_version) {
+        try {
+          $this->migrate_file($file);
+          $this->last_executed_version = $version;
+          $this->set_current_migration_version($this->last_executed_version);
+        } catch (\Exception $e) {
+          throw $e;
+        }
       }
-      $next_path = rtrim($this->migration_directory, '/') . '/' . $migration_files[$next_migration];
-      if(file_exists($next_path) && is_file($next_path)) {
-        $this->execute_statement_file($next_path);
-        $this->set_current_migration_version($next_migration);
-      }
-    } while(file_exists($next_path));
+    }
+  }
+
+  /**
+   * @return int
+   */
+  protected function get_last_executed_version() {
+    if(count($this->db->query("SHOW TABLES LIKE 'migration_ver'")) < 1) {
+      return 0;
+    }
+    return $this->db->field('migration_ver', 'version');
   }
 
   /**
@@ -67,18 +83,27 @@ class DatabaseMigrator {
         }
       }
     }
+    ksort($migration_files, SORT_NUMERIC);
     return $migration_files;
   }
 
   /**
-   * @return int
+   * @param string $filename
+   * @throws DatabaseMigratorException when any command of the file is not executable
    */
-  protected function get_current_migration_version() {
-    if(count($this->db->query("SHOW TABLES LIKE 'migration_ver'")) < 1) {
-      return 0;
+  protected function migrate_file($filename) {
+    $this->db->execute('SET autocommit = 0;');
+    $this->db->execute('START TRANSACTION;');
+    $statements = $this->get_statements_from_file($filename);
+    foreach($statements as $statement) {
+      try {
+        $this->execute_statement($statement);
+      } catch (DBQueryException $e) {
+        throw new DatabaseMigratorException($e->getMessage(), 1415089456);
+      }
     }
-
-    return $this->db->field('migration_ver', 'version');
+    $this->db->execute('COMMIT;');
+    $this->db->execute('SET autocommit = 1;');
   }
 
   /**
@@ -99,36 +124,18 @@ class DatabaseMigrator {
   }
 
   /**
-   * @param string $filename
-   * @throws DatabaseMigratorException when any command of the file is not executable
-   */
-  protected function execute_statement_file($filename) {
-    $this->db->execute('SET autocommit = 0;');
-    $this->db->execute('START TRANSACTION;');
-    $statements = $this->get_statements_from_file($filename);
-    foreach($statements as $statement) {
-      try {
-        $this->execute_statement($statement);
-      } catch (DBQueryException $e) {
-        throw new DatabaseMigratorException('An error occured while executing query of "' . $filename . '": "' . $statement . '"', 1415089456);
-      }
-    }
-    $this->db->execute('COMMIT;');
-    $this->db->execute('SET autocommit = 1;');
-  }
-
-  /**
    * @param $filename
    * @return array
    * @throws DatabaseMigratorException
    */
   protected function get_statements_from_file($filename) {
-    $f = @fopen($filename, "r");
-    if ($f === false) {
-      throw new DatabaseMigratorException('Unable to open file "' . $filename . '"');
+    $file = rtrim($this->migration_directory, '/') . '/' . $filename;
+    $f = @fopen($file, "r");
+    if ($f === FALSE) {
+      throw new DatabaseMigratorException('Unable to open file "' . $file . '"');
     }
-    $sqlFile = fread($f, filesize($filename));
-    return explode(';', $sqlFile);
+    $sql = fread($f, filesize($file));
+    return explode(';', $sql);
   }
 
   /**

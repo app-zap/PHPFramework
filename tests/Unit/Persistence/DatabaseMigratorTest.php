@@ -8,8 +8,8 @@ use AppZap\PHPFramework\Persistence\DatabaseMigrator;
 use AppZap\PHPFramework\Persistence\StaticDatabaseConnection;
 
 class DatabaseMigratorMock extends DatabaseMigrator {
-  public function _get_current_migration_version() {
-    return $this->get_current_migration_version();
+  public function _get_last_executed_version() {
+    return $this->get_last_executed_version();
   }
 }
 
@@ -27,12 +27,21 @@ class DatabaseMigratorTest extends \PHPUnit_Framework_TestCase {
 
   public function setUp() {
     Configuration::reset();
+    $database = 'phpunit_tests';
+    $host = '127.0.0.1';
+    $password = '';
+    $user = 'travis';
+    Configuration::set('phpframework', 'db.mysql.database', $database);
+    Configuration::set('phpframework', 'db.mysql.host', $host);
+    Configuration::set('phpframework', 'db.mysql.password', $password);
+    Configuration::set('phpframework', 'db.mysql.user', $user);
     $this->basePath = dirname(__FILE__);
     $this->db = StaticDatabaseConnection::getInstance();
     $this->db->query('DROP TABLE IF EXISTS `migration_ver`');
     $this->db->query('DROP TABLE IF EXISTS `migrator_test_1`');
     $this->db->query('DROP TABLE IF EXISTS `migrator_test_2`');
     $this->db->query('DROP TABLE IF EXISTS `migrator_test_error`');
+    $this->db->query('DROP TABLE IF EXISTS `migrator_test_timestamps`');
   }
 
   /**
@@ -60,7 +69,7 @@ class DatabaseMigratorTest extends \PHPUnit_Framework_TestCase {
   public function currentMigrationVersionIs0IfTableDoesntExist() {
     Configuration::set('phpframework', 'db.migrator.directory', $this->basePath . '/_migrator/_1/');
     $migrator = new DatabaseMigratorMock();
-    $this->assertSame(0, $migrator->_get_current_migration_version());
+    $this->assertSame(0, $migrator->_get_last_executed_version());
   }
 
   /**
@@ -94,12 +103,22 @@ class DatabaseMigratorTest extends \PHPUnit_Framework_TestCase {
    * @test
    */
   public function migrationsAreExecutedFilesStartAt2() {
-    $this->markTestIncomplete('Skipping numbers seems not supported yet.');
     Configuration::set('phpframework', 'db.migrator.directory', $this->basePath . '/_migrator/_2/');
     (new DatabaseMigrator())->migrate();
     $this->assertSame(1, count($this->db->query("SHOW TABLES LIKE 'migrator_test_2'")));
     $this->assertSame(1, $this->db->count('migrator_test_2', ['title' => 'test2']));
     $this->assertSame(2, $this->db->count('migrator_test_2'));
+  }
+
+  /**
+   * @test
+   */
+  public function migrationsAreExecutedFilesUseTimestamps() {
+    Configuration::set('phpframework', 'db.migrator.directory', $this->basePath . '/_migrator/_timestamps/');
+    (new DatabaseMigrator())->migrate();
+    $this->assertSame(1, count($this->db->query("SHOW TABLES LIKE 'migrator_test_timestamps'")));
+    $this->assertSame(1, $this->db->count('migrator_test_timestamps', ['title' => 'test2']));
+    $this->assertSame(2, $this->db->count('migrator_test_timestamps'));
   }
 
   /**
