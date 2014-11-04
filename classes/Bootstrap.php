@@ -51,7 +51,7 @@ class Bootstrap {
   }
 
   /**
-   * 
+   *
    */
   protected static function registerCoreSlots() {
     SignalSlotDispatcher::registerSlot(Dispatcher::SIGNAL_CONSTRUCT, ['AppZap\PHPFramework\SignalSlot\CoreSlots', 'invokeDatabaseMigrator']);
@@ -64,9 +64,6 @@ class Bootstrap {
   protected static function checkForRequiredApplicationParts() {
     if (!is_dir(Configuration::get('application', 'templates_directory'))) {
       throw new ApplicationPartMissingException('Template directory "' . Configuration::get('application', 'templates_directory') . '" does not exist.');
-    }
-    if (!is_readable(Configuration::get('application', 'routes_file'))) {
-      throw new ApplicationPartMissingException('Routes file "' . Configuration::get('application', 'routes_file') . '" does not exist.');
     }
   }
 
