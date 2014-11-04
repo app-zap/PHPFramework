@@ -97,6 +97,10 @@ class Bootstrap {
       $resource = '/' . join('/', $argv);
     } else {
       $resource = $_SERVER['REQUEST_URI'];
+      $uri_path_prefix = '/' . trim(Configuration::get('phpframework', 'uri_path_prefix'), '/');
+      if ($uri_path_prefix && strpos($resource, $uri_path_prefix) === 0) {
+        $resource = substr($resource, strlen($uri_path_prefix));
+      }
     }
     return $dispatcher->dispatch($resource);
   }
