@@ -49,7 +49,8 @@ class Dispatcher {
   }
 
   /**
-   * @param string $uri
+   * @param $uri
+   * @return string
    */
   public function dispatch($uri) {
 
@@ -138,7 +139,7 @@ class Dispatcher {
   protected function dispatch_controller(Router $router) {
     $responder = $router->get_responder();
     $parameters = $router->get_parameters();
-    $request = new BaseHttpRequest($this->request_method);
+    $request = new Request($this->request_method);
     $response = new TwigView();
 
     $default_template_name = $this->determineDefaultTemplateName($responder);

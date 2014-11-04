@@ -16,7 +16,7 @@ abstract class AbstractController {
   protected $params;
 
   /**
-   * @var BaseHttpRequest
+   * @var Request
    */
   protected $request;
 
@@ -31,10 +31,10 @@ abstract class AbstractController {
   protected $require_http_authentication = FALSE;
 
   /**
-   * @param BaseHttpRequest $request
+   * @param Request $request
    * @param AbstractView $response
    */
-  public function __construct(BaseHttpRequest $request, AbstractView $response) {
+  public function __construct(Request $request, AbstractView $response) {
     SignalSlotDispatcher::emitSignal(self::SIGNAL_INIT_REQUEST, $request);
     SignalSlotDispatcher::emitSignal(self::SIGNAL_INIT_RESPONSE, $response);
     $this->request = $request;

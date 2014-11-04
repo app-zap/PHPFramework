@@ -1,7 +1,7 @@
 <?php
 namespace AppZap\PHPFramework\Mvc;
 
-class BaseHttpRequest {
+class Request {
 
   /**
    * @var array
@@ -10,6 +10,7 @@ class BaseHttpRequest {
     'get' => ['default' => 'get', 'fallback' => 'post'],
     'post' => ['default' => 'post', 'fallback' => 'get'],
     'head' => ['default' => 'get', 'fallback' => 'post'],
+    'cli' => ['default' => 'cli'],
   ];
 
   /**
@@ -19,6 +20,10 @@ class BaseHttpRequest {
 
   public function __construct($request_method) {
     $this->request_method = $request_method;
+    // Early exit when not defined where to read request values
+    if(!array_key_exists($this->request_method, $this->value_sources)) {
+      throw new MethodNotSupportedException('Getting request parameters of ' . $this->request_method . ' is not supported.', 1415273543);
+    }
   }
 
   /**
@@ -30,24 +35,19 @@ class BaseHttpRequest {
    * @return mixed
    * @throws MethodNotSupportedException when the parameter is read for a request type which is not supported by the framework
    */
-  public function get($parameter_name, $default_value = null, $use_strict_mode = false) {
-    // Early exit when not defined where to read request values
-    if(!array_key_exists($this->request_method, $this->value_sources)) {
-      throw new MethodNotSupportedException('Getting request parameters of ' . $this->request_method . ' is not supported.');
-    }
+  public function get($parameter_name, $default_value = NULL, $use_strict_mode = FALSE) {
 
     try {
       return $this->read_request_parameter($parameter_name, $this->value_sources[$this->request_method]['default']);
     } catch(ParameterNotFoundException $ex) {}
 
-    if(!$use_strict_mode) {
+    if(!$use_strict_mode && isset($this->value_sources[$this->request_method]['fallback'])) {
       try {
         return $this->read_request_parameter($parameter_name, $this->value_sources[$this->request_method]['fallback']);
       } catch(ParameterNotFoundException $ex) {}
     }
 
     return $default_value;
-
   }
 
   /**
@@ -92,14 +92,14 @@ class BaseHttpRequest {
     }
 
     if($source === null) {
-      throw new ValueSourceNotSupportedException('The source ' . $value_source . ' is not supported to read values from.');
+      throw new ValueSourceNotSupportedException('The source ' . $value_source . ' is not supported to read values from.', 1415273682);
     }
 
     if(array_key_exists($parameter_name, $source)) {
       return $source[$parameter_name];
     }
 
-    throw new ParameterNotFoundException('Parameter ' . $parameter_name . ' was not found in source ' . $value_source);
+    throw new ParameterNotFoundException('Parameter ' . $parameter_name . ' was not found in source ' . $value_source, 1415273689);
   }
 
 }

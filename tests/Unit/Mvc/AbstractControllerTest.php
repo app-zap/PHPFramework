@@ -2,7 +2,7 @@
 namespace AppZap\PHPFramework\Tests\Mvc;
 
 use AppZap\PHPFramework\Mvc\AbstractController;
-use AppZap\PHPFramework\Mvc\BaseHttpRequest;
+use AppZap\PHPFramework\Mvc\Request;
 use AppZap\PHPFramework\Mvc\View\AbstractView;
 
 class TestResponse extends AbstractView {
@@ -32,7 +32,7 @@ class AbstractControllerTest extends \PHPUnit_Framework_TestCase {
   protected $testController;
 
   public function setUp() {
-    $this->testController = new TestController(new BaseHttpRequest('cli'), new TestResponse());
+    $this->testController = new TestController(new Request('cli'), new TestResponse());
   }
 
   /**
