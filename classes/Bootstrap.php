@@ -2,16 +2,18 @@
 namespace AppZap\PHPFramework;
 
 use AppZap\PHPFramework\Configuration\Configuration;
+use AppZap\PHPFramework\Configuration\DefaultConfiguration;
 use AppZap\PHPFramework\Configuration\Parser\IniParser;
 use AppZap\PHPFramework\Mvc\ApplicationPartMissingException;
 use AppZap\PHPFramework\Mvc\Dispatcher;
-use AppZap\PHPFramework\Persistence\DatabaseMigrator;
 use AppZap\PHPFramework\SignalSlot\Dispatcher as SignalSlotDispatcher;
 
 class Bootstrap {
 
   /**
-   * @param $application
+   * @param string $application
+   * @return string
+   * @throws ApplicationPartMissingException
    * @throws \Exception
    */
   public static function bootstrap($application) {
@@ -29,7 +31,9 @@ class Bootstrap {
    * @throws \Exception
    */
   protected static function initializeConfiguration($application) {
-    IniParser::init($application);
+    Configuration::reset();
+    DefaultConfiguration::initialize($application);
+    IniParser::initialize();
   }
 
   /**
