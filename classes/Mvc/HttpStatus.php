@@ -89,5 +89,4 @@ class HttpStatus {
     self::$additional_headers = [];
   }
 
-
 }

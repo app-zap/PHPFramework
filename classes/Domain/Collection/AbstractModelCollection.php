@@ -39,27 +39,45 @@ abstract class AbstractModelCollection implements \Iterator, \Countable {
     return NULL;
   }
 
+  /**
+   * @return mixed
+   */
   public function current() {
     return current($this->items);
   }
 
+  /**
+   * @return mixed
+   */
   public function next() {
     return next($this->items);
   }
 
+  /**
+   * @return mixed
+   */
   public function key() {
     return key($this->items);
   }
 
+  /**
+   *
+   */
   public function rewind() {
     reset($this->items);
   }
 
+  /**
+   * @return bool
+   */
   public function valid() {
     $key = key($this->items);
     return ($key !== NULL && $key !== FALSE);
   }
 
+  /**
+   * @return int
+   */
   public function count() {
     return count($this->items);
   }

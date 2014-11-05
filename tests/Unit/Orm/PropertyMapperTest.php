@@ -80,7 +80,7 @@ class PropertyMapperTest extends \PHPUnit_Framework_TestCase {
 
   /**
    * @test
-   * @expectedException \AppZap\PHPFramework\Orm\PropertyMappingNotSupportedForTargetClassException
+   * @expectedException \AppZap\PHPFramework\Orm\PropertyMappingException
    */
   public function conversion_not_supported() {
     $source = 'abc';
@@ -100,7 +100,7 @@ class PropertyMapperTest extends \PHPUnit_Framework_TestCase {
 
   /**
    * @test
-   * @expectedException \AppZap\PHPFramework\Orm\NoRepositoryForModelFoundException
+   * @expectedException \AppZap\PHPFramework\Orm\PropertyMappingException
    */
   public function convert_to_model_without_repo() {
     $source = 1;

@@ -154,5 +154,3 @@ class DatabaseMigrator {
   }
 
 }
-
-class DatabaseMigratorException extends \Exception {}

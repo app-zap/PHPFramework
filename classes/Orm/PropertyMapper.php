@@ -30,7 +30,7 @@ class PropertyMapper {
         default:
           $target = get_parent_class($target);
           if ($target === FALSE) {
-            throw new PropertyMappingNotSupportedForTargetClassException('No conversion found for type "' . $original_target . '"', 1409745080);
+            throw new PropertyMappingException('No conversion found for type "' . $original_target . '"', 1409745080);
           }
       }
     }
@@ -61,7 +61,7 @@ class PropertyMapper {
   protected function mapToModel($source, $target_class) {
     $repository_classname = Nomenclature::modelclassname_to_repositoryclassname($target_class);
     if (!class_exists($repository_classname)) {
-      throw new NoRepositoryForModelFoundException('Repository class ' . $repository_classname . ' for model ' . $target_class . ' does not exist.', 1409745296);
+      throw new PropertyMappingException('Repository class ' . $repository_classname . ' for model ' . $target_class . ' does not exist.', 1409745296);
     }
     /** @var \AppZap\PHPFramework\Domain\Repository\AbstractDomainRepository $repository */
     $repository = $repository_classname::get_instance();
@@ -69,6 +69,3 @@ class PropertyMapper {
   }
 
 }
-
-class PropertyMappingNotSupportedForTargetClassException extends \InvalidArgumentException {}
-class NoRepositoryForModelFoundException extends \InvalidArgumentException{}
