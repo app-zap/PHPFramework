@@ -67,7 +67,8 @@ class Router {
     foreach ($routes as $regex => $regex_responder) {
       $regex = $this->enhance_regex($regex);
       if (preg_match($regex, $resource, $matches)) {
-        for ($i = 1; $i < count($matches); $i++) {
+        $matches_count = count($matches);
+        for ($i = 1; $i < $matches_count; $i++) {
           $this->parameters[] = $matches[$i];
         }
         if (is_array($regex_responder)) {
