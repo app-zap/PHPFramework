@@ -1,5 +1,6 @@
 {
   "name": "app-zap/phpframework",
+  "description": "A lightweight but powerful PHP framework",
   "require": {
     "nette/caching": "2.2.*",
     "nodrew/php-airbrake": "1.0.0",
