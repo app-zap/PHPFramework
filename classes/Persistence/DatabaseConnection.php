@@ -71,7 +71,6 @@ class DatabaseConnection {
    *
    * @param string $sql Finally escaped SQL statement
    * @return resource Result data of the query
-   * @throws DBConnectionException
    * @throws DBQueryException
    */
   public function execute($sql) {
@@ -390,9 +389,6 @@ class DatabaseConnection {
     return sprintf('`%s` %s %s', $field, $operand, $value);
   }
 
-}
-
-class DBConnectionException extends \Exception {
 }
 
 class DBQueryException extends \Exception {

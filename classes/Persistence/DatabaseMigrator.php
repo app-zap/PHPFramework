@@ -40,7 +40,6 @@ class DatabaseMigrator {
   }
 
   /**
-   * @throws DBConnectionException
    * @throws DatabaseMigratorException
    */
   public function migrate() {
