@@ -160,7 +160,7 @@ class Dispatcher {
         $output = $response->render();
       }
       return $output;
-    } catch (HttpAuthenticationRequiredException $e) {
+    } catch (DispatchingInterruptedException $e) {
       $output = '';
     }
     return $output;

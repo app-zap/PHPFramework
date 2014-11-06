@@ -54,7 +54,7 @@ abstract class AbstractController {
         HttpStatus::HEADER_FIELD_ALLOW => join(', ', $this->get_implemented_methods())
     ]);
     HttpStatus::send_headers();
-    die();
+    throw new DispatchingInterruptedException('Request method not allowed', 1415268266);
   }
 
   /**

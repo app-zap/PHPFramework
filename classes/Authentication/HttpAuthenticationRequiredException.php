@@ -1,4 +1,6 @@
 <?php
 namespace AppZap\PHPFramework\Authentication;
 
-class HttpAuthenticationRequiredException extends \Exception {}
+use AppZap\PHPFramework\Mvc\DispatchingInterruptedException;
+
+class HttpAuthenticationRequiredException extends DispatchingInterruptedException {}
