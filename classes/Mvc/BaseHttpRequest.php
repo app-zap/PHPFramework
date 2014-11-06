@@ -103,5 +103,3 @@ class BaseHttpRequest {
   }
 
 }
-
-class ParameterNotFoundException extends \Exception {}
