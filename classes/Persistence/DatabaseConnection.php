@@ -361,14 +361,14 @@ class DatabaseConnection {
    * @param array $where
    * @param string $method
    * @return string
-   * @throws InputException
+   * @throws \InvalidArgumentException
    */
   protected function where($where, $method = 'AND') {
     if (is_null($where)) {
       return '';
     }
     if (!is_array($where)) {
-      throw new InputException('where clause has to be an associative array', 1409767864);
+      throw new \InvalidArgumentException('where clause has to be an associative array', 1409767864);
     }
     if (!count($where)) {
       return '';
@@ -452,9 +452,6 @@ class DBQueryException extends \Exception {
 }
 
 class DBDatabaseException extends \Exception {
-}
-
-class InputException extends \Exception {
 }
 
 class DBConfigException extends \Exception {

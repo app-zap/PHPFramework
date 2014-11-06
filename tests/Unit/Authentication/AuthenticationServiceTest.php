@@ -32,7 +32,7 @@ class NullSession implements BaseSessionInterface {
 class SessionNotImplementingTheInterface {
 }
 
-class AuthenticationServiceTest extends \PHPUnit_Framework_TestCase{
+class AuthenticationServiceTest extends \PHPUnit_Framework_TestCase {
 
   /**
    * @test

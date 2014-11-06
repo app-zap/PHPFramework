@@ -179,7 +179,8 @@ class DatabaseConnectionTest extends \PHPUnit_Extensions_Database_TestCase {
 
   /**
    * @test
-   * @expectedException \AppZap\PHPFramework\Persistence\InputException
+   * @expectedException \InvalidArgumentException
+   * @expectedExceptionCode 1409767864
    */
   public function where_string() {
     $this->fixture->select('item', '*', 'id = 1');

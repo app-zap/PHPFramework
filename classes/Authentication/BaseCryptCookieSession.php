@@ -21,8 +21,8 @@ class BaseCryptCookieSession implements BaseSessionInterface {
   public function __construct() {
     $this->cookie_name = Configuration::get('phpframework', 'authentication.cookie.name', 'SecureSessionCookie');;
 
-    if(Configuration::get('phpframework', 'authentication.cookie.encrypt_key')) {
-      throw new BaseCryptCookieSessionException('Config key "cookie.encrypt_key" must be set!');
+    if(!Configuration::get('phpframework', 'authentication.cookie.encrypt_key')) {
+      throw new BaseCryptCookieSessionException('Config key "authentication.cookie.encrypt_key" must be set!', 1415264244);
     }
 
     $this->decodeCryptCookie();
@@ -96,5 +96,3 @@ class BaseCryptCookieSession implements BaseSessionInterface {
     $this->encodeCryptCookie();
   }
 }
-
-class BaseCryptCookieSessionException extends \Exception {}
