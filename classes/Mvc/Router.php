@@ -86,7 +86,10 @@ class Router {
    * @return string
    */
   protected function enhance_regex($regex) {
-    if (@preg_match($regex, "") === FALSE) {
+    set_error_handler(function() {}, E_WARNING);
+    $isRegularExpression = preg_match($regex, "") !== FALSE;
+    restore_error_handler();
+    if (!$isRegularExpression) {
       // if $regex is no regular expression
       if ($regex === '.') {
         $regex = '';
