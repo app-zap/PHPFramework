@@ -11,14 +11,19 @@ abstract class AbstractController {
   const SIGNAL_INIT_RESPONSE = 1413325748;
 
   /**
+   * @var array
+   */
+  protected $params;
+
+  /**
    * @var BaseHttpRequest
    */
-  protected $request = null;
+  protected $request;
 
   /**
    * @var AbstractView
    */
-  protected $response = null;
+  protected $response;
 
   /**
    * @var bool
@@ -40,6 +45,7 @@ abstract class AbstractController {
    * @param array $params
    */
   public function initialize($params) {
+    $this->params = $params;
     if ($this->require_http_authentication) {
       $base_http_authentication = new BaseHttpAuthentication();
       $base_http_authentication->check_authentication();
