@@ -72,7 +72,7 @@ class DatabaseConnection {
    * @param string $sql Finally escaped SQL statement
    * @param array $parameters
    * @return resource Result data of the query
-   * @throws DBQueryException
+   * @throws DatabaseQueryException
    */
   public function execute($sql, $parameters = []) {
     $this->connect();
@@ -85,7 +85,7 @@ class DatabaseConnection {
       $success = FALSE;
     }
     if ($success === FALSE) {
-      throw new DBQueryException('Database query failed. Error: "' . print_r($statement->errorInfo(), 1) . '". Query was: "' . $statement->queryString . '". Parameters: ' . print_r($parameters, 1), 1415219261);
+      throw new DatabaseQueryException('Database query failed. Error: "' . print_r($statement->errorInfo(), 1) . '". Query was: "' . $statement->queryString . '". Parameters: ' . print_r($parameters, 1), 1415219261);
     }
     return $statement->fetchAll();
   }
@@ -446,13 +446,4 @@ class DatabaseConnection {
     return sprintf('`%s` %s %s', $field, $operand, $value);
   }
 
-}
-
-class DBQueryException extends \Exception {
-}
-
-class DBDatabaseException extends \Exception {
-}
-
-class DBConfigException extends \Exception {
 }

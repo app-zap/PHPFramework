@@ -81,7 +81,7 @@ class DatabaseConnectionTest extends \PHPUnit_Extensions_Database_TestCase {
 
   /**
    * @test
-   * @expectedException \AppZap\PHPFramework\Persistence\DBQueryException
+   * @expectedException \AppZap\PHPFramework\Persistence\DatabaseQueryException
    */
   public function failing_query() {
     $this->fixture->query('SQL SYNTAX ERROR!');
@@ -162,7 +162,7 @@ class DatabaseConnectionTest extends \PHPUnit_Extensions_Database_TestCase {
 
   /**
    * @test
-   * @expectedException \AppZap\PHPFramework\Persistence\DBQueryException
+   * @expectedException \AppZap\PHPFramework\Persistence\DatabaseQueryException
    */
   public function insert_into_not_existing_table() {
     $this->fixture->insert('not_existing_table', ['title' => 'bar']);

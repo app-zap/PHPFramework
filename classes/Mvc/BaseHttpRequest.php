@@ -104,6 +104,4 @@ class BaseHttpRequest {
 
 }
 
-class MethodNotSupportedException extends \Exception {}
-class ValueSourceNotSupportedException extends \Exception {}
 class ParameterNotFoundException extends \Exception {}

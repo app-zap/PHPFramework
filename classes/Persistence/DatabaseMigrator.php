@@ -97,7 +97,7 @@ class DatabaseMigrator {
     foreach($statements as $statement) {
       try {
         $this->execute_statement($statement);
-      } catch (DBQueryException $e) {
+      } catch (DatabaseQueryException $e) {
         throw new DatabaseMigratorException($e->getMessage(), 1415089456);
       }
     }
@@ -139,14 +139,14 @@ class DatabaseMigrator {
 
   /**
    * @param $statement
-   * @throws DBQueryException
+   * @throws DatabaseQueryException
    * @throws DatabaseMigratorException
    */
   protected function execute_statement($statement) {
     if (strlen($statement) > 3 && substr(ltrim($statement), 0, 2) != '/*') {
       try {
         $this->db->execute($statement);
-      } catch (DBQueryException $ex) {
+      } catch (DatabaseQueryException $ex) {
         $this->db->execute('ROLLBACK;');
         throw $ex;
       }

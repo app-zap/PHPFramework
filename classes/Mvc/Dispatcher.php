@@ -138,6 +138,3 @@ class Dispatcher {
   }
 
 }
-
-class InvalidHttpResponderException extends \Exception {
-}
