@@ -97,10 +97,10 @@ abstract class AbstractView {
    * Sends an json encoded object to the browser using correct content type
    *
    * @param mixed $object Object (most likely an array) to json encode
-   * @param null|string $callback If set to string answer will be sent as JSONP output with this function
+   * @param string $callback If set to string answer will be sent as JSONP output with this function
    */
   public function json_output($object, $callback = null) {
-    if($callback !== null) {
+    if($callback !== NULL) {
       $ctype = 'text/javascript';
       $output = $callback . '(' . json_encode($object) . ');';
     } else {
@@ -110,7 +110,7 @@ abstract class AbstractView {
     $this->header('Content-Type', $ctype);
     $this->send_headers();
 
-    die($output);
+    echo $output;
   }
 
   /**
