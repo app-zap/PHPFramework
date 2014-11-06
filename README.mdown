@@ -56,3 +56,4 @@ If you need a `.gitignore` start here:
     settings_local.ini
 
 [![Build Status](https://travis-ci.org/app-zap/PHPFramework.svg?branch=develop)](https://travis-ci.org/app-zap/PHPFramework)
+[![SensioLabsInsight](https://insight.sensiolabs.com/projects/cc3c64ed-fcd3-4be9-8f6c-ba7ad0adad11/small.png)](https://insight.sensiolabs.com/projects/cc3c64ed-fcd3-4be9-8f6c-ba7ad0adad11)
