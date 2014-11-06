@@ -1,7 +1,6 @@
 <?php
 namespace AppZap\PHPFramework\Mvc;
 
-use AppZap\PHPFramework\Authentication\HttpAuthenticationRequiredException;
 use AppZap\PHPFramework\Cache\CacheFactory;
 use AppZap\PHPFramework\Configuration\Configuration;
 use AppZap\PHPFramework\Cache\Cache;
