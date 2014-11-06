@@ -19,9 +19,9 @@ class DefaultConfiguration {
     }
     $application_directory .= '/';
     Configuration::set('phpframework', 'project_root', $project_root);
+    Configuration::set('phpframework', 'db.migrator.directory', $application_directory . '_sql/');
     Configuration::set('application', 'application', $application);
     Configuration::set('application', 'application_directory', $application_directory);
-    Configuration::set('application', 'migration_directory', $application_directory . '_sql/');
     Configuration::set('application', 'routes_file', $application_directory . 'routes.php');
     Configuration::set('application', 'templates_directory', $application_directory . 'templates/');
     Configuration::set('phpframework', 'version', '1.4-dev');
