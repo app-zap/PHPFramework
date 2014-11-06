@@ -39,8 +39,7 @@ class BaseHttpAuthentication {
     if (is_array($http_authentication) && !$this->is_authenticated()) {
       HttpStatus::set_status(HttpStatus::STATUS_401_UNAUTHORIZED);
       header('WWW-Authenticate: Basic realm="Login"');
-      echo('Login required!');
-      exit;
+      throw new HttpAuthenticationRequiredException('HTTP authentication was required but not fulfilled.', 1415266170);
     }
   }
 

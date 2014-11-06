@@ -1,6 +1,7 @@
 <?php
 namespace AppZap\PHPFramework\Mvc;
 
+use AppZap\PHPFramework\Authentication\HttpAuthenticationRequiredException;
 use AppZap\PHPFramework\Cache\CacheFactory;
 use AppZap\PHPFramework\Configuration\Configuration;
 use AppZap\PHPFramework\Cache\Cache;
@@ -57,36 +58,8 @@ class Dispatcher {
     if ($this->request_method === 'get') {
       $output = $this->cache->load('output_' . $uri);
     }
-
     if (is_null($output)) {
-      $router = $this->getRouter($uri);
-      $responder = $router->get_responder();
-      $parameters = $router->get_parameters();
-
-      if (is_callable($responder)) {
-        $output = call_user_func($responder, $parameters);
-      } else {
-        $request = new BaseHttpRequest($this->request_method);
-        $response = new TwigView();
-
-        $default_template_name = $this->determineDefaultTemplateName($responder);
-        if ($default_template_name) {
-          $response->set_template_name($default_template_name);
-        }
-
-        /** @var AbstractController $contoller */
-        $contoller = new $responder($request, $response);
-        if (!method_exists($contoller, $this->request_method)) {
-          // Send HTTP 405 response
-          $contoller->handle_not_supported_method($this->request_method);
-        }
-        $contoller->initialize($parameters);
-        $output = $contoller->{$this->request_method}($parameters);
-        if (is_null($output)) {
-          $output = $response->render();
-        }
-      }
-
+      $output = $this->dispatch_uncached($uri);
     };
 
     SignalSlotDispatcher::emitSignal(self::SIGNAL_OUTPUT_READY, $output);
@@ -135,6 +108,62 @@ class Dispatcher {
       return new Router($uri);
     });
     return $router;
+  }
+
+  /**
+   * @param $uri
+   * @return string
+   */
+  protected function dispatch_uncached($uri) {
+    $router = $this->getRouter($uri);
+    if (is_callable($router->get_responder())) {
+      $output = $this->dispatch_callable($router);
+    } else {
+      $output = $this->dispatch_controller($router);
+    }
+    return $output;
+  }
+
+  /**
+   * @param Router $router
+   * @return string
+   */
+  protected function dispatch_callable(Router $router) {
+    return call_user_func($router->get_responder(), $router->get_parameters());
+  }
+
+  /**
+   * @param Router $router
+   * @return string
+   */
+  protected function dispatch_controller(Router $router) {
+    $responder = $router->get_responder();
+    $parameters = $router->get_parameters();
+    $request = new BaseHttpRequest($this->request_method);
+    $response = new TwigView();
+
+    $default_template_name = $this->determineDefaultTemplateName($responder);
+    if ($default_template_name) {
+      $response->set_template_name($default_template_name);
+    }
+
+    try {
+      /** @var AbstractController $contoller */
+      $contoller = new $responder($request, $response);
+      if (!method_exists($contoller, $this->request_method)) {
+        // Send HTTP 405 response
+        $contoller->handle_not_supported_method($this->request_method);
+      }
+      $contoller->initialize($parameters);
+      $output = $contoller->{$this->request_method}($parameters);
+      if (is_null($output)) {
+        $output = $response->render();
+      }
+      return $output;
+    } catch (HttpAuthenticationRequiredException $e) {
+      $output = '';
+    }
+    return $output;
   }
 
 }
