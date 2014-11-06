@@ -157,7 +157,13 @@ class DatabaseConnection {
    * @return resource
    */
   public function update($table, $input, $where) {
-    return $this->execute('UPDATE ' . $table . ' SET ' . $this->values($input) . $this->where($where));
+    $sql = sprintf(
+      'UPDATE %s SET %s%s',
+      $table,
+      $this->values($input),
+      $this->where($where)
+    );
+    return $this->execute($sql);
   }
 
   /**
@@ -182,21 +188,20 @@ class DatabaseConnection {
    * @param string $select Fields to retrieve from table
    * @param array $where Selector for the datasets to select
    * @param string $order Already escaped content of order clause
-   * @param int $start First index of dataset to retrieve
+   * @param int $offset First index of dataset to retrieve
    * @param int $limit Number of entries to retrieve
    * @return array
    */
-  public function select($table, $select = '*', $where = NULL, $order = NULL, $start = NULL, $limit = NULL) {
-    $sql = 'SELECT ' . $select . ' FROM ' . $table;
-
-    $sql .= $this->where($where);
-    if ($order !== NULL) {
-      $sql .= ' ORDER BY ' . $order;
-    }
-    if ($start !== NULL && $limit !== NULL) {
-      $sql .= ' LIMIT ' . $start . ',' . $limit;
-    }
-
+  public function select($table, $select = '*', $where = NULL, $order = '', $offset = 0, $limit = NULL) {
+    $sql = sprintf(
+        'SELECT %s FROM %s%s%s%s',
+        $select,
+        $table,
+        $this->where($where),
+        $this->order($order),
+        $this->limit($limit),
+        $this->offset($offset)
+    );
     return $this->query($sql);
   }
 
@@ -309,6 +314,50 @@ class DatabaseConnection {
   }
 
   /**
+   * @param string $order
+   * @return string
+   */
+  protected function order($order = '') {
+    if ($order) {
+      $order = sprintf(
+        ' ORDER BY %s',
+        $order
+      );
+    }
+    return $order;
+  }
+
+  /**
+   * @param int $limit
+   * @return string
+   */
+  protected function limit($limit = 0) {
+    if ($limit > 0) {
+      return sprintf(
+          ' LIMIT %d',
+          $limit
+      );
+    } else {
+      return '';
+    }
+  }
+
+  /**
+   * @param int $limit
+   * @return string
+   */
+  protected function offset($offset = 0) {
+    if ($offset > 0) {
+      return sprintf(
+          ' OFFSET %d',
+          $offset
+      );
+    } else {
+      return '';
+    }
+  }
+
+  /**
    * @param array $where
    * @param string $method
    * @return string
@@ -354,7 +403,10 @@ class DatabaseConnection {
         }
       }
     }
-    return ' WHERE ' . implode(' ' . $method . ' ', $constraints);
+    return sprintf(
+        ' WHERE %s',
+        implode(' ' . $method . ' ', $constraints)
+    );
   }
 
   /**
