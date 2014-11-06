@@ -48,7 +48,7 @@ class DatabaseConnection {
    */
   protected function set_charset($charset) {
     $sql = 'SET NAMES ' . $charset;
-    $this->execute($sql, FALSE);
+    $this->execute($sql);
   }
 
   /**
@@ -70,22 +70,24 @@ class DatabaseConnection {
    * Executes the passed SQL statement
    *
    * @param string $sql Finally escaped SQL statement
+   * @param array $parameters
    * @return resource Result data of the query
    * @throws DBQueryException
    */
-  public function execute($sql) {
+  public function execute($sql, $parameters = []) {
     $this->connect();
     // execute the query
+    $statement = $this->connection->prepare($sql);
     try {
-      $result = $this->connection->query($sql);
+      $success = $statement->execute($parameters);
     } catch(\PDOException $e) {
       // under HHVM we get a \PDOException instead of FALSE if the query fails
-      $result = FALSE;
+      $success = FALSE;
     }
-    if ($result === FALSE) {
-      throw new DBQueryException('Database query failed. Error: "' . print_r($this->connection->errorInfo(), 1) . '". Query was: "' . $sql . '"');
+    if ($success === FALSE) {
+      throw new DBQueryException('Database query failed. Error: "' . print_r($statement->errorInfo(), 1) . '". Query was: "' . $statement->queryString . '". Parameters: ' . print_r($parameters, 1), 1415219261);
     }
-    return $result;
+    return $statement->fetchAll();
   }
 
   /**
@@ -165,8 +167,11 @@ class DatabaseConnection {
    * @param array $where Selector for the datasets to delete
    */
   public function delete($table, $where = NULL) {
-    $sql = 'DELETE FROM ' . $table;
-    $sql .= $this->where($where);
+    $sql = sprintf(
+        'DELETE FROM %s%s',
+        $table,
+        $this->where($where)
+    );
     $this->execute($sql);
   }
 
