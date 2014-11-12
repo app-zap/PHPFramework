@@ -10,6 +10,8 @@ use AppZap\PHPFramework\SignalSlot\Dispatcher as SignalSlotDispatcher;
 
 class Bootstrap {
 
+  const SIGNAL_PLUGINSLOADED = 1415790750;
+
   /**
    * @param string $application
    * @return string
@@ -22,7 +24,6 @@ class Bootstrap {
     self::registerCoreSlots();
     self::checkForRequiredApplicationParts();
     self::setErrorReporting();
-    self::initializeExceptionLogging();
     return self::invokeDispatcher();
   }
 
@@ -52,6 +53,7 @@ class Bootstrap {
         }
       }
     }
+    SignalSlotDispatcher::emitSignal(self::SIGNAL_PLUGINSLOADED);
   }
 
   /**
@@ -78,13 +80,6 @@ class Bootstrap {
     if (Configuration::get('phpframework', 'debug_mode')) {
       error_reporting(E_ALL);
     }
-  }
-
-  /**
-   *
-   */
-  protected static function initializeExceptionLogging() {
-    ExceptionLogger::initialize();
   }
 
   /**
