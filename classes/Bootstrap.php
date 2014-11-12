@@ -59,13 +59,11 @@ class Bootstrap {
    *
    */
   protected static function registerCoreSlots() {
-    SignalSlotDispatcher::registerSlots([
-        Dispatcher::SIGNAL_CONSTRUCT => ['AppZap\PHPFramework\SignalSlot\CoreSlots', 'invokeDatabaseMigrator'],
-        Dispatcher::SIGNAL_START_DISPATCHING, ['AppZap\PHPFramework\SignalSlot\CoreSlots', 'readOutputFromCache'],
-        Dispatcher::SIGNAL_OUTPUT_READY, ['AppZap\PHPFramework\SignalSlot\CoreSlots', 'addFrameworkSignatureToOutput'],
-        Dispatcher::SIGNAL_OUTPUT_READY, ['AppZap\PHPFramework\SignalSlot\CoreSlots', 'writeOutputToCache'],
-        Dispatcher::SIGNAL_OUTPUT_READY, ['AppZap\PHPFramework\SignalSlot\CoreSlots', 'echoOutput'],
-    ]);
+    SignalSlotDispatcher::registerSlot(Dispatcher::SIGNAL_CONSTRUCT, ['AppZap\PHPFramework\SignalSlot\CoreSlots', 'invokeDatabaseMigrator']);
+    SignalSlotDispatcher::registerSlot(Dispatcher::SIGNAL_START_DISPATCHING, ['AppZap\PHPFramework\SignalSlot\CoreSlots', 'readOutputFromCache']);
+    SignalSlotDispatcher::registerSlot(Dispatcher::SIGNAL_OUTPUT_READY, ['AppZap\PHPFramework\SignalSlot\CoreSlots', 'addFrameworkSignatureToOutput']);
+    SignalSlotDispatcher::registerSlot(Dispatcher::SIGNAL_OUTPUT_READY, ['AppZap\PHPFramework\SignalSlot\CoreSlots', 'writeOutputToCache']);
+    SignalSlotDispatcher::registerSlot(Dispatcher::SIGNAL_OUTPUT_READY, ['AppZap\PHPFramework\SignalSlot\CoreSlots', 'echoOutput']);
   }
 
   /**
