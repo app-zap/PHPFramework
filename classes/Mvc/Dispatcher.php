@@ -16,6 +16,7 @@ class Dispatcher {
 
   const SIGNAL_CONSTRUCT = 1415092297;
   const SIGNAL_OUTPUT_READY = 1413366871;
+  const SIGNAL_START_DISPATCHING = 1415798962;
 
   /**
    * @var \Nette\Caching\Cache
@@ -53,24 +54,12 @@ class Dispatcher {
    * @return string
    */
   public function dispatch($uri) {
-
     $output = NULL;
-    if ($this->request_method === 'get') {
-      $output = $this->cache->load('output_' . $uri);
-    }
+    SignalSlotDispatcher::emitSignal(self::SIGNAL_START_DISPATCHING, $output, $uri, $this->request_method);
     if (is_null($output)) {
       $output = $this->dispatch_uncached($uri);
     };
-
-    SignalSlotDispatcher::emitSignal(self::SIGNAL_OUTPUT_READY, $output);
-
-    if (Configuration::get('phpframework', 'cache.full_output', FALSE) && $this->request_method === 'get') {
-      $this->cache->save('output_' . $uri, $output, [
-        Cache::EXPIRE => Configuration::get('phpframework', 'cache.full_output_expiration', '20 Minutes'),
-      ]);
-    }
-
-    echo $output;
+    SignalSlotDispatcher::emitSignal(self::SIGNAL_OUTPUT_READY, $output, $uri, $this->request_method);
     return $output;
   }
 
@@ -80,8 +69,7 @@ class Dispatcher {
   protected function determineRequestMethod() {
     if (isset($_ENV['AppZap\PHPFramework\RequestMethod'])) {
       $this->request_method = $_ENV['AppZap\PHPFramework\RequestMethod'];
-    }
-    elseif (php_sapi_name() === 'cli') {
+    } elseif (php_sapi_name() === 'cli') {
       $this->request_method = 'cli';
     } else {
       $this->request_method = strtolower($_SERVER['REQUEST_METHOD']);

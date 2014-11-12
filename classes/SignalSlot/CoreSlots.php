@@ -1,6 +1,8 @@
 <?php
 namespace AppZap\PHPFramework\SignalSlot;
 
+use AppZap\PHPFramework\Cache\Cache;
+use AppZap\PHPFramework\Cache\CacheFactory;
 use AppZap\PHPFramework\Configuration\Configuration;
 use AppZap\PHPFramework\Persistence\DatabaseMigrator;
 
@@ -21,6 +23,41 @@ class CoreSlots {
   public static function invokeDatabaseMigrator() {
     if (Configuration::get('phpframework', 'db.migrator.enable')) {
       (new DatabaseMigrator())->migrate();
+    }
+  }
+
+  /**
+   * @param string $output
+   * @param string $uri
+   * @param string $request_method
+   * @throws \AppZap\PHPFramework\Mvc\ApplicationPartMissingException
+   */
+  public static function readOutputFromCache(&$output, $uri, $request_method) {
+    if (Configuration::get('phpframework', 'cache.full_output', FALSE) && $request_method === 'get') {
+      $output = CacheFactory::getCache()->load('output_' . $uri);
+    }
+  }
+
+  /**
+   * @param string $output
+   * @param string $uri
+   * @param string $request_method
+   * @throws \AppZap\PHPFramework\Mvc\ApplicationPartMissingException
+   */
+  public static function writeOutputToCache($output, $uri, $request_method) {
+    if (Configuration::get('phpframework', 'cache.full_output', FALSE) && $request_method === 'get') {
+      CacheFactory::getCache()->save('output_' . $uri, $output, [
+          Cache::EXPIRE => Configuration::get('phpframework', 'cache.full_output_expiration', '20 Minutes'),
+      ]);
+    }
+  }
+
+  /**
+   * @param string $output
+   */
+  public static function echoOutput($output) {
+    if (Configuration::get('phpframework', 'echo_output', TRUE)) {
+      echo $output;
     }
   }
 

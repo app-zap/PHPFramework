@@ -30,4 +30,13 @@ class Dispatcher {
     self::$slots[$signalName][] = $callback;
   }
 
+  /**
+   * @param array $slots
+   */
+  public static function registerSlots($slots) {
+    foreach ($slots as $signalName => $callback) {
+      self::registerSlot($signalName, $callback);
+    }
+  }
+
 }
