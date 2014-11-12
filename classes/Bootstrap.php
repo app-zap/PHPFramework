@@ -68,9 +68,7 @@ class Bootstrap {
    * @throws ApplicationPartMissingException
    */
   protected static function checkForRequiredApplicationParts() {
-    if (!is_dir(Configuration::get('application', 'templates_directory'))) {
-      throw new ApplicationPartMissingException('Template directory "' . Configuration::get('application', 'templates_directory') . '" does not exist.');
-    }
+
   }
 
   /**

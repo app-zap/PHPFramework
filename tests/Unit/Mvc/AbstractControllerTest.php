@@ -8,6 +8,8 @@ use AppZap\PHPFramework\Mvc\View\AbstractView;
 class TestResponse extends AbstractView {
   public function __construct() {
   }
+  protected function get_rendering_engine() {
+  }
 }
 
 class TestController extends AbstractController {

@@ -4,7 +4,8 @@ namespace AppZap\PHPFramework\Tests\Unit\Mvc;
 use AppZap\PHPFramework\Mvc\View\AbstractView;
 
 class TestView extends AbstractView {
-
+  protected function get_rendering_engine() {
+  }
 }
 
 class AbstractViewTest extends \PHPUnit_Framework_TestCase {

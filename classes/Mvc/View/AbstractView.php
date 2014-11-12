@@ -27,6 +27,11 @@ abstract class AbstractView {
   protected $default_template_file_extension = 'html';
 
   /**
+   * @return \Twig_Environment
+   */
+  abstract protected function get_rendering_engine();
+
+  /**
    * @param $template_name
    */
   public function set_template_name($template_name) {
@@ -147,7 +152,7 @@ abstract class AbstractView {
       $template_name = $this->template_name;
     }
     $template_file_extension = Configuration::get('phpframework', 'template_file_extension', $this->default_template_file_extension);
-    $template = $this->rendering_engine->loadTemplate($template_name . '.' . $template_file_extension);
+    $template = $this->get_rendering_engine()->loadTemplate($template_name . '.' . $template_file_extension);
 
     return $template;
   }

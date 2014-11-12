@@ -48,7 +48,7 @@ class Router {
     // check if the responder is valid
     if (is_string($this->responder)) {
       if (!class_exists($this->responder, TRUE)) {
-        throw new InvalidHttpResponderException('Controller ' . $this->responder . ' for uri ' . $resource . ' not found!', 1415129223);
+        throw new InvalidHttpResponderException('Controller ' . $this->responder . ' for uri "' . $resource . '" not found!', 1415129223);
       }
     } elseif(!isset($this->responder)) {
       throw new InvalidHttpResponderException('Route ' . $resource . ' could not be routed.', 1415136995);

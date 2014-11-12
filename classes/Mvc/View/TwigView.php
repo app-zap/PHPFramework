@@ -2,6 +2,7 @@
 namespace AppZap\PHPFramework\Mvc\View;
 
 use AppZap\PHPFramework\Configuration\Configuration;
+use AppZap\PHPFramework\Mvc\ApplicationPartMissingException;
 
 class TwigView extends AbstractView {
 
@@ -11,16 +12,29 @@ class TwigView extends AbstractView {
   protected $default_template_file_extension = 'twig';
 
   /**
-   *
+   * @throws ApplicationPartMissingException
    */
   public function __construct() {
     \Twig_Autoloader::register();
-    $loader = new \Twig_Loader_Filesystem(Configuration::get('application', 'templates_directory'));
-    $options = [];
-    if (Configuration::get('phpframework', 'cache.enable')) {
-      $options['cache'] = Configuration::get('phpframework', 'cache.twig_folder', './cache/twig/');
+  }
+
+  /**
+   * @return \Twig_Environment
+   * @throws ApplicationPartMissingException
+   */
+  protected function get_rendering_engine() {
+    if (!isset($this->rendering_engine)) {
+      if (!is_dir(Configuration::get('application', 'templates_directory'))) {
+        throw new ApplicationPartMissingException('Template directory "' . Configuration::get('application', 'templates_directory') . '" does not exist.');
+      }
+      $loader = new \Twig_Loader_Filesystem(Configuration::get('application', 'templates_directory'));
+      $options = [];
+      if (Configuration::get('phpframework', 'cache.enable')) {
+        $options['cache'] = Configuration::get('phpframework', 'cache.twig_folder', './cache/twig/');
+      }
+      $this->rendering_engine = new \Twig_Environment($loader, $options);
     }
-    $this->rendering_engine = new \Twig_Environment($loader, $options);
+    return $this->rendering_engine;
   }
 
   /**
@@ -34,7 +48,7 @@ class TwigView extends AbstractView {
     if (!$htmlEscape) {
       $options = ['is_safe' => ['all']];
     }
-    $this->rendering_engine->addFilter(new \Twig_SimpleFilter($name, $function, $options));
+    $this->get_rendering_engine()->addFilter(new \Twig_SimpleFilter($name, $function, $options));
   }
 
   /**
@@ -42,7 +56,7 @@ class TwigView extends AbstractView {
    * @return bool
    */
   public function has_output_filter($name) {
-    return $this->rendering_engine->getFilter($name) instanceof \Twig_SimpleFilter;
+    return $this->get_rendering_engine()->getFilter($name) instanceof \Twig_SimpleFilter;
   }
 
   /**
@@ -56,7 +70,7 @@ class TwigView extends AbstractView {
     if (!$htmlEscape) {
       $options = ['is_safe' => ['all']];
     }
-    $this->rendering_engine->addFunction(new \Twig_SimpleFunction($name, $function, $options));
+    $this->get_rendering_engine()->addFunction(new \Twig_SimpleFunction($name, $function, $options));
   }
 
   /**
@@ -64,7 +78,7 @@ class TwigView extends AbstractView {
    * @return bool
    */
   public function has_output_function($name) {
-    return $this->rendering_engine->getFunction($name) instanceof \Twig_SimpleFunction;
+    return $this->get_rendering_engine()->getFunction($name) instanceof \Twig_SimpleFunction;
   }
 
 }
