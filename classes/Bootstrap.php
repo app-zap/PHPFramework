@@ -22,7 +22,6 @@ class Bootstrap {
     self::initializeConfiguration($application);
     self::loadPlugins();
     self::registerCoreSlots();
-    self::checkForRequiredApplicationParts();
     self::setErrorReporting();
     return self::invokeDispatcher();
   }
@@ -62,13 +61,6 @@ class Bootstrap {
   protected static function registerCoreSlots() {
     SignalSlotDispatcher::registerSlot(Dispatcher::SIGNAL_CONSTRUCT, ['AppZap\PHPFramework\SignalSlot\CoreSlots', 'invokeDatabaseMigrator']);
     SignalSlotDispatcher::registerSlot(Dispatcher::SIGNAL_OUTPUT_READY, ['AppZap\PHPFramework\SignalSlot\CoreSlots', 'addFrameworkSignatureToOutput']);
-  }
-
-  /**
-   * @throws ApplicationPartMissingException
-   */
-  protected static function checkForRequiredApplicationParts() {
-
   }
 
   /**
