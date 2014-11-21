@@ -2,8 +2,6 @@
 namespace AppZap\PHPFramework\Mvc;
 
 use AppZap\PHPFramework\Cache\CacheFactory;
-use AppZap\PHPFramework\Configuration\Configuration;
-use AppZap\PHPFramework\Cache\Cache;
 use AppZap\PHPFramework\Mvc\View\TwigView;
 use AppZap\PHPFramework\SignalSlot\Dispatcher as SignalSlotDispatcher;
 
