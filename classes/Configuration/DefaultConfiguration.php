@@ -11,7 +11,7 @@ class DefaultConfiguration {
    * @throws ApplicationPartMissingException
    */
   public static function initialize($application) {
-    $project_root = isset($_ENV['AppZap\PHPFramework\ProjectRoot']) ? $_ENV['AppZap\PHPFramework\ProjectRoot'] : dirname($_SERVER['DOCUMENT_ROOT'] . $_SERVER['PHP_SELF']);
+    $project_root = isset($_ENV['AppZap\PHPFramework\ProjectRoot']) ? $_ENV['AppZap\PHPFramework\ProjectRoot'] : getcwd();
     $application_directory_path = $project_root . '/' . $application;
     $application_directory = realpath($application_directory_path);
     if (!is_dir($application_directory)) {

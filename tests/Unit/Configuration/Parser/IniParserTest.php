@@ -8,7 +8,7 @@ use AppZap\PHPFramework\Configuration\Parser\IniParser;
 class IniParserTest extends \PHPUnit_Framework_TestCase {
 
   public function setUp() {
-    $_ENV['AppZap\PHPFramework\ProjectRoot'] = dirname(__FILE__);
+    $_ENV['AppZap\PHPFramework\ProjectRoot'] = __DIR__;
     Configuration::reset();
   }
 
