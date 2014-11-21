@@ -1,7 +1,5 @@
 <?php
 require_once 'vendor/autoload.php';
 
-# $_ENV['AppZap\PHPFramework\ProjectRoot'] = dirname(__FILE__);
-
 $application = 'myapp';
 \AppZap\PHPFramework\Bootstrap::bootstrap($application);
