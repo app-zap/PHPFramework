@@ -32,12 +32,17 @@ abstract class AbstractController {
 
   /**
    * @param Request $request
+   */
+  public function setRequest(Request $request) {
+    SignalSlotDispatcher::emitSignal(self::SIGNAL_INIT_REQUEST, $request);
+    $this->request = $request;
+  }
+
+  /**
    * @param AbstractView $response
    */
-  public function __construct(Request $request, AbstractView $response) {
-    SignalSlotDispatcher::emitSignal(self::SIGNAL_INIT_REQUEST, $request);
+  public function setResponse(AbstractView $response) {
     SignalSlotDispatcher::emitSignal(self::SIGNAL_INIT_RESPONSE, $response);
-    $this->request = $request;
     $this->response = $response;
   }
 

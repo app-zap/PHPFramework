@@ -6,6 +6,16 @@ class Request {
   /**
    * @var array
    */
+  protected $parameters;
+
+  /**
+   * @var string
+   */
+  protected $request_method;
+
+  /**
+   * @var array
+   */
   protected $value_sources = [
     'get' => ['default' => 'get', 'fallback' => 'post'],
     'post' => ['default' => 'post', 'fallback' => 'get'],
@@ -14,16 +24,18 @@ class Request {
   ];
 
   /**
-   * @var string
+   * @param string $request_method
+   * @param array $parameters
+   *
+   * @throws \AppZap\PHPFramework\Mvc\MethodNotSupportedException
    */
-  protected $request_method;
-
-  public function __construct($request_method) {
-    $this->request_method = $request_method;
+  public function __construct($request_method, $parameters = []) {
     // Early exit when not defined where to read request values
-    if(!array_key_exists($this->request_method, $this->value_sources)) {
-      throw new MethodNotSupportedException('Getting request parameters of ' . $this->request_method . ' is not supported.', 1415273543);
+    if(!array_key_exists($request_method, $this->value_sources)) {
+      throw new MethodNotSupportedException('Getting request parameters of ' . $request_method . ' is not supported.', 1415273543);
     }
+    $this->request_method = $request_method;
+    $this->parameters = $parameters;
   }
 
   /**
@@ -48,6 +60,20 @@ class Request {
     }
 
     return $default_value;
+  }
+
+  /**
+   * @return array
+   */
+  public function getParameters() {
+    return $this->parameters;
+  }
+
+  /**
+   * @return string
+   */
+  public function getRequestMethod() {
+    return $this->request_method;
   }
 
   /**

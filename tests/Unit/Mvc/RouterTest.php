@@ -2,18 +2,17 @@
 namespace AppZap\PHPFramework\Tests\Mvc;
 
 use AppZap\PHPFramework\Configuration\Configuration;
-use AppZap\PHPFramework\Mvc\Router;
+use AppZap\PHPFramework\Mvc\AbstractController;
+use AppZap\PHPFramework\Mvc\Request;
+use AppZap\PHPFramework\Mvc\Responder\CallableResponder;
+use AppZap\PHPFramework\Mvc\Responder\ControllerResponder;
+use AppZap\PHPFramework\Mvc\Responder\SubpathResponder;
+use AppZap\PHPFramework\Mvc\Routing\Router;
 
-class RouterMock extends Router {
-  public function _enhance_regex($regex) {
-    return $this->enhance_regex($regex);
-  }
+class Responder_Index extends AbstractController {
 }
 
-class Responder_Index {
-}
-
-class Responder_Foo {
+class Responder_Foo extends AbstractController {
 }
 
 class RouterTest extends \PHPUnit_Framework_TestCase {
@@ -44,41 +43,11 @@ class RouterTest extends \PHPUnit_Framework_TestCase {
   /**
    * @test
    * @expectedException \AppZap\PHPFramework\Mvc\InvalidHttpResponderException
-   * @expectedExceptionCode 1415129223
-   */
-  public function classNotExisting() {
-    $this->load_routes_file('routes_class_not_existing');
-    new Router('/');
-  }
-
-  /**
-   * @test
-   * @expectedException \AppZap\PHPFramework\Mvc\InvalidHttpResponderException
    * @expectedExceptionCode 1415135585
    */
   public function noReturn() {
     $this->load_routes_file('no_return');
     new Router('/');
-  }
-
-  /**
-   * @test
-   * @expectedException \AppZap\PHPFramework\Mvc\InvalidHttpResponderException
-   * @expectedExceptionCode 1415129333
-   */
-  public function neitherClassNorCallableButObject() {
-    $this->load_routes_file('neither_class_nor_callable');
-    new Router('/object');
-  }
-
-  /**
-   * @test
-   * @expectedException \AppZap\PHPFramework\Mvc\InvalidHttpResponderException
-   * @expectedExceptionCode 1415129333
-   */
-  public function neitherClassNorCallableButInteger() {
-    $this->load_routes_file('neither_class_nor_callable');
-    new Router('/integer');
   }
 
   /**
@@ -97,13 +66,14 @@ class RouterTest extends \PHPUnit_Framework_TestCase {
   public function routeToClassNames() {
     $this->load_routes_file('classnames');
     $router = new Router('/');
-    $responder_class = $router->get_responder();
-    $this->assertTrue(class_exists($responder_class));
-    $this->assertSame('\AppZap\PHPFramework\Tests\Mvc\Responder_Index', $responder_class);
+    /** @var ControllerResponder $responder */
+    $responder = $router->get_responder();
+    $this->assertTrue($responder instanceof ControllerResponder);
+    $this->assertSame('AppZap\PHPFramework\Tests\Mvc\Responder_Index', get_class($responder->getController()));
     $router = new Router('/foo');
-    $responder_class = $router->get_responder();
-    $this->assertTrue(class_exists($responder_class));
-    $this->assertSame('\AppZap\PHPFramework\Tests\Mvc\Responder_Foo', $responder_class);
+    $responder = $router->get_responder();
+    $this->assertTrue($responder instanceof ControllerResponder);
+    $this->assertSame('AppZap\PHPFramework\Tests\Mvc\Responder_Foo', get_class($responder->getController()));
   }
 
   /**
@@ -112,46 +82,26 @@ class RouterTest extends \PHPUnit_Framework_TestCase {
   public function routeToCallables() {
     $this->load_routes_file('callables');
     $router = new Router('/');
-    /** @var callable $responder_callable */
-    $responder_callable = $router->get_responder();
-    $this->assertTrue(is_callable($responder_callable));
-    $this->assertSame('index', call_user_func($responder_callable, $router->get_parameters()));
+    $responder = $router->get_responder();
+    $this->assertTrue($responder instanceof CallableResponder);
+    $this->assertSame('index', $responder->dispatch(new Request('cli', $router->get_parameters())));
     $router = new Router('/user/42');
-    /** @var callable $responder_callable */
-    $responder_callable = $router->get_responder();
-    $this->assertTrue(is_callable($responder_callable));
-    $this->assertSame('user:42', call_user_func($responder_callable, $router->get_parameters()));
+    $responder = $router->get_responder();
+    $this->assertTrue($responder instanceof CallableResponder);
+    $this->assertSame('user:42', $responder->dispatch(new Request('cli', $router->get_parameters())));
   }
 
   /**
    * @test
    */
   public function routeWithSubpaths() {
+    $this->markTestIncomplete();
     $this->load_routes_file('subpaths');
     $router = new Router('/user/42/group/23/edit/');
     /** @var callable $responder_callable */
-    $responder_callable = $router->get_responder();
-    $this->assertTrue(is_callable($responder_callable));
-    $this->assertSame('user:42:group:23:edit', call_user_func($responder_callable, $router->get_parameters()));
-  }
-
-  /**
-   * @test
-   */
-  public function enhanceRegex() {
-    $this->load_routes_file('classnames');
-    $router = new RouterMock('/');
-    $expressions = [
-      '.' => '|^$|',
-      '|^/$|' => '|^/$|',
-      'foo/' => '|^foo/$|',
-      'foo/%' => '|^foo/|',
-      '%foo/' => '|foo/$|',
-      '/user/?/%' => '|^/user/([a-z0-9]*)/|',
-    ];
-    foreach ($expressions as $before => $after) {
-      $this->assertSame($after, $router->_enhance_regex($before));
-    }
+    $responder = $router->get_responder();
+    $this->assertTrue($responder instanceof SubpathResponder);
+    $this->assertSame('user:42:group:23:edit', $responder->dispatch(new Request('cli', $router->get_parameters())));
   }
 
   /**
