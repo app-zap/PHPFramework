@@ -25,6 +25,15 @@ abstract class AbstractModelCollection implements \Iterator, \Countable {
   }
 
   /**
+   * @param AbstractModelCollection $itemsToRemove
+   */
+  public function removeItems(AbstractModelCollection $itemsToRemove) {
+    foreach ($itemsToRemove as $item) {
+      $this->remove_item($item);
+    }
+  }
+
+  /**
    * @param $id
    * @return AbstractModel
    */

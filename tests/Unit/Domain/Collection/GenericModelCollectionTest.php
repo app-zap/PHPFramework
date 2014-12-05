@@ -60,6 +60,30 @@ class GenericModelCollectionTest extends \PHPUnit_Framework_TestCase {
   /**
    * @test
    */
+  public function removeItems() {
+    $model1 = new MyModel();
+    $model1->set_id(1);
+    $model2 = new MyModel();
+    $model2->set_id(2);
+    $model3 = new MyModel();
+    $model3->set_id(3);
+    $this->collection->set_item($model1);
+    $this->collection->set_item($model2);
+    $this->collection->set_item($model3);
+    $itemsToRemove = new GenericModelCollection();
+    $itemsToRemove->set_item($model1);
+    $itemsToRemove->set_item($model3);
+    $this->collection->removeItems($itemsToRemove);
+    $this->assertSame(1, count($this->collection));
+    foreach ($this->collection as $model) {
+      /** @var $model AbstractModel */
+      $this->assertSame(2, $model->get_id());
+    }
+  }
+
+  /**
+   * @test
+   */
   public function foreachOverCollection() {
     $model1 = new MyModel();
     $model1->set_id(1);
