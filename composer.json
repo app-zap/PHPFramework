@@ -4,6 +4,7 @@
   "license": "BSD-2-Clause",
   "require": {
     "nette/caching": "2.2.*",
+    "php": ">=5.4.0",
     "twig/twig": "1.16.*"
   },
   "require-dev": {
