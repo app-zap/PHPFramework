@@ -9,7 +9,7 @@ Since the fork wide parts of the system were rewritten or heavily modified. Here
 * Support for Domain Driven Design, including Domain Model Objects, Repositories, Collections and an [ORM](https://en.wikipedia.org/wiki/Object-relational_mapping) mechanism.
 
 The fork is not compatible to the original framework and not compatible to its own previous versions.
-After the next release (2.0) we'll switch to a more backwards compatible development.
+After the next major release (2.0) we'll switch to a more backwards compatible development.
 
 # Requirements
 
@@ -18,7 +18,7 @@ Successfully tested with
 - Debian / Ubuntu Linux
 - PHP from 5.4.0 up to 5.6.2
 - Apache or nginx
-- MySQL 5.6 *(but 5.0 or even 4.x should work as well)*
+- MySQL 5.6
 
 # Setup
 
