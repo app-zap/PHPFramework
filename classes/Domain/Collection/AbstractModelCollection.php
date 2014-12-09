@@ -12,8 +12,16 @@ abstract class AbstractModelCollection implements \Iterator, \Countable {
 
   /**
    * @param AbstractModel $model
+   * @deprecated Since: 1.4, Removal: 1.5, Reason: use ->add() instead
    */
   public function set_item(AbstractModel $model) {
+    $this->add($model);
+  }
+
+  /**
+   * @param AbstractModel $model
+   */
+  public function add(AbstractModel $model) {
     $this->items[spl_object_hash($model)] = $model;
   }
 

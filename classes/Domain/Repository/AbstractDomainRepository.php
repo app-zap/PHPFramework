@@ -32,6 +32,9 @@ abstract class AbstractDomainRepository {
    */
   protected $db;
 
+  /**
+   *
+   */
   public function __construct() {
     $this->db = StaticDatabaseConnection::getInstance();
     $this->known_items = $this->get_new_collection();
@@ -48,7 +51,7 @@ abstract class AbstractDomainRepository {
     if (is_null($item)) {
       $model = $this->create_identity_model($id);
       $item = $this->entity_mapper->record_to_object($this->db->row($this->tablename, '*', ['id' => (int)$id]), $model);
-      $this->known_items->set_item($item);
+      $this->known_items->add($item);
     }
     return $item;
   }
@@ -90,13 +93,14 @@ abstract class AbstractDomainRepository {
     $collection = $this->get_new_collection();
     $records = $this->db->select($this->tablename, '*', $this->scalarize_where($where));
     foreach ($records as $record) {
-      $collection->set_item($this->record_to_object($record));
+      $collection->add($this->record_to_object($record));
     }
     return $collection;
   }
 
   /**
    * @param array $where
+   * @return string
    */
   protected function scalarize_where($where) {
     if (is_array($where)) {
@@ -108,7 +112,7 @@ abstract class AbstractDomainRepository {
   }
 
   /**
-   * @return \AppZap\PHPFramework\Domain\Collection\AbstractModelCollection
+   * @return AbstractModelCollection
    */
   protected function get_new_collection() {
     $collection_classname = Nomenclature::repositoryclassname_to_collectionclassname(get_called_class());
@@ -130,9 +134,9 @@ abstract class AbstractDomainRepository {
    * @return AbstractModel
    */
   protected function create_empty_model() {
-    $model_classname = Nomenclature::repositoryclassname_to_modelclassname(get_called_class());
+    $modelClassname = Nomenclature::repositoryclassname_to_modelclassname(get_called_class());
     /** @var AbstractModel $model */
-    $model = new $model_classname();
+    $model = new $modelClassname();
     return $model;
   }
 
@@ -143,7 +147,7 @@ abstract class AbstractDomainRepository {
   protected function create_identity_model($id) {
     $model = $this->create_empty_model();
     $model->set_id($id);
-    $this->known_items->set_item($model);
+    $this->known_items->add($model);
     return $model;
   }
 
