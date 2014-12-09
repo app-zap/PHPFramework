@@ -14,3 +14,5 @@ install:
 before_script:
   - mysql -e 'create database phpunit_tests;'
   - mysql -e 'CREATE TABLE phpunit_tests.item (`id` int(11) unsigned NOT NULL AUTO_INCREMENT, `title` text, PRIMARY KEY (`id`)) ENGINE=InnoDB DEFAULT CHARSET=latin1;'
+notifications:
+  slack: app-zap:RFuWlEbbIc9Y1K2SJ6XGw6oD
