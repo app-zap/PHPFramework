@@ -134,14 +134,14 @@ class Dispatcher {
     }
 
     try {
-      /** @var AbstractController $contoller */
-      $contoller = new $responder($request, $response);
-      if (!method_exists($contoller, $this->request_method)) {
+      /** @var AbstractController $controller */
+      $controller = new $responder($request, $response);
+      if (!method_exists($controller, $this->request_method)) {
         // Send HTTP 405 response
-        $contoller->handle_not_supported_method($this->request_method);
+        $controller->handle_not_supported_method($this->request_method);
       }
-      $contoller->initialize($parameters);
-      $output = $contoller->{$this->request_method}($parameters);
+      $controller->initialize($parameters);
+      $output = $controller->{$this->request_method}($parameters);
       if (is_null($output)) {
         $output = $response->render();
       }
