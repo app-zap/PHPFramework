@@ -83,4 +83,14 @@ abstract class AbstractController {
     return $implemented_methods;
   }
 
+  /**
+   * Can be used to alter/prefix the default template name (derived from the name of the controller)
+   *
+   * @param string $defaultTemplateName
+   * @return string
+   */
+  public function getTemplateName($defaultTemplateName) {
+    return $defaultTemplateName;
+  }
+
 }

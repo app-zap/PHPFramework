@@ -75,12 +75,12 @@ class Dispatcher {
   }
 
   /**
-   * @param $responder_class
+   * @param AbstractController $controller
    * @return string
    */
-  protected function determineDefaultTemplateName($responder_class) {
-    if (preg_match('|\\\\([a-zA-Z0-9]{2,50})Controller$|', $responder_class, $matches)) {
-      return $matches[1];
+  protected function determineDefaultTemplateName(AbstractController $controller) {
+    if (preg_match('|\\\\([a-zA-Z0-9]{2,50})Controller$|', get_class($controller), $matches)) {
+      return $controller->getTemplateName($matches[1]);
     }
     return NULL;
   }
@@ -128,17 +128,16 @@ class Dispatcher {
     $request = new Request($this->request_method);
     $response = new TwigView();
 
-    $default_template_name = $this->determineDefaultTemplateName($responder);
-    if ($default_template_name) {
-      $response->set_template_name($default_template_name);
-    }
-
     try {
       /** @var AbstractController $controller */
       $controller = new $responder($request, $response);
       if (!method_exists($controller, $this->request_method)) {
         // Send HTTP 405 response
         $controller->handle_not_supported_method($this->request_method);
+      }
+      $default_template_name = $this->determineDefaultTemplateName($controller);
+      if ($default_template_name) {
+        $response->set_template_name($default_template_name);
       }
       $controller->setParameters($parameters);
       $controller->initialize();
