@@ -51,7 +51,9 @@ abstract class AbstractDomainRepository {
     if (is_null($item)) {
       $model = $this->create_identity_model($id);
       $item = $this->entity_mapper->record_to_object($this->db->row($this->tablename, '*', ['id' => (int)$id]), $model);
-      $this->known_items->add($item);
+      if ($item instanceof AbstractModel) {
+        $this->known_items->add($item);
+      }
     }
     return $item;
   }
