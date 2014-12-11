@@ -140,7 +140,8 @@ class Dispatcher {
         // Send HTTP 405 response
         $controller->handle_not_supported_method($this->request_method);
       }
-      $controller->initialize($parameters);
+      $controller->setParameters($parameters);
+      $controller->initialize();
       $output = $controller->{$this->request_method}($parameters);
       if (is_null($output)) {
         $output = $response->render();

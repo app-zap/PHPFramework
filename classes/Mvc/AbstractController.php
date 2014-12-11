@@ -13,7 +13,7 @@ abstract class AbstractController {
   /**
    * @var array
    */
-  protected $params;
+  protected $parameters;
 
   /**
    * @var Request
@@ -42,10 +42,16 @@ abstract class AbstractController {
   }
 
   /**
-   * @param array $params
+   * @param array $parameters
    */
-  public function initialize($params) {
-    $this->params = $params;
+  public function setParameters($parameters) {
+    $this->parameters = $parameters;
+  }
+
+  /**
+   * @throws \AppZap\PHPFramework\Authentication\HttpAuthenticationRequiredException
+   */
+  public function initialize() {
     if ($this->require_http_authentication) {
       $base_http_authentication = new BaseHttpAuthentication();
       $base_http_authentication->check_authentication();
