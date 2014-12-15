@@ -52,7 +52,7 @@ class GenericModelCollectionTest extends \PHPUnit_Framework_TestCase {
     $this->collection->add($model);
     $gotten_model = $this->collection->get_by_id(42);
     $this->assertSame(42, $gotten_model->get_id());
-    $this->collection->remove_item($gotten_model);
+    $this->collection->remove($gotten_model);
     $gotten_model = $this->collection->get_by_id(43);
     $this->assertNull($gotten_model);
   }

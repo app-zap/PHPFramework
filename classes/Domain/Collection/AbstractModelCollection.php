@@ -12,14 +12,6 @@ abstract class AbstractModelCollection implements \Iterator, \Countable {
 
   /**
    * @param AbstractModel $model
-   * @deprecated Since: 1.4, Removal: 1.5, Reason: use ->add() instead
-   */
-  public function set_item(AbstractModel $model) {
-    $this->add($model);
-  }
-
-  /**
-   * @param AbstractModel $model
    */
   public function add(AbstractModel $model) {
     $this->items[spl_object_hash($model)] = $model;
@@ -28,7 +20,7 @@ abstract class AbstractModelCollection implements \Iterator, \Countable {
   /**
    * @param AbstractModel $model
    */
-  public function remove_item(AbstractModel $model) {
+  public function remove(AbstractModel $model) {
     unset($this->items[spl_object_hash($model)] );
   }
 
@@ -37,7 +29,7 @@ abstract class AbstractModelCollection implements \Iterator, \Countable {
    */
   public function removeItems(AbstractModelCollection $itemsToRemove) {
     foreach ($itemsToRemove as $item) {
-      $this->remove_item($item);
+      $this->remove($item);
     }
   }
 
@@ -97,6 +89,22 @@ abstract class AbstractModelCollection implements \Iterator, \Countable {
    */
   public function count() {
     return count($this->items);
+  }
+
+  /**
+   * @param AbstractModel $model
+   * @deprecated Since: 1.4, Removal: 1.5, Reason: use ->add() instead
+   */
+  public function set_item(AbstractModel $model) {
+    $this->add($model);
+  }
+
+  /**
+   * @param AbstractModel $model
+   * @deprecated Since: 1.4, Removal: 1.5, Reason: use ->remove() instead
+   */
+  public function remove_item(AbstractModel $model) {
+    $this->remove($model);
   }
 
 }
