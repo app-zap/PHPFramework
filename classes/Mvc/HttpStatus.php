@@ -36,7 +36,7 @@ class HttpStatus {
    * @param string $options
    * @throws \Exception
    */
-  public static function set_status($code, $options = NULL) {
+  public static function setStatus($code, $options = NULL) {
     $code = (int) $code;
     // Status codes with optional "Location"
     if (in_array($code, [self::STATUS_201_CREATED])) {
@@ -75,18 +75,43 @@ class HttpStatus {
   /**
    * @return int
    */
-  public static function get_status() {
+  public static function getStatus() {
     return http_response_code();
   }
 
   /**
    *
    */
-  public static function send_headers() {
+  public static function sendHeaders() {
     foreach (self::$additional_headers as $field => $value) {
       header($field . ':' . $value);
     }
     self::$additional_headers = [];
+  }
+
+  /**
+   * @param int $code
+   * @param string $options
+   * @throws \Exception
+   * @deprecated Since: 1.4, Removal: 1.5, Reason: use ->setStatus() instead
+   */
+  public static function set_status($code, $options = NULL) {
+    self::setStatus($code, $options);
+  }
+
+  /**
+   * @return int
+   * @deprecated Since: 1.4, Removal: 1.5, Reason: use ->getStatus() instead
+   */
+  public static function get_status() {
+    return self::getStatus();
+  }
+
+  /**
+   * @deprecated Since: 1.4, Removal: 1.5, Reason: use ->sendHeaders() instead
+   */
+  public static function send_headers() {
+    self::sendHeaders();
   }
 
 }

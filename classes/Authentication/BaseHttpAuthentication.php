@@ -37,7 +37,7 @@ class BaseHttpAuthentication {
   public function checkAuthentication() {
     $httpAuthentication = Configuration::getSection('phpframework', 'authentication.http');
     if (is_array($httpAuthentication) && !$this->isAuthenticated()) {
-      HttpStatus::set_status(HttpStatus::STATUS_401_UNAUTHORIZED);
+      HttpStatus::setStatus(HttpStatus::STATUS_401_UNAUTHORIZED);
       header('WWW-Authenticate: Basic realm="Login"');
       throw new HttpAuthenticationRequiredException('HTTP authentication was required but not fulfilled.', 1415266170);
     }

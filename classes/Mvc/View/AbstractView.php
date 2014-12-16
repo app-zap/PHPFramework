@@ -122,15 +122,15 @@ abstract class AbstractView {
    * Sets the location header including the HTTP status header for redirects
    *
    * @param string $target The target to use in location header
-   * @param int $http_code The HTTP code to use
+   * @param int $httpCode The HTTP code to use
    * @see \AppZap\PHPFramework\Mvc\HttpStatus
    */
-  public function redirect($target, $http_code = HttpStatus::STATUS_307_TEMPORARY_REDIRECT) {
+  public function redirect($target, $httpCode = HttpStatus::STATUS_307_TEMPORARY_REDIRECT) {
     if (php_sapi_name() !== 'cli') {
-      HttpStatus::set_status($http_code, [
+      HttpStatus::setStatus($httpCode, [
           HttpStatus::HEADER_FIELD_LOCATION => $target
       ]);
-      HttpStatus::send_headers();
+      HttpStatus::sendHeaders();
     }
   }
 

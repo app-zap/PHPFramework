@@ -62,10 +62,10 @@ abstract class AbstractController {
    * @throws \Exception
    */
   public function handleNotSupportedMethod() {
-    HttpStatus::set_status(HttpStatus::STATUS_405_METHOD_NOT_ALLOWED, [
+    HttpStatus::setStatus(HttpStatus::STATUS_405_METHOD_NOT_ALLOWED, [
         HttpStatus::HEADER_FIELD_ALLOW => join(', ', $this->getImplementedMethods())
     ]);
-    HttpStatus::send_headers();
+    HttpStatus::sendHeaders();
     throw new DispatchingInterruptedException('Request method not allowed', 1415268266);
   }
 
