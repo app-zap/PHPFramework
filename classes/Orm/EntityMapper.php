@@ -19,7 +19,7 @@ class EntityMapper {
     }
     /** @var AbstractModel $object */
     foreach ($record as $fieldname => $value) {
-      $setter = Nomenclature::fieldname_to_setter($fieldname);
+      $setter = Nomenclature::fieldnameToSetter($fieldname);
       if (method_exists($object, $setter)) {
         call_user_func([$object, $setter], $value);
         continue;

@@ -61,12 +61,12 @@ class PropertyMapper {
    * @throws PropertyMappingException
    */
   protected function mapToModel($source, $targetModelClassname) {
-    $repositoryClassname = Nomenclature::modelclassname_to_repositoryclassname($targetModelClassname);
+    $repositoryClassname = Nomenclature::modelClassnameToRepositoryClassname($targetModelClassname);
     if (!class_exists($repositoryClassname)) {
       throw new PropertyMappingException('Repository class ' . $repositoryClassname . ' for model ' . $targetModelClassname . ' does not exist.', 1409745296);
     }
     /** @var \AppZap\PHPFramework\Domain\Repository\AbstractDomainRepository $repository */
-    $repository = $repositoryClassname::get_instance();
+    $repository = $repositoryClassname::getInstance();
     return $repository->findById((int) $source);
   }
 

@@ -22,65 +22,65 @@ class NomenclatureTest extends \PHPUnit_Framework_TestCase {
    * @test
    */
   public function collectionclassnameToRepositoryclassname() {
-    $this->assertSame($this->names['repository'], Nomenclature::collectionclassname_to_repositoryclassname($this->names['collection']));
+    $this->assertSame($this->names['repository'], Nomenclature::collectionclassnameToRepositoryclassname($this->names['collection']));
   }
 
   /**
    * @test
    */
   public function fieldnameToGetter() {
-    $this->assertSame($this->names['getter'], Nomenclature::fieldname_to_getter($this->names['fieldname']));
+    $this->assertSame($this->names['getter'], Nomenclature::fieldnameToGetter($this->names['fieldname']));
   }
 
   /**
    * @test
    */
   public function fieldnameToSetter() {
-    $this->assertSame($this->names['setter'], Nomenclature::fieldname_to_setter($this->names['fieldname']));
+    $this->assertSame($this->names['setter'], Nomenclature::fieldnameToSetter($this->names['fieldname']));
   }
 
   /**
    * @test
    */
   public function getterToFieldname() {
-    $this->assertSame($this->names['fieldname'], Nomenclature::getter_to_fieldname($this->names['getter']));
-    $this->assertSame($this->names['fieldname'], Nomenclature::getter_to_fieldname('get_my_field'));
-    $this->assertFalse(Nomenclature::getter_to_fieldname('not_a_getter_method'));
+    $this->assertSame($this->names['fieldname'], Nomenclature::getterToFieldname($this->names['getter']));
+    $this->assertSame($this->names['fieldname'], Nomenclature::getterToFieldname('get_my_field'));
+    $this->assertFalse(Nomenclature::getterToFieldname('not_a_getter_method'));
   }
 
   /**
    * @test
    */
-  public function modelclassnameToCollectionclassname() {
-    $this->assertSame($this->names['collection'], Nomenclature::modelclassname_to_collectionclassname($this->names['model']));
+  public function modelClassnameToCollectionClassname() {
+    $this->assertSame($this->names['collection'], Nomenclature::modelClassnameToCollectionClassname($this->names['model']));
   }
 
   /**
    * @test
    */
-  public function modelclassnameToRepositoryclassname() {
-    $this->assertSame($this->names['repository'], Nomenclature::modelclassname_to_repositoryclassname($this->names['model']));
+  public function modelClassnameToRepositoryClassname() {
+    $this->assertSame($this->names['repository'], Nomenclature::modelClassnameToRepositoryClassname($this->names['model']));
   }
 
   /**
    * @test
    */
-  public function repositoryclassnameToCollectionclassname() {
-    $this->assertSame($this->names['collection'], Nomenclature::repositoryclassname_to_collectionclassname($this->names['repository']));
+  public function repositoryClassnameToCollectionClassname() {
+    $this->assertSame($this->names['collection'], Nomenclature::repositoryClassnameToCollectionClassname($this->names['repository']));
   }
 
   /**
    * @test
    */
   public function repositoryclassnameToModelclassname() {
-    $this->assertSame($this->names['model'], Nomenclature::repositoryclassname_to_modelclassname($this->names['repository']));
+    $this->assertSame($this->names['model'], Nomenclature::repositoryClassnameToModelClassname($this->names['repository']));
   }
 
   /**
    * @test
    */
   public function repositoryclassnameToTablename() {
-    $this->assertSame($this->names['table'], Nomenclature::repositoryclassname_to_tablename($this->names['repository']));
+    $this->assertSame($this->names['table'], Nomenclature::repositoryClassnameToTablename($this->names['repository']));
   }
 
 }

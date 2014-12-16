@@ -35,10 +35,20 @@ All notable changes to this project will be documented in this file.
 * Deprecated `HttpStatus::get_status()` Use `HttpStatus::getStatus()` instead.
 * Deprecated `HttpStatus::send_headers()` Use `HttpStatus::sendHeaders()` instead.
 * Deprecated `HttpStatus::set_status()` Use `HttpStatus::setStatus()` instead.
-* Deprecated `TwigView::add_output_filter()` Use `TwigView::addOutputFilter()` instead.
-* Deprecated `TwigView::add_output_function()` Use `TwigView::addOutputFunction()` instead.
-* Deprecated `TwigView::has_output_filter()` Use `TwigView::hasOutputFilter()` instead.
-* Deprecated `TwigView::has_output_function()` Use `TwigView::hasOutputFunction()` instead.
+* Deprecated `Nomenclature::collectionclassname_to_repositoryclassname()` Use `Nomenclature::collectionclassnameToRepositoryclassname()` instead.
+* Deprecated `Nomenclature::fieldname_to_getter()` Use `Nomenclature::fieldnameToGetter()` instead.
+* Deprecated `Nomenclature::fieldname_to_setter()` Use `Nomenclature::fieldnameToSetter()` instead.
+* Deprecated `Nomenclature::getter_to_fieldname()` Use `Nomenclature::getterToFieldname()` instead.
+* Deprecated `Nomenclature::modelclassname_to_collectionclassname()` Use `Nomenclature::modelClassnameToCollectionClassname()` instead.
+* Deprecated `Nomenclature::modelclassname_to_repositoryclassname()` Use `Nomenclature::modelClassnameToRepositoryClassname()` instead.
+* Deprecated `Nomenclature::repositoryclassname_to_collectionclassname()` Use `Nomenclature::repositoryClassnameToCollectionClassname()` instead.
+* Deprecated `Nomenclature::repositoryclassname_to_modelclassname()` Use `Nomenclature::repositoryClassnameToModelClassname()` instead.
+* Deprecated `Nomenclature::repositoryclassname_to_tablename()` Use `Nomenclature::repositoryClassnameToTablename()` instead.
+* Deprecated `Singleton::get_instance()` Use `Singleton::getInstance()` instead.
+* Deprecated `TwigView->add_output_filter()` Use `TwigView->addOutputFilter()` instead.
+* Deprecated `TwigView->add_output_function()` Use `TwigView->addOutputFunction()` instead.
+* Deprecated `TwigView->has_output_filter()` Use `TwigView->hasOutputFilter()` instead.
+* Deprecated `TwigView->has_output_function()` Use `TwigView->hasOutputFunction()` instead.
 * Deprecated lower_camel_cased setters and getters in model classes. Use lowerCamelCased method names instead.
 
 ### Removed
