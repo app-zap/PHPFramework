@@ -25,6 +25,8 @@ All notable changes to this project will be documented in this file.
 * Deprecated `BaseSessionInterface->clear_all()`. Use `BaseSessionInterface->clearAll()` instead.
 * Deprecated `Configuration::remove_key()`. Use `Configuration::remove()` instead.
 * Deprecated `Configuration::remove_section()`. Use `Configuration::removeSection()` instead.
+* Deprecated `DatabaseConnection->is_connected()`. Use `DatabaseConnection->isConnected()` instead.
+* Deprecated `DatabaseConnection->last_id()`. Use `DatabaseConnection->lastId()` instead.
 * Deprecated `Dispatcher->get_request_method()`. Use `Dispatcher->getRequestMethod()` instead.
 * Deprecated `Dispatcher->get_request_method()`. Use `Dispatcher->getRequestMethod()` instead.
 * Deprecated `EntityMapper->object_to_record()`. Use `EntityMapper->objectToRecord()` instead.

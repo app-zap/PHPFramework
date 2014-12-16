@@ -57,9 +57,9 @@ class DatabaseConnectionTest extends \PHPUnit_Extensions_Database_TestCase {
    * @test
    */
   public function isConnected() {
-    $this->assertFalse($this->fixture->is_connected());
+    $this->assertFalse($this->fixture->isConnected());
     $this->fixture->connect();
-    $this->assertTrue($this->fixture->is_connected());
+    $this->assertTrue($this->fixture->isConnected());
   }
 
   /**
