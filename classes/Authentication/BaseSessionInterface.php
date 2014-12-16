@@ -33,11 +33,6 @@ interface BaseSessionInterface {
   /**
    * @return BaseSessionInterface
    */
-  public function clear_all();
+  public function clearAll();
 
 }
-
-
-
-
-

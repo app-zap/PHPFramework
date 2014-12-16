@@ -23,7 +23,7 @@ class NullSession implements BaseSessionInterface {
   public function clear($key) {
   }
 
-  public function clear_all() {
+  public function clearAll() {
   }
 }
 

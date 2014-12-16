@@ -91,8 +91,17 @@ class BaseCryptCookieSession implements BaseSessionInterface {
   /**
    * @return BaseSessionInterface
    */
-  public function clear_all() {
+  public function clearAll() {
     $this->store = [];
     $this->encodeCryptCookie();
   }
+
+  /**
+   * @return BaseSessionInterface
+   * @deprecated Since 1.4, Removal: 1.5, Reason: Use ->clearAll() instead
+   */
+  public function clear_all() {
+    $this->clearAll();
+  }
+
 }

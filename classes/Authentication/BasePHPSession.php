@@ -66,8 +66,17 @@ class BasePHPSession implements BaseSessionInterface {
   /**
    * @return BasePHPSession
    */
-  public function clear_all() {
+  public function clearAll() {
     session_unset();
     return $this;
   }
+
+  /**
+   * @return BasePHPSession
+   * @deprecated Since 1.4, Removal: 1.5, Reason: Use ->clearAll() instead
+   */
+  public function clear_all() {
+    $this->clearAll();
+  }
+
 }
