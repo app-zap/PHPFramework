@@ -9,7 +9,7 @@ abstract class AbstractView {
   /**
    * @var \Twig_Environment
    */
-  protected $rendering_engine;
+  protected $renderingEngine;
 
   /**
    * @var string
@@ -19,7 +19,7 @@ abstract class AbstractView {
   /**
    * @var array
    */
-  protected $template_vars = [];
+  protected $templateVars = [];
 
   /**
    * @var array
@@ -29,12 +29,12 @@ abstract class AbstractView {
   /**
    * @var array
    */
-  protected $output_filters = [];
+  protected $outputFilters = [];
 
   /**
    * @var array
    */
-  protected $output_functions = [];
+  protected $outputFunctions = [];
 
   /**
    * @var string
@@ -56,25 +56,25 @@ abstract class AbstractView {
   /**
    * Sets a header to the specified value for delivery when the page is rendered
    *
-   * @param string $header_name Name of the header not including the colon
-   * @param string $header_value Values of the header to send
+   * @param string $headerName Name of the header not including the colon
+   * @param string $headerValue Values of the header to send
    */
-  public function header($header_name, $header_value) {
-    $this->headers[$header_name] = $header_value;
+  public function header($headerName, $headerValue) {
+    $this->headers[$headerName] = $headerValue;
   }
 
   /**
    * Returns the value of a template value previously set
    *
-   * @param string $template_variable_name Name of the template variable
-   * @param mixed $default_value Value to be returned when the template variable was not set previously
+   * @param string $templateVariableName Name of the template variable
+   * @param mixed $defaultValue Value to be returned when the template variable was not set previously
    * @return mixed
    */
-  public function get($template_variable_name, $default_value = null) {
-    if(array_key_exists($template_variable_name, $this->template_vars)) {
-      return $this->template_vars[$template_variable_name];
+  public function get($templateVariableName, $defaultValue = NULL) {
+    if(array_key_exists($templateVariableName, $this->templateVars)) {
+      return $this->templateVars[$templateVariableName];
     }
-    return $default_value;
+    return $defaultValue;
   }
 
   /**
@@ -84,7 +84,7 @@ abstract class AbstractView {
    * @param mixed $template_variable_value Value of the template variable to set to
    */
   public function set($template_variable_name, $template_variable_value) {
-    $this->template_vars[$template_variable_name] = $template_variable_value;
+    $this->templateVars[$template_variable_name] = $template_variable_value;
   }
 
   /**
@@ -96,7 +96,7 @@ abstract class AbstractView {
   public function render($templateName = NULL) {
     $this->sendHeaders();
     $template = $this->getTemplateEnvironment($templateName);
-    return $template->render($this->template_vars);
+    return $template->render($this->templateVars);
   }
 
   /**
@@ -119,7 +119,7 @@ abstract class AbstractView {
    * @param mixed $object Object (most likely an array) to json encode
    * @param string $callback If set to string answer will be sent as JSONP output with this function
    */
-  public function jsonOutput($object, $callback = null) {
+  public function jsonOutput($object, $callback = NULL) {
     if($callback !== NULL) {
       $ctype = 'text/javascript';
       $output = $callback . '(' . json_encode($object) . ');';
@@ -187,7 +187,7 @@ abstract class AbstractView {
    * @param string $callback If set to string answer will be sent as JSONP output with this function
    * @deprecated Since: 1.4, Removal: 1.5, Reason: Use ->jsonOutput() instead
    */
-  public function json_output($object, $callback = null) {
+  public function json_output($object, $callback = NULL) {
     $this->jsonOutput($object, $callback);
   }
 

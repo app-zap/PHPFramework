@@ -40,7 +40,7 @@ class EntityMapper {
   public function objectToRecord(AbstractModel $object) {
     $record = [];
     foreach (get_class_methods($object) as $methodName) {
-      $fieldname = Nomenclature::getter_to_fieldname($methodName);
+      $fieldname = Nomenclature::getterToFieldname($methodName);
       if (is_string($fieldname)) {
         $value = call_user_func([$object, $methodName]);
         $value = $this->scalarizeValue($value);

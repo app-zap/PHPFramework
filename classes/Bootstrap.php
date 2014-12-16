@@ -81,9 +81,9 @@ class Bootstrap {
   protected static function invokeDispatcher() {
     $dispatcher = new Dispatcher();
     if ($dispatcher->getRequestMethod() === 'cli') {
-      $cli_arguments = $_SERVER['argv'];
-      array_shift($cli_arguments);
-      $resource = '/' . join('/', $cli_arguments);
+      $cliArguments = $_SERVER['argv'];
+      array_shift($cliArguments);
+      $resource = '/' . join('/', $cliArguments);
     } else {
       $resource = $_SERVER['REQUEST_URI'];
       $uriPathPrefix = '/' . trim(Configuration::get('phpframework', 'uri_path_prefix'), '/');

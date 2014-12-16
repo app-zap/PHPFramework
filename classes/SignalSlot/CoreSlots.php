@@ -29,11 +29,11 @@ class CoreSlots {
   /**
    * @param string $output
    * @param string $uri
-   * @param string $request_method
+   * @param string $requestMethod
    * @throws \AppZap\PHPFramework\Mvc\ApplicationPartMissingException
    */
-  public static function readOutputFromCache(&$output, $uri, $request_method) {
-    if (Configuration::get('phpframework', 'cache.full_output', FALSE) && $request_method === 'get') {
+  public static function readOutputFromCache(&$output, $uri, $requestMethod) {
+    if (Configuration::get('phpframework', 'cache.full_output', FALSE) && $requestMethod === 'get') {
       $output = CacheFactory::getCache()->load('output_' . $uri);
     }
   }
@@ -41,11 +41,11 @@ class CoreSlots {
   /**
    * @param string $output
    * @param string $uri
-   * @param string $request_method
+   * @param string $requestMethod
    * @throws \AppZap\PHPFramework\Mvc\ApplicationPartMissingException
    */
-  public static function writeOutputToCache($output, $uri, $request_method) {
-    if (Configuration::get('phpframework', 'cache.full_output', FALSE) && $request_method === 'get') {
+  public static function writeOutputToCache($output, $uri, $requestMethod) {
+    if (Configuration::get('phpframework', 'cache.full_output', FALSE) && $requestMethod === 'get') {
       CacheFactory::getCache()->save('output_' . $uri, $output, [
           Cache::EXPIRE => Configuration::get('phpframework', 'cache.full_output_expiration', '20 Minutes'),
       ]);

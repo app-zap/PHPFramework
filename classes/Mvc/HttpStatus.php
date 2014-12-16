@@ -29,7 +29,7 @@ class HttpStatus {
   /**
    * @var array
    */
-  protected static $additional_headers = [];
+  protected static $additionalHeaders = [];
 
   /**
    * @param int $code
@@ -41,14 +41,14 @@ class HttpStatus {
     // Status codes with optional "Location"
     if (in_array($code, [self::STATUS_201_CREATED])) {
       if (is_array($options) && array_key_exists(self::HEADER_FIELD_LOCATION, $options)) {
-        self::$additional_headers[self::HEADER_FIELD_LOCATION] = $options[self::HEADER_FIELD_LOCATION];
+        self::$additionalHeaders[self::HEADER_FIELD_LOCATION] = $options[self::HEADER_FIELD_LOCATION];
       }
     }
     // Status codes with required "Location"
     if (in_array($code, [self::STATUS_301_MOVED_PERMANENTLY, self::STATUS_307_TEMPORARY_REDIRECT])) {
       if (
           !(
-              array_key_exists(self::HEADER_FIELD_LOCATION, self::$additional_headers) ||
+              array_key_exists(self::HEADER_FIELD_LOCATION, self::$additionalHeaders) ||
               (
                   is_array($options) && array_key_exists(self::HEADER_FIELD_LOCATION, $options)
               )
@@ -57,16 +57,16 @@ class HttpStatus {
         throw new \Exception('Tried to set HTTP status code ' . $code . ' without required location field');
       }
       if (array_key_exists(self::HEADER_FIELD_LOCATION, $options)) {
-        self::$additional_headers[self::HEADER_FIELD_LOCATION] = $options[self::HEADER_FIELD_LOCATION];
+        self::$additionalHeaders[self::HEADER_FIELD_LOCATION] = $options[self::HEADER_FIELD_LOCATION];
       }
     }
     // Status codes with required "Allow"
     if (in_array($code, [self::STATUS_405_METHOD_NOT_ALLOWED])) {
-      if (!(array_key_exists(self::HEADER_FIELD_ALLOW, self::$additional_headers) || array_key_exists(self::HEADER_FIELD_ALLOW, $options))) {
+      if (!(array_key_exists(self::HEADER_FIELD_ALLOW, self::$additionalHeaders) || array_key_exists(self::HEADER_FIELD_ALLOW, $options))) {
         throw new \Exception('Tried to set HTTP status code ' . $code . ' without required allow field');
       }
       if (array_key_exists(self::HEADER_FIELD_ALLOW, $options)) {
-        self::$additional_headers[self::HEADER_FIELD_ALLOW] = $options[self::HEADER_FIELD_ALLOW];
+        self::$additionalHeaders[self::HEADER_FIELD_ALLOW] = $options[self::HEADER_FIELD_ALLOW];
       }
     }
     http_response_code($code);
@@ -83,10 +83,10 @@ class HttpStatus {
    *
    */
   public static function sendHeaders() {
-    foreach (self::$additional_headers as $field => $value) {
+    foreach (self::$additionalHeaders as $field => $value) {
       header($field . ':' . $value);
     }
-    self::$additional_headers = [];
+    self::$additionalHeaders = [];
   }
 
   /**

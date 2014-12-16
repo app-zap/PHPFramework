@@ -12,7 +12,7 @@ class NullSession implements BaseSessionInterface {
   public function set($key, $value) {
   }
 
-  public function get($key, $default = null) {
+  public function get($key, $default = NULL) {
     return NULL;
   }
 

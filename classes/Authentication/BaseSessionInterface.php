@@ -15,7 +15,7 @@ interface BaseSessionInterface {
    * @param mixed $default Default value to return when key is not found
    * @return mixed
    */
-  public function get($key, $default = null);
+  public function get($key, $default = NULL);
 
   /**
    * @param string $key

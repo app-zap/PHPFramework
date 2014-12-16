@@ -18,7 +18,7 @@ class DatabaseMigrator {
   /**
    * @var int
    */
-  protected $last_executed_version = 0;
+  protected $lastExecutedVersion = 0;
 
   /**
    * @throws DatabaseMigratorException
@@ -35,7 +35,7 @@ class DatabaseMigrator {
       throw new DatabaseMigratorException('Migration directory "' . $this->migrationDirectory . '" does not exist or is not a directory.', 1415085126);
     }
 
-    $this->last_executed_version = $this->getLastExecutedVersion();
+    $this->lastExecutedVersion = $this->getLastExecutedVersion();
 
   }
 
@@ -44,11 +44,11 @@ class DatabaseMigrator {
    */
   public function migrate() {
     foreach ($this->getMigrationFiles() as $version => $file) {
-      if ($version > $this->last_executed_version) {
+      if ($version > $this->lastExecutedVersion) {
         try {
           $this->migrateFile($file);
-          $this->last_executed_version = $version;
-          $this->setCurrentMigrationVersion($this->last_executed_version);
+          $this->lastExecutedVersion = $version;
+          $this->setCurrentMigrationVersion($this->lastExecutedVersion);
         } catch (\Exception $e) {
           throw $e;
         }
@@ -70,20 +70,20 @@ class DatabaseMigrator {
    * @return array
    */
   protected function getMigrationFiles() {
-    $migration_files = [];
+    $migrationFiles = [];
     $matches = [];
     if($handle = opendir($this->migrationDirectory)) {
       while($file = readdir($handle)) {
         if(preg_match('/^([0-9]+)_.*\.sql$/', $file, $matches) > 0) {
-          $migration_files[(int)$matches[1]] = $file;
+          $migrationFiles[(int)$matches[1]] = $file;
         }
         if(preg_match('/^([0-9]+)\.sql$/', $file, $matches) > 0) {
-          $migration_files[(int)$matches[1]] = $file;
+          $migrationFiles[(int)$matches[1]] = $file;
         }
       }
     }
-    ksort($migration_files, SORT_NUMERIC);
-    return $migration_files;
+    ksort($migrationFiles, SORT_NUMERIC);
+    return $migrationFiles;
   }
 
   /**

@@ -22,9 +22,9 @@ trait Singleton {
    * @return object
    */
   public static function getInstance() {
-    static $_instance = NULL;
+    static $instance = NULL;
     $class = get_called_class();
-    return $_instance ?: $_instance = new $class;
+    return $instance ?: $instance = new $class;
   }
 
   public function __clone() {

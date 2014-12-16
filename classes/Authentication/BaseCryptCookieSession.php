@@ -13,13 +13,13 @@ class BaseCryptCookieSession implements BaseSessionInterface {
   /**
    * @var string
    */
-  protected $cookie_name;
+  protected $cookieName;
 
   /**
    * @throws BaseCryptCookieSessionException
    */
   public function __construct() {
-    $this->cookie_name = Configuration::get('phpframework', 'authentication.cookie.name', 'SecureSessionCookie');;
+    $this->cookieName = Configuration::get('phpframework', 'authentication.cookie.name', 'SecureSessionCookie');;
 
     if(!Configuration::get('phpframework', 'authentication.cookie.encrypt_key')) {
       throw new BaseCryptCookieSessionException('Config key "authentication.cookie.encrypt_key" must be set!', 1415264244);
@@ -33,7 +33,7 @@ class BaseCryptCookieSession implements BaseSessionInterface {
    * @param mixed $default Default value to return when key is not found
    * @return mixed
    */
-  public function get($key, $default = null) {
+  public function get($key, $default = NULL) {
     return array_key_exists($key, $this->store) ? $this->store[$key] : $default;
   }
 
@@ -52,10 +52,10 @@ class BaseCryptCookieSession implements BaseSessionInterface {
    */
   protected function decodeCryptCookie() {
     $sSecretKey = Configuration::get('phpframework', 'authentication.cookie.encrypt_key');
-    if(!array_key_exists($this->cookie_name, $_COOKIE)) {
+    if(!array_key_exists($this->cookieName, $_COOKIE)) {
       return;
     }
-    $sEncrypted = $_COOKIE[$this->cookie_name];
+    $sEncrypted = $_COOKIE[$this->cookieName];
     $data = trim(mcrypt_decrypt(MCRYPT_RIJNDAEL_256, $sSecretKey, base64_decode($sEncrypted), MCRYPT_MODE_ECB, mcrypt_create_iv(mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB), MCRYPT_RAND)));
     $this->store = json_decode($data, true);
   }
@@ -67,7 +67,7 @@ class BaseCryptCookieSession implements BaseSessionInterface {
     $sSecretKey = Configuration::get('phpframework', 'authentication.cookie.encrypt_key');
     $sDecrypted = json_encode($this->store);
     $data = trim(base64_encode(mcrypt_encrypt(MCRYPT_RIJNDAEL_256, $sSecretKey, $sDecrypted, MCRYPT_MODE_ECB, mcrypt_create_iv(mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB), MCRYPT_RAND))));
-    setcookie($this->cookie_name, $data, time() + 31 * 86400, '/');
+    setcookie($this->cookieName, $data, time() + 31 * 86400, '/');
   }
 
   /**

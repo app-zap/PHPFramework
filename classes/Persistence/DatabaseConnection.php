@@ -23,11 +23,11 @@ class DatabaseConnection {
    */
   public function connect() {
     if (!($this->connection instanceof \PDO)) {
-      $db_configuration = Configuration::getSection('phpframework', 'db');
-      $dsn = 'mysql:host=' . $db_configuration['mysql.host'] . ';dbname=' . $db_configuration['mysql.database'];
-      $this->connection = new \PDO($dsn, $db_configuration['mysql.user'], $db_configuration['mysql.password']);
-      if (isset($db_configuration['charset'])) {
-        $this->setCharset($db_configuration['charset']);
+      $dbConfiguration = Configuration::getSection('phpframework', 'db');
+      $dsn = 'mysql:host=' . $dbConfiguration['mysql.host'] . ';dbname=' . $dbConfiguration['mysql.database'];
+      $this->connection = new \PDO($dsn, $dbConfiguration['mysql.user'], $dbConfiguration['mysql.password']);
+      if (isset($dbConfiguration['charset'])) {
+        $this->setCharset($dbConfiguration['charset']);
       }
     }
   }
@@ -364,7 +364,7 @@ class DatabaseConnection {
    * @throws \InvalidArgumentException
    */
   protected function where($where, $method = 'AND') {
-    if (is_null($where)) {
+    if ($where === NULL) {
       return '';
     }
     if (!is_array($where)) {
@@ -380,26 +380,26 @@ class DatabaseConnection {
       // the last character of the field can modify the query mode:
       switch(substr($field, -1)) {
         case '!':
-          $query_mode = self::QUERY_MODE_NOT;
+          $queryMode = self::QUERY_MODE_NOT;
           $field = substr($field, 0, -1);
           break;
         case '?':
-          $query_mode = self::QUERY_MODE_LIKE;
+          $queryMode = self::QUERY_MODE_LIKE;
           $field = substr($field, 0, -1);
           break;
         default:
-          $query_mode = self::QUERY_MODE_REGULAR;
+          $queryMode = self::QUERY_MODE_REGULAR;
       }
 
-      if ($query_mode === self::QUERY_MODE_LIKE && is_array($value)) {
+      if ($queryMode === self::QUERY_MODE_LIKE && is_array($value)) {
         // LIKE and multiple values needs a special syntax in SQL
         $value = array_map([$this, 'escape'], $value);
         $constraints[] = '(`' . $field . '` LIKE ' . implode(' OR `' . $field . '` LIKE ', $value) . ')';
       } else {
         if (is_array($value)) {
-          $constraints[] = $this->whereMultipleValues($value, $query_mode, $field);
+          $constraints[] = $this->whereMultipleValues($value, $queryMode, $field);
         } else {
-          $constraints[] = $this->whereSingleValue($value, $query_mode, $field);
+          $constraints[] = $this->whereSingleValue($value, $queryMode, $field);
         }
       }
     }
@@ -410,14 +410,14 @@ class DatabaseConnection {
   }
 
   /**
-   * @param $value
-   * @param $query_mode
-   * @param $field
+   * @param array $value
+   * @param int $queryMode
+   * @param string $field
    * @return array
    */
-  protected function whereMultipleValues($value, $query_mode, $field) {
+  protected function whereMultipleValues($value, $queryMode, $field) {
     $value = implode(', ', array_map([$this, 'escape'], $value));
-    if ($query_mode === self::QUERY_MODE_NOT) {
+    if ($queryMode === self::QUERY_MODE_NOT) {
       $operand = 'NOT IN';
     } else {
       $operand = 'IN';
@@ -427,13 +427,13 @@ class DatabaseConnection {
 
   /**
    * @param $value
-   * @param $query_mode
+   * @param $queryMode
    * @param $field
    * @return array
    */
-  protected function whereSingleValue($value, $query_mode, $field) {
+  protected function whereSingleValue($value, $queryMode, $field) {
     $value = $this->escape($value);
-    switch ($query_mode) {
+    switch ($queryMode) {
       case self::QUERY_MODE_LIKE:
         $operand = 'LIKE';
         break;

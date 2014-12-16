@@ -24,7 +24,7 @@ class Dispatcher {
   /**
    * @var string
    */
-  protected $request_method;
+  protected $requestMethod;
 
   /**
    * @var string
@@ -44,7 +44,7 @@ class Dispatcher {
    * @return string
    */
   public function getRequestMethod() {
-    return $this->request_method;
+    return $this->requestMethod;
   }
 
   /**
@@ -53,11 +53,11 @@ class Dispatcher {
    */
   public function dispatch($uri) {
     $output = NULL;
-    SignalSlotDispatcher::emitSignal(self::SIGNAL_START_DISPATCHING, $output, $uri, $this->request_method);
-    if (is_null($output)) {
+    SignalSlotDispatcher::emitSignal(self::SIGNAL_START_DISPATCHING, $output, $uri, $this->requestMethod);
+    if ($output === NULL) {
       $output = $this->dispatchUncached($uri);
     };
-    SignalSlotDispatcher::emitSignal(self::SIGNAL_OUTPUT_READY, $output, $uri, $this->request_method);
+    SignalSlotDispatcher::emitSignal(self::SIGNAL_OUTPUT_READY, $output, $uri, $this->requestMethod);
     return $output;
   }
 
@@ -66,11 +66,11 @@ class Dispatcher {
    */
   protected function determineRequestMethod() {
     if (isset($_ENV['AppZap\PHPFramework\RequestMethod'])) {
-      $this->request_method = $_ENV['AppZap\PHPFramework\RequestMethod'];
+      $this->requestMethod = $_ENV['AppZap\PHPFramework\RequestMethod'];
     } elseif (php_sapi_name() === 'cli') {
-      $this->request_method = 'cli';
+      $this->requestMethod = 'cli';
     } else {
-      $this->request_method = strtolower($_SERVER['REQUEST_METHOD']);
+      $this->requestMethod = strtolower($_SERVER['REQUEST_METHOD']);
     }
   }
 
@@ -90,7 +90,7 @@ class Dispatcher {
    * @return Router
    */
   protected function getRouter($uri) {
-    $router = $this->cache->load('router_' . $uri . '_' . $this->request_method, function () use ($uri) {
+    $router = $this->cache->load('router_' . $uri . '_' . $this->requestMethod, function () use ($uri) {
       return new Router($uri);
     });
     return $router;
@@ -125,24 +125,24 @@ class Dispatcher {
   protected function dispatchController(Router $router) {
     $responder = $router->getResponder();
     $parameters = $router->getParameters();
-    $request = new Request($this->request_method);
+    $request = new Request($this->requestMethod);
     $response = new TwigView();
 
     try {
       /** @var AbstractController $controller */
       $controller = new $responder($request, $response);
-      if (!method_exists($controller, $this->request_method)) {
+      if (!method_exists($controller, $this->requestMethod)) {
         // Send HTTP 405 response
-        $controller->handleNotSupportedMethod($this->request_method);
+        $controller->handleNotSupportedMethod($this->requestMethod);
       }
-      $default_template_name = $this->determineDefaultTemplateName($controller);
-      if ($default_template_name) {
-        $response->set_template_name($default_template_name);
+      $defaultTemplateName = $this->determineDefaultTemplateName($controller);
+      if ($defaultTemplateName) {
+        $response->setTemplateName($defaultTemplateName);
       }
       $controller->setParameters($parameters);
       $controller->initialize();
-      $output = $controller->{$this->request_method}($parameters);
-      if (is_null($output)) {
+      $output = $controller->{$this->requestMethod}($parameters);
+      if ($output === NULL) {
         $output = $response->render();
       }
       return $output;

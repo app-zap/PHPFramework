@@ -23,7 +23,7 @@ class TwigView extends AbstractView {
    * @throws ApplicationPartMissingException
    */
   protected function getRenderingEngine() {
-    if (!isset($this->rendering_engine)) {
+    if (!isset($this->renderingEngine)) {
       if (!is_dir(Configuration::get('application', 'templates_directory'))) {
         throw new ApplicationPartMissingException('Template directory "' . Configuration::get('application', 'templates_directory') . '" does not exist.');
       }
@@ -32,9 +32,9 @@ class TwigView extends AbstractView {
       if (Configuration::get('phpframework', 'cache.enable')) {
         $options['cache'] = Configuration::get('phpframework', 'cache.twig_folder', './cache/twig/');
       }
-      $this->rendering_engine = new \Twig_Environment($loader, $options);
+      $this->renderingEngine = new \Twig_Environment($loader, $options);
     }
-    return $this->rendering_engine;
+    return $this->renderingEngine;
   }
 
   /**

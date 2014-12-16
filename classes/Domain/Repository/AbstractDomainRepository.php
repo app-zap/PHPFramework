@@ -15,12 +15,12 @@ abstract class AbstractDomainRepository {
   /**
    * @var EntityMapper
    */
-  protected $entity_mapper;
+  protected $entityMapper;
 
   /**
    * @var AbstractModelCollection
    */
-  protected $known_items;
+  protected $knownItems;
 
   /**
    * @var string
@@ -37,8 +37,8 @@ abstract class AbstractDomainRepository {
    */
   public function __construct() {
     $this->db = StaticDatabaseConnection::getInstance();
-    $this->known_items = $this->getNewCollection();
-    $this->entity_mapper = EntityMapper::getInstance();
+    $this->knownItems = $this->getNewCollection();
+    $this->entityMapper = EntityMapper::getInstance();
     $this->tablename = Nomenclature::repositoryClassnameToTablename(get_called_class());
   }
 
@@ -47,12 +47,12 @@ abstract class AbstractDomainRepository {
    * @return AbstractModel
    */
   public function findById($id) {
-    $item = $this->known_items->getById($id);
-    if (is_null($item)) {
+    $item = $this->knownItems->getById($id);
+    if ($item === NULL) {
       $model = $this->createIdentityModel($id);
-      $item = $this->entity_mapper->recordToObject($this->db->row($this->tablename, '*', ['id' => (int)$id]), $model);
+      $item = $this->entityMapper->recordToObject($this->db->row($this->tablename, '*', ['id' => (int)$id]), $model);
       if ($item instanceof AbstractModel) {
-        $this->known_items->add($item);
+        $this->knownItems->add($item);
       }
     }
     return $item;
@@ -69,7 +69,7 @@ abstract class AbstractDomainRepository {
    * @param AbstractModel $object
    */
   public function save(AbstractModel $object) {
-    $record = $this->entity_mapper->objectToRecord($object);
+    $record = $this->entityMapper->objectToRecord($object);
     if ($record['id']) {
       $where = ['id' => (int)$record['id']];
       $this->db->update($this->tablename, $record, $where);
@@ -107,7 +107,7 @@ abstract class AbstractDomainRepository {
   protected function scalarizeWhere($where) {
     if (is_array($where)) {
       foreach ($where as $property => $value) {
-        $where[$property] = $this->entity_mapper->scalarizeValue($value);
+        $where[$property] = $this->entityMapper->scalarizeValue($value);
       }
     }
     return $where;
@@ -129,7 +129,7 @@ abstract class AbstractDomainRepository {
    * @return AbstractModel
    */
   protected function recordToObject($record) {
-    return $this->entity_mapper->recordToObject($record, $this->createEmptyModel());
+    return $this->entityMapper->recordToObject($record, $this->createEmptyModel());
   }
 
   /**
@@ -149,7 +149,7 @@ abstract class AbstractDomainRepository {
   protected function createIdentityModel($id) {
     $model = $this->createEmptyModel();
     $model->setId($id);
-    $this->known_items->add($model);
+    $this->knownItems->add($model);
     return $model;
   }
 

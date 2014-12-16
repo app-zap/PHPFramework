@@ -28,7 +28,7 @@ class BasePHPSession implements BaseSessionInterface {
    * @return mixed
    * @throws BaseSessionUndefinedIndexException if $key not in $_SESSION
    */
-  public function get($key, $default = null) {
+  public function get($key, $default = NULL) {
     $key = (string)$key;
 
     if($this->exist($key)) {

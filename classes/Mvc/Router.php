@@ -50,17 +50,17 @@ class Router {
    */
   protected function route($routes, $resource) {
     $resource = ltrim($resource, '/');
-    foreach ($routes as $regex => $regex_responder) {
+    foreach ($routes as $regex => $regexResponder) {
       $regex = $this->enhanceRegex($regex);
       if (preg_match($regex, $resource, $matches)) {
-        $matches_count = count($matches);
-        for ($i = 1; $i < $matches_count; $i++) {
+        $matchesCount = count($matches);
+        for ($i = 1; $i < $matchesCount; $i++) {
           $this->parameters[] = $matches[$i];
         }
-        if (is_array($regex_responder)) {
-          $this->route($regex_responder, preg_replace($regex, '', $resource));
+        if (is_array($regexResponder)) {
+          $this->route($regexResponder, preg_replace($regex, '', $resource));
         } else {
-          $this->responder = $regex_responder;
+          $this->responder = $regexResponder;
         }
         break;
       }

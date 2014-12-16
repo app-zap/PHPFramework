@@ -27,14 +27,25 @@ abstract class AbstractController {
 
   /**
    * @var bool
+   * @deprecated Since: 1.4, Removal: 1.5, Reason: Use ->requireHttpAuthentication instead
    */
-  protected $require_http_authentication = FALSE;
+  protected $require_http_authentication = NULL;
+
+  /**
+   * @var bool
+   */
+  protected $requireHttpAuthentication = FALSE;
 
   /**
    * @param Request $request
    * @param AbstractView $response
    */
   public function __construct(Request $request, AbstractView $response) {
+    /** @noinspection PhpDeprecationInspection */
+    if ($this->require_http_authentication !== NULL) {
+      /** @noinspection PhpDeprecationInspection */
+      $this->requireHttpAuthentication = $this->require_http_authentication;
+    }
     SignalSlotDispatcher::emitSignal(self::SIGNAL_INIT_REQUEST, $request);
     SignalSlotDispatcher::emitSignal(self::SIGNAL_INIT_RESPONSE, $response);
     $this->request = $request;
@@ -52,9 +63,9 @@ abstract class AbstractController {
    * @throws \AppZap\PHPFramework\Authentication\HttpAuthenticationRequiredException
    */
   public function initialize() {
-    if ($this->require_http_authentication) {
-      $base_http_authentication = new BaseHttpAuthentication();
-      $base_http_authentication->checkAuthentication();
+    if ($this->requireHttpAuthentication) {
+      $baseHttpAuthentication = new BaseHttpAuthentication();
+      $baseHttpAuthentication->checkAuthentication();
     }
   }
 
@@ -74,13 +85,13 @@ abstract class AbstractController {
    */
   protected function getImplementedMethods() {
     $methods = ['options', 'get', 'head', 'post', 'put', 'delete'];
-    $implemented_methods = [];
+    $implementedMethods = [];
     foreach($methods as $method) {
       if (method_exists($this, $method)) {
-        $implemented_methods[] = $method;
+        $implementedMethods[] = $method;
       }
     }
-    return $implemented_methods;
+    return $implementedMethods;
   }
 
   /**

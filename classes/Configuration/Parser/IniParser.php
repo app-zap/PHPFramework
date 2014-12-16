@@ -6,26 +6,25 @@ use AppZap\PHPFramework\Configuration\Configuration;
 class IniParser {
 
   /**
-   * @param string $application
    * @throws \Exception
    */
   static public function initialize() {
-    $application_directory = Configuration::get('application', 'application_directory');
-    $config_file_path = $application_directory . 'settings.ini';
-    $overwrite_file_path = $application_directory . 'settings_local.ini';
-    self::parse($config_file_path, $overwrite_file_path);
+    $applicationDirectory = Configuration::get('application', 'application_directory');
+    $configFilePath = $applicationDirectory . 'settings.ini';
+    $overwriteFilePath = $applicationDirectory . 'settings_local.ini';
+    self::parse($configFilePath, $overwriteFilePath);
   }
 
   /**
-   * @param string $config_file
-   * @param string $overwrite_file
+   * @param string $configFile
+   * @param string $overwriteFile
    */
-  protected static function parse($config_file, $overwrite_file = NULL) {
-    if (is_readable($config_file)) {
-      self::parseFile($config_file);
+  protected static function parse($configFile, $overwriteFile = NULL) {
+    if (is_readable($configFile)) {
+      self::parseFile($configFile);
     }
-    if (is_readable($overwrite_file)) {
-      self::parseFile($overwrite_file);
+    if (is_readable($overwriteFile)) {
+      self::parseFile($overwriteFile);
     }
   }
 

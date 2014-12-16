@@ -11,6 +11,7 @@ All notable changes to this project will be documented in this file.
 ### Deprecated
 
 * Deprecated `AbstractController->handle_not_supported_method()`. Use `AbstractController->handleNotSupportedMethod()` instead.
+* Deprecated `AbstractController->require_http_authentication`. Use `AbstractController->requireHttpAuthentication` instead.
 * Deprecated `AbstractDomainRepository->create_identity_model()`. Use `AbstractDomainRepository->createIdentityModel()` instead.
 * Deprecated `AbstractDomainRepository->find_all()`. Use `AbstractDomainRepository->findAll()` instead.
 * Deprecated `AbstractDomainRepository->find_by_id()`. Use `AbstractDomainRepository->findById()` instead.

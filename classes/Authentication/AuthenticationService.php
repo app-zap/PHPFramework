@@ -8,7 +8,7 @@ abstract class AuthenticationService {
   /**
    * @var string
    */
-  protected $default_session_class_namespace = 'AppZap\PHPFramework\Authentication';
+  protected $defaultSessionClassNamespace = 'AppZap\PHPFramework\Authentication';
 
   /**
    * @var BaseSessionInterface
@@ -21,12 +21,12 @@ abstract class AuthenticationService {
   public function __construct() {
     $sessionClass = Configuration::get('phpframework', 'authentication.sessionclass', 'BasePHPSession');
     if (!class_exists($sessionClass)) {
-      $sessionClass = $this->default_session_class_namespace . '\\' . $sessionClass;
+      $sessionClass = $this->defaultSessionClassNamespace . '\\' . $sessionClass;
     }
     if(class_exists($sessionClass)) {
       $this->session = new $sessionClass();
       if(!($this->session instanceof BaseSessionInterface)) {
-        $this->session = null;
+        unset($this->session);
         throw new BaseSessionException($sessionClass . ' is not an instance of AppZap\PHPFramework\Authentication\BaseSessionInterface', 1409732473);
       }
     } else {

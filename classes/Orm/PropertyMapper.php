@@ -17,20 +17,20 @@ class PropertyMapper {
       return $source;
     }
     $target = ltrim($target, '\\');
-    $original_target = $target;
+    $originalTarget = $target;
     $value = NULL;
     while(TRUE) {
       switch ($target) {
         case 'AppZap\\PHPFramework\\Domain\\Model\\AbstractModel':
-          $value = $this->mapToModel($source, $original_target);
+          $value = $this->mapToModel($source, $originalTarget);
           break(2);
         case 'DateTime':
-          $value = $this->mapToDateTime($source, $original_target);
+          $value = $this->mapToDateTime($source, $originalTarget);
           break(2);
         default:
           $target = get_parent_class($target);
           if ($target === FALSE) {
-            throw new PropertyMappingException('No conversion found for type "' . $original_target . '"', 1409745080);
+            throw new PropertyMappingException('No conversion found for type "' . $originalTarget . '"', 1409745080);
           }
       }
     }

@@ -24,22 +24,22 @@ class CacheFactory {
   public static function getCache() {
     if (!self::$cache instanceof Cache) {
       if (Configuration::get('phpframework', 'cache.enable')) {
-        $cache_folder = Configuration::get('phpframework', 'cache.folder', './cache');
-        $cache_folder_path = realpath($cache_folder);
-        if (!is_dir($cache_folder_path)) {
-          if (!@mkdir($cache_folder, 0777, TRUE)) {
-            throw new ApplicationPartMissingException('Cache folder "' . $cache_folder . '" is missing and could not be created.', 1410537983);
+        $cacheFolder = Configuration::get('phpframework', 'cache.folder', './cache');
+        $cacheFolderPath = realpath($cacheFolder);
+        if (!is_dir($cacheFolderPath)) {
+          if (!@mkdir($cacheFolder, 0777, TRUE)) {
+            throw new ApplicationPartMissingException('Cache folder "' . $cacheFolder . '" is missing and could not be created.', 1410537983);
           }
-          $cache_folder_path = realpath($cache_folder);
+          $cacheFolderPath = realpath($cacheFolder);
         }
-        $testfile = $cache_folder_path . '/L7NxnrqsICAtxg0qxDWPUSA';
+        $testfile = $cacheFolderPath . '/L7NxnrqsICAtxg0qxDWPUSA';
         @touch($testfile);
         if (file_exists($testfile)) {
           unlink($testfile);
         } else {
-          throw new ApplicationPartMissingException('Cache folder "' . $cache_folder . '" is not writable', 1410537933);
+          throw new ApplicationPartMissingException('Cache folder "' . $cacheFolder . '" is not writable', 1410537933);
         }
-        $storage = new FileStorage($cache_folder_path, new FileJournal($cache_folder_path));
+        $storage = new FileStorage($cacheFolderPath, new FileJournal($cacheFolderPath));
       } else {
         $storage = new DevNullStorage();
       }

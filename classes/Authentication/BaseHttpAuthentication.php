@@ -47,12 +47,12 @@ class BaseHttpAuthentication {
    * @return bool
    */
   protected function isAuthenticated() {
-    $http_authentication = Configuration::getSection('phpframework', 'authentication.http');
+    $httpAuthentication = Configuration::getSection('phpframework', 'authentication.http');
     return
         $this->name !== NULL &&
         $this->password !== NULL &&
-        array_key_exists($this->name, $http_authentication) &&
-        sha1($this->password) === $http_authentication[$this->name];
+        array_key_exists($this->name, $httpAuthentication) &&
+        sha1($this->password) === $httpAuthentication[$this->name];
   }
 
   /**
