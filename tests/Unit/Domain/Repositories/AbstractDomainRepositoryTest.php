@@ -18,7 +18,7 @@ class Item extends AbstractModel {
 
 class ItemRepository extends AbstractDomainRepository {
   public function find_by_title($title) {
-    return $this->query_one(['title' => $title]);
+    return $this->queryOne(['title' => $title]);
   }
 }
 
@@ -50,12 +50,12 @@ class AbstractDomainRepositoryTest extends \PHPUnit_Framework_TestCase {
     $this->repository->save($item);
     $id = $item->getId();
     /** @var Item $gotten_item */
-    $gotten_item = $this->repository->find_by_id($id);
+    $gotten_item = $this->repository->findById($id);
     $this->assertSame('test', $gotten_item->getTitle());
     $gotten_item->setTitle('test2');
     $this->repository->save($item);
     /** @var Item $gotten_item2 */
-    $gotten_item2 = $this->repository->find_by_id($id);
+    $gotten_item2 = $this->repository->findById($id);
     $this->assertSame('test2', $gotten_item2->getTitle());
   }
 
@@ -102,7 +102,7 @@ class AbstractDomainRepositoryTest extends \PHPUnit_Framework_TestCase {
    * @test
    */
   public function findAll() {
-    $items = $this->repository->find_all();
+    $items = $this->repository->findAll();
     $this->assertTrue($items instanceof GenericModelCollection);
   }
 

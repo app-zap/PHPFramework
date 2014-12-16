@@ -10,9 +10,6 @@ class MyDateTime extends \DateTime {}
 
 class Item extends AbstractModel{}
 class ItemRepository extends AbstractDomainRepository{
-  public function find_by_id($id) {
-    return $this->create_identity_model($id);
-  }
 }
 class ItemCollection extends AbstractModelCollection{}
 class ItemWithoutRepo extends AbstractModel{}

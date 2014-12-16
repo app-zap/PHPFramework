@@ -37,7 +37,7 @@ abstract class AbstractDomainRepository {
    */
   public function __construct() {
     $this->db = StaticDatabaseConnection::getInstance();
-    $this->known_items = $this->get_new_collection();
+    $this->known_items = $this->getNewCollection();
     $this->entity_mapper = EntityMapper::get_instance();
     $this->tablename = Nomenclature::repositoryclassname_to_tablename(get_called_class());
   }
@@ -46,7 +46,7 @@ abstract class AbstractDomainRepository {
    * @param int $id
    * @return AbstractModel
    */
-  public function find_by_id($id) {
+  public function findById($id) {
     $item = $this->known_items->getById($id);
     if (is_null($item)) {
       $model = $this->create_identity_model($id);
@@ -61,8 +61,8 @@ abstract class AbstractDomainRepository {
   /**
    * @return AbstractModelCollection
    */
-  public function find_all() {
-    return $this->query_many();
+  public function findAll() {
+    return $this->queryMany();
   }
 
   /**
@@ -83,19 +83,19 @@ abstract class AbstractDomainRepository {
    * @param array $where
    * @return AbstractModel
    */
-  protected function query_one($where = NULL) {
-    return $this->record_to_object($this->db->row($this->tablename, '*', $this->scalarize_where($where)));
+  protected function queryOne($where = NULL) {
+    return $this->recordToObject($this->db->row($this->tablename, '*', $this->scalarizeWhere($where)));
   }
 
   /**
    * @param array $where
    * @return AbstractModelCollection
    */
-  protected function query_many($where = NULL) {
-    $collection = $this->get_new_collection();
-    $records = $this->db->select($this->tablename, '*', $this->scalarize_where($where));
+  protected function queryMany($where = NULL) {
+    $collection = $this->getNewCollection();
+    $records = $this->db->select($this->tablename, '*', $this->scalarizeWhere($where));
     foreach ($records as $record) {
-      $collection->add($this->record_to_object($record));
+      $collection->add($this->recordToObject($record));
     }
     return $collection;
   }
@@ -104,7 +104,7 @@ abstract class AbstractDomainRepository {
    * @param array $where
    * @return string
    */
-  protected function scalarize_where($where) {
+  protected function scalarizeWhere($where) {
     if (is_array($where)) {
       foreach ($where as $property => $value) {
         $where[$property] = $this->entity_mapper->scalarize_value($value);
@@ -116,7 +116,7 @@ abstract class AbstractDomainRepository {
   /**
    * @return AbstractModelCollection
    */
-  protected function get_new_collection() {
+  protected function getNewCollection() {
     $collection_classname = Nomenclature::repositoryclassname_to_collectionclassname(get_called_class());
     if (!class_exists($collection_classname)) {
       $collection_classname = 'AppZap\\PHPFramework\\Domain\\Collection\\GenericModelCollection';
@@ -128,14 +128,14 @@ abstract class AbstractDomainRepository {
    * @param $record
    * @return AbstractModel
    */
-  protected function record_to_object($record) {
-    return $this->entity_mapper->record_to_object($record, $this->create_empty_model());
+  protected function recordToObject($record) {
+    return $this->entity_mapper->record_to_object($record, $this->createEmptyModel());
   }
 
   /**
    * @return AbstractModel
    */
-  protected function create_empty_model() {
+  protected function createEmptyModel() {
     $modelClassname = Nomenclature::repositoryclassname_to_modelclassname(get_called_class());
     /** @var AbstractModel $model */
     $model = new $modelClassname();
@@ -146,11 +146,55 @@ abstract class AbstractDomainRepository {
    * @param int $id
    * @return AbstractModel
    */
-  protected function create_identity_model($id) {
-    $model = $this->create_empty_model();
+  protected function createIdentityModel($id) {
+    $model = $this->createEmptyModel();
     $model->setId($id);
     $this->known_items->add($model);
     return $model;
+  }
+
+  /**
+   * @param int $id
+   * @return AbstractModel
+   * @deprecated Since: 1.4, Removal: 1.5, Reason: use ->findById() instead
+   */
+  public function find_by_id($id) {
+    return $this->findById($id);
+  }
+
+  /**
+   * @return AbstractModelCollection
+   * @deprecated Since: 1.4, Removal: 1.5, Reason: use ->findAll() instead
+   */
+  public function find_all() {
+    return $this->findAll();
+  }
+
+  /**
+   * @param array $where
+   * @return AbstractModel
+   * @deprecated Since: 1.4, Removal: 1.5, Reason: use ->queryOne() instead
+   */
+  protected function query_one($where = NULL) {
+    return $this->queryOne($where);
+  }
+
+  /**
+   * @param array $where
+   * @return AbstractModelCollection
+   * @deprecated Since: 1.4, Removal: 1.5, Reason: use ->queryMany() instead
+   */
+  protected function query_many($where = NULL) {
+    return $this->queryMany($where);
+  }
+
+  /**
+   * @param int $id
+   * @return AbstractModel
+   * @deprecated Since: 1.4, Removal: 1.5, Reason: use ->createIdentityModel() instead
+   */
+  protected function create_identity_model($id) {
+    return $this->createIdentityModel($id);
   }
 
 }

@@ -67,7 +67,7 @@ class PropertyMapper {
     }
     /** @var \AppZap\PHPFramework\Domain\Repository\AbstractDomainRepository $repository */
     $repository = $repositoryClassname::get_instance();
-    return $repository->find_by_id((int) $source);
+    return $repository->findById((int) $source);
   }
 
 }
