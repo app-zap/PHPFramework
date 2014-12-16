@@ -8,8 +8,8 @@ use AppZap\PHPFramework\Persistence\DatabaseMigrator;
 use AppZap\PHPFramework\Persistence\StaticDatabaseConnection;
 
 class DatabaseMigratorMock extends DatabaseMigrator {
-  public function _get_last_executed_version() {
-    return $this->get_last_executed_version();
+  public function _getLastExecutedVersion() {
+    return $this->getLastExecutedVersion();
   }
 }
 
@@ -69,7 +69,7 @@ class DatabaseMigratorTest extends \PHPUnit_Framework_TestCase {
   public function currentMigrationVersionIs0IfTableDoesntExist() {
     Configuration::set('phpframework', 'db.migrator.directory', $this->basePath . '/_migrator/_1/');
     $migrator = new DatabaseMigratorMock();
-    $this->assertSame(0, $migrator->_get_last_executed_version());
+    $this->assertSame(0, $migrator->_getLastExecutedVersion());
   }
 
   /**
