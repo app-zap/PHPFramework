@@ -54,7 +54,7 @@ abstract class AbstractController {
   public function initialize() {
     if ($this->require_http_authentication) {
       $base_http_authentication = new BaseHttpAuthentication();
-      $base_http_authentication->check_authentication();
+      $base_http_authentication->checkAuthentication();
     }
   }
 
