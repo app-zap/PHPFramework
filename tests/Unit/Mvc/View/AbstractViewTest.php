@@ -22,14 +22,14 @@ class AbstractViewTest extends \PHPUnit_Framework_TestCase {
   /**
    * @test
    */
-  public function set_header() {
+  public function setHeader() {
     $this->view->header('foo', 'bar');
   }
 
   /**
    * @test
    */
-  public function template_variables() {
+  public function templateVariables() {
     $this->view->set('foo', 'bar');
     $this->assertSame('bar', $this->view->get('foo'));
     $this->assertSame('bar', $this->view->get('foo', 'baz'));

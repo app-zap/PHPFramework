@@ -45,7 +45,7 @@ class AuthenticationServiceTest extends \PHPUnit_Framework_TestCase {
    * @expectedException \AppZap\PHPFramework\Authentication\BaseSessionException
    * @expectedExceptionCode 1409732473
    */
-  public function construct_with_session_class_not_implementing_the_interface() {
+  public function constructWithSessionClassNotImplementingTheInterface() {
     Configuration::set('phpframework', 'authentication.sessionclass', '\\AppZap\\PHPFramework\\Tests\\Unit\\Authentication\\SessionNotImplementingTheInterface');
     new AuthenticationService();
   }
@@ -55,7 +55,7 @@ class AuthenticationServiceTest extends \PHPUnit_Framework_TestCase {
    * @expectedException \AppZap\PHPFramework\Authentication\BaseSessionException
    * @expectedExceptionCode 1409732479
    */
-  public function construct_with_not_existing_session_class() {
+  public function constructWithNotExistingSessionClass() {
     Configuration::set('phpframework', 'authentication.sessionclass', '\\AppZap\\PHPFramework\\Tests\\Unit\\Authentication\\NotExisting');
     new AuthenticationService();
   }

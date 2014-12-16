@@ -9,7 +9,7 @@ class VersionTest extends \PHPUnit_Framework_TestCase {
   /**
    * @test
    */
-  public function minimum_clean() {
+  public function minimumClean() {
     Configuration::set('phpframework', 'version', '2.0');
     $this->assertTrue(Version::minimum(0, 0));
     $this->assertTrue(Version::minimum(1, 0));
@@ -30,7 +30,7 @@ class VersionTest extends \PHPUnit_Framework_TestCase {
   /**
    * @test
    */
-  public function minimum_dev() {
+  public function minimumDev() {
     Configuration::set('phpframework', 'version', '2.0-dev');
     $this->assertTrue(Version::minimum(1, 5));
     $this->assertTrue(Version::minimum(2, 0));
@@ -46,7 +46,7 @@ class VersionTest extends \PHPUnit_Framework_TestCase {
   /**
    * @test
    */
-  public function maximum_clean() {
+  public function maximumClean() {
     Configuration::set('phpframework', 'version', '2.0');
     $this->assertTrue(Version::maximum(2, 0));
     $this->assertTrue(Version::maximum(2, 5));
@@ -64,7 +64,7 @@ class VersionTest extends \PHPUnit_Framework_TestCase {
   /**
    * @test
    */
-  public function maximum_dev() {
+  public function maximumDev() {
     Configuration::set('phpframework', 'version', '2.0-dev');
     $this->assertTrue(Version::maximum(2, 0));
     $this->assertTrue(Version::maximum(2, 5));

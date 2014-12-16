@@ -37,7 +37,7 @@ class RouterTest extends \PHPUnit_Framework_TestCase {
    * @expectedExceptionCode 1415134009
    */
   public function routesfileMissing() {
-    $this->load_routes_file('this_file_doesnt_even_exist');
+    $this->loadRoutesFile('this_file_doesnt_even_exist');
     new Router('/');
   }
 
@@ -47,7 +47,7 @@ class RouterTest extends \PHPUnit_Framework_TestCase {
    * @expectedExceptionCode 1415129223
    */
   public function classNotExisting() {
-    $this->load_routes_file('routes_class_not_existing');
+    $this->loadRoutesFile('routes_class_not_existing');
     new Router('/');
   }
 
@@ -57,7 +57,7 @@ class RouterTest extends \PHPUnit_Framework_TestCase {
    * @expectedExceptionCode 1415135585
    */
   public function noReturn() {
-    $this->load_routes_file('no_return');
+    $this->loadRoutesFile('no_return');
     new Router('/');
   }
 
@@ -67,7 +67,7 @@ class RouterTest extends \PHPUnit_Framework_TestCase {
    * @expectedExceptionCode 1415129333
    */
   public function neitherClassNorCallableButObject() {
-    $this->load_routes_file('neither_class_nor_callable');
+    $this->loadRoutesFile('neither_class_nor_callable');
     new Router('/object');
   }
 
@@ -77,7 +77,7 @@ class RouterTest extends \PHPUnit_Framework_TestCase {
    * @expectedExceptionCode 1415129333
    */
   public function neitherClassNorCallableButInteger() {
-    $this->load_routes_file('neither_class_nor_callable');
+    $this->loadRoutesFile('neither_class_nor_callable');
     new Router('/integer');
   }
 
@@ -87,7 +87,7 @@ class RouterTest extends \PHPUnit_Framework_TestCase {
    * @expectedExceptionCode 1415136995
    */
   public function resourceNotRoutable() {
-    $this->load_routes_file('classnames');
+    $this->loadRoutesFile('classnames');
     new Router('/this/resource/doesnt/even/exist');
   }
 
@@ -95,7 +95,7 @@ class RouterTest extends \PHPUnit_Framework_TestCase {
    * @test
    */
   public function routeToClassNames() {
-    $this->load_routes_file('classnames');
+    $this->loadRoutesFile('classnames');
     $router = new Router('/');
     $responder_class = $router->get_responder();
     $this->assertTrue(class_exists($responder_class));
@@ -110,7 +110,7 @@ class RouterTest extends \PHPUnit_Framework_TestCase {
    * @test
    */
   public function routeToCallables() {
-    $this->load_routes_file('callables');
+    $this->loadRoutesFile('callables');
     $router = new Router('/');
     /** @var callable $responder_callable */
     $responder_callable = $router->get_responder();
@@ -127,7 +127,7 @@ class RouterTest extends \PHPUnit_Framework_TestCase {
    * @test
    */
   public function routeWithSubpaths() {
-    $this->load_routes_file('subpaths');
+    $this->loadRoutesFile('subpaths');
     $router = new Router('/user/42/group/23/edit/');
     /** @var callable $responder_callable */
     $responder_callable = $router->get_responder();
@@ -139,7 +139,7 @@ class RouterTest extends \PHPUnit_Framework_TestCase {
    * @test
    */
   public function enhanceRegex() {
-    $this->load_routes_file('classnames');
+    $this->loadRoutesFile('classnames');
     $router = new RouterMock('/');
     $expressions = [
       '.' => '|^$|',
@@ -157,7 +157,7 @@ class RouterTest extends \PHPUnit_Framework_TestCase {
   /**
    * @param string $filename
    */
-  protected function load_routes_file($filename) {
+  protected function loadRoutesFile($filename) {
     $routes_file = dirname(__FILE__) . '/_routesfiles/' . $filename . '.php';
     Configuration::set('application', 'routes_file', $routes_file);
   }

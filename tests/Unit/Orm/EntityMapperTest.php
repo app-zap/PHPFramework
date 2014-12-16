@@ -71,7 +71,7 @@ class EntityMapperTest extends \PHPUnit_Framework_TestCase {
   /**
    * @test
    */
-  public function record_to_object() {
+  public function recordToObject() {
     $object = new EntityTestItem();
     $this->assertNull($this->entityMapper->record_to_object(NULL, $object));
     $this->entityMapper->record_to_object([
@@ -84,7 +84,7 @@ class EntityMapperTest extends \PHPUnit_Framework_TestCase {
   /**
    * @test
    */
-  public function object_to_record() {
+  public function objectToRecord() {
     $id = 42;
     $timestamp = 1413182967;
     $title = '1kcfRvy6J1WsWtXvgOu/kXba';

@@ -31,7 +31,7 @@ class PropertyMapperTest extends \PHPUnit_Framework_TestCase {
   /**
    * @test
    */
-  public function source_is_already_of_target_type() {
+  public function sourceIsAlreadyOfTargetType() {
     $source = new \DateTime();
     $this->assertSame($source, $this->fixture->map($source, '\\DateTime'));
   }
@@ -39,7 +39,7 @@ class PropertyMapperTest extends \PHPUnit_Framework_TestCase {
   /**
    * @test
    */
-  public function timestamp_to_datetime() {
+  public function timestampToDatetime() {
     $source = 1409738029;
     /** @var \DateTime $datetime */
     $datetime = $this->fixture->map($source, '\\DateTime');
@@ -50,7 +50,7 @@ class PropertyMapperTest extends \PHPUnit_Framework_TestCase {
   /**
    * @test
    */
-  public function with_or_without_trailing_backslash() {
+  public function withOrWithoutTrailingBackslash() {
     $source = 1409738157;
     /** @var \DateTime $datetime */
     $datetime = $this->fixture->map($source, '\\DateTime');
@@ -62,7 +62,7 @@ class PropertyMapperTest extends \PHPUnit_Framework_TestCase {
   /**
    * @test
    */
-  public function dont_convert_to_datetime_if_not_numeric() {
+  public function dontConvertToDatetimeIfNotNumeric() {
     $source = 'abc';
     $this->assertSame($source, $this->fixture->map($source, 'DateTime'));
   }
@@ -70,7 +70,7 @@ class PropertyMapperTest extends \PHPUnit_Framework_TestCase {
   /**
    * @test
    */
-  public function convert_to_class_extending_datetime() {
+  public function convertToClassExtendingDatetime() {
     $source = 1409744701;
     /** @var MyDateTime $my_datetime */
     $my_datetime = $this->fixture->map($source, '\\AppZap\\PHPFramework\\Tests\\Unit\\Orm\\MyDateTime');
@@ -82,7 +82,7 @@ class PropertyMapperTest extends \PHPUnit_Framework_TestCase {
    * @test
    * @expectedException \AppZap\PHPFramework\Orm\PropertyMappingException
    */
-  public function conversion_not_supported() {
+  public function conversionNotSupported() {
     $source = 'abc';
     $this->fixture->map($source, 'NotExistingClass');
   }
@@ -90,7 +90,7 @@ class PropertyMapperTest extends \PHPUnit_Framework_TestCase {
   /**
    * @test
    */
-  public function convert_to_model() {
+  public function convertToModel() {
     $source = 1;
     /** @var Item $item */
     $item = $this->fixture->map($source, 'AppZap\\PHPFramework\\Tests\\Unit\\Orm\\Item');
@@ -102,7 +102,7 @@ class PropertyMapperTest extends \PHPUnit_Framework_TestCase {
    * @test
    * @expectedException \AppZap\PHPFramework\Orm\PropertyMappingException
    */
-  public function convert_to_model_without_repo() {
+  public function convertToModelWithoutRepo() {
     $source = 1;
     $this->fixture->map($source, 'AppZap\\PHPFramework\\Tests\\Unit\\Orm\\ItemWithoutRepo');
   }

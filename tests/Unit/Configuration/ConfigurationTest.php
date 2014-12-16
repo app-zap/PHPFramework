@@ -8,7 +8,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase {
   /**
    * @test
    */
-  public function roundtrip_single_value() {
+  public function roundtripSingleValue() {
     Configuration::set('test', 'foo', 'bar');
     $this->assertSame('bar', Configuration::get('test', 'foo'));
   }
@@ -16,7 +16,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase {
   /**
    * @test
    */
-  public function get_default_value() {
+  public function getDefaultValue() {
     Configuration::reset();
     $this->assertSame('bar', Configuration::get('test', 'foo', 'bar'));
   }
@@ -24,7 +24,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase {
   /**
    * @test
    */
-  public function reset_works() {
+  public function resetWorks() {
     Configuration::set('test', 'reset_works', TRUE);
     $this->assertTrue(Configuration::get('test', 'reset_works'));
     Configuration::reset();
@@ -34,7 +34,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase {
   /**
    * @test
    */
-  public function remove_key_works() {
+  public function removeKeyWorks() {
     Configuration::set('test', 'key1', TRUE);
     Configuration::set('test', 'key2', TRUE);
     $this->assertTrue(Configuration::get('test', 'key1'));
@@ -47,7 +47,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase {
   /**
    * @test
    */
-  public function get_section() {
+  public function getSection() {
     Configuration::reset();
     Configuration::set('test', 'key1', TRUE);
     Configuration::set('test', 'key2', TRUE);
@@ -60,7 +60,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase {
   /**
    * @test
    */
-  public function get_section_namespace() {
+  public function getSectionNamespace() {
     Configuration::reset();
     Configuration::set('test', 'key1', FALSE);
     Configuration::set('test', 'ns1.key1', TRUE);
@@ -82,7 +82,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase {
   /**
    * @test
    */
-  public function get_non_existing_section() {
+  public function getNonExistingSection() {
     Configuration::reset();
     $this->assertNull(Configuration::getSection('not_existing'));
   }
@@ -90,7 +90,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase {
   /**
    * @test
    */
-  public function remove_section() {
+  public function removeSection() {
     Configuration::reset();
     Configuration::set('test', 'key1', TRUE);
     Configuration::set('test', 'key2', TRUE);
