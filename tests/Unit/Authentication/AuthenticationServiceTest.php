@@ -8,8 +8,6 @@ class AuthenticationService extends \AppZap\PHPFramework\Authentication\Authenti
 }
 
 class NullSession implements BaseSessionInterface {
-  public function __construct() {
-  }
 
   public function set($key, $value) {
   }

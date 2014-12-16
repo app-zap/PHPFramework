@@ -4,11 +4,6 @@ namespace AppZap\PHPFramework\Authentication;
 interface BaseSessionInterface {
 
   /**
-   *
-   */
-  public function __construct();
-
-  /**
    * @param string $key
    * @param mixed $value
    * @return BaseSessionInterface
@@ -39,6 +34,7 @@ interface BaseSessionInterface {
    * @return BaseSessionInterface
    */
   public function clear_all();
+
 }
 
 
