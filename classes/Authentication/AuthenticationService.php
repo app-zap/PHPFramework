@@ -20,10 +20,10 @@ abstract class AuthenticationService {
    */
   public function __construct() {
     $sessionClass = Configuration::get('phpframework', 'authentication.sessionclass', 'BasePHPSession');
-    if (!class_exists($sessionClass, TRUE)) {
+    if (!class_exists($sessionClass)) {
       $sessionClass = $this->default_session_class_namespace . '\\' . $sessionClass;
     }
-    if(class_exists($sessionClass, TRUE)) {
+    if(class_exists($sessionClass)) {
       $this->session = new $sessionClass();
       if(!($this->session instanceof BaseSessionInterface)) {
         $this->session = null;
