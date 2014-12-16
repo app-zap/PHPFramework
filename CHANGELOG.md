@@ -30,6 +30,10 @@ All notable changes to this project will be documented in this file.
 * Deprecated `HttpStatus::get_status()` Use `HttpStatus::getStatus()` instead.
 * Deprecated `HttpStatus::send_headers()` Use `HttpStatus::sendHeaders()` instead.
 * Deprecated `HttpStatus::set_status()` Use `HttpStatus::setStatus()` instead.
+* Deprecated `TwigView::add_output_filter()` Use `TwigView::addOutputFilter()` instead.
+* Deprecated `TwigView::add_output_function()` Use `TwigView::addOutputFunction()` instead.
+* Deprecated `TwigView::has_output_filter()` Use `TwigView::hasOutputFilter()` instead.
+* Deprecated `TwigView::has_output_function()` Use `TwigView::hasOutputFunction()` instead.
 * Deprecated lower_camel_cased setters and getters in model classes. Use lowerCamelCased method names instead.
 
 ### Removed

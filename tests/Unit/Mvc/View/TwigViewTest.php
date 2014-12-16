@@ -21,18 +21,18 @@ class TwigViewTest extends \PHPUnit_Framework_TestCase {
    * @test
    */
   public function addOutputFilter() {
-    $this->reponse->add_output_filter('foo', function(){});
-    $this->assertTrue($this->reponse->has_output_filter('foo'));
-    $this->assertFalse($this->reponse->has_output_filter('bar'));
+    $this->reponse->addOutputFilter('foo', function(){});
+    $this->assertTrue($this->reponse->hasOutputFilter('foo'));
+    $this->assertFalse($this->reponse->hasOutputFilter('bar'));
   }
 
   /**
    * @test
    */
   public function addOutputFunction() {
-    $this->reponse->add_output_function('foo', function(){});
-    $this->assertTrue($this->reponse->has_output_function('foo'));
-    $this->assertFalse($this->reponse->has_output_function('bar'));
+    $this->reponse->addOutputFunction('foo', function(){});
+    $this->assertTrue($this->reponse->hasOutputFunction('foo'));
+    $this->assertFalse($this->reponse->hasOutputFunction('bar'));
   }
 
 }
