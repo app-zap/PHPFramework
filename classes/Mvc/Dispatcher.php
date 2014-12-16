@@ -102,7 +102,7 @@ class Dispatcher {
    */
   protected function dispatchUncached($uri) {
     $router = $this->getRouter($uri);
-    if (is_callable($router->get_responder())) {
+    if (is_callable($router->getResponder())) {
       $output = $this->dispatchCallable($router);
     } else {
       $output = $this->dispatchController($router);
@@ -115,7 +115,7 @@ class Dispatcher {
    * @return string
    */
   protected function dispatchCallable(Router $router) {
-    return call_user_func($router->get_responder(), $router->get_parameters());
+    return call_user_func($router->getResponder(), $router->getParameters());
   }
 
   /**
@@ -123,8 +123,8 @@ class Dispatcher {
    * @return string
    */
   protected function dispatchController(Router $router) {
-    $responder = $router->get_responder();
-    $parameters = $router->get_parameters();
+    $responder = $router->getResponder();
+    $parameters = $router->getParameters();
     $request = new Request($this->request_method);
     $response = new TwigView();
 

@@ -97,11 +97,11 @@ class RouterTest extends \PHPUnit_Framework_TestCase {
   public function routeToClassNames() {
     $this->loadRoutesFile('classnames');
     $router = new Router('/');
-    $responder_class = $router->get_responder();
+    $responder_class = $router->getResponder();
     $this->assertTrue(class_exists($responder_class));
     $this->assertSame('\AppZap\PHPFramework\Tests\Mvc\Responder_Index', $responder_class);
     $router = new Router('/foo');
-    $responder_class = $router->get_responder();
+    $responder_class = $router->getResponder();
     $this->assertTrue(class_exists($responder_class));
     $this->assertSame('\AppZap\PHPFramework\Tests\Mvc\Responder_Foo', $responder_class);
   }
@@ -113,14 +113,14 @@ class RouterTest extends \PHPUnit_Framework_TestCase {
     $this->loadRoutesFile('callables');
     $router = new Router('/');
     /** @var callable $responder_callable */
-    $responder_callable = $router->get_responder();
+    $responder_callable = $router->getResponder();
     $this->assertTrue(is_callable($responder_callable));
-    $this->assertSame('index', call_user_func($responder_callable, $router->get_parameters()));
+    $this->assertSame('index', call_user_func($responder_callable, $router->getParameters()));
     $router = new Router('/user/42');
     /** @var callable $responder_callable */
-    $responder_callable = $router->get_responder();
+    $responder_callable = $router->getResponder();
     $this->assertTrue(is_callable($responder_callable));
-    $this->assertSame('user:42', call_user_func($responder_callable, $router->get_parameters()));
+    $this->assertSame('user:42', call_user_func($responder_callable, $router->getParameters()));
   }
 
   /**
@@ -130,9 +130,9 @@ class RouterTest extends \PHPUnit_Framework_TestCase {
     $this->loadRoutesFile('subpaths');
     $router = new Router('/user/42/group/23/edit/');
     /** @var callable $responder_callable */
-    $responder_callable = $router->get_responder();
+    $responder_callable = $router->getResponder();
     $this->assertTrue(is_callable($responder_callable));
-    $this->assertSame('user:42:group:23:edit', call_user_func($responder_callable, $router->get_parameters()));
+    $this->assertSame('user:42:group:23:edit', call_user_func($responder_callable, $router->getParameters()));
   }
 
   /**

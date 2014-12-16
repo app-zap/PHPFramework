@@ -44,6 +44,8 @@ All notable changes to this project will be documented in this file.
 * Deprecated `Nomenclature::repositoryclassname_to_collectionclassname()` Use `Nomenclature::repositoryClassnameToCollectionClassname()` instead.
 * Deprecated `Nomenclature::repositoryclassname_to_modelclassname()` Use `Nomenclature::repositoryClassnameToModelClassname()` instead.
 * Deprecated `Nomenclature::repositoryclassname_to_tablename()` Use `Nomenclature::repositoryClassnameToTablename()` instead.
+* Deprecated `Router::get_parameters()` Use `Router::getParameters()` instead.
+* Deprecated `Router::get_responder()` Use `Router::getResponder()` instead.
 * Deprecated `Singleton::get_instance()` Use `Singleton::getInstance()` instead.
 * Deprecated `TwigView->add_output_filter()` Use `TwigView->addOutputFilter()` instead.
 * Deprecated `TwigView->add_output_function()` Use `TwigView->addOutputFunction()` instead.
