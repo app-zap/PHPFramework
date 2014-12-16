@@ -47,7 +47,7 @@ abstract class AbstractDomainRepository {
    * @return AbstractModel
    */
   public function find_by_id($id) {
-    $item = $this->known_items->get_by_id($id);
+    $item = $this->known_items->getById($id);
     if (is_null($item)) {
       $model = $this->create_identity_model($id);
       $item = $this->entity_mapper->record_to_object($this->db->row($this->tablename, '*', ['id' => (int)$id]), $model);

@@ -37,7 +37,7 @@ abstract class AbstractModelCollection implements \Iterator, \Countable {
    * @param $id
    * @return AbstractModel
    */
-  public function get_by_id($id) {
+  public function getById($id) {
     $id = (int) $id;
     foreach ($this->items as $item) {
       /** @var AbstractModel $item */
@@ -89,6 +89,15 @@ abstract class AbstractModelCollection implements \Iterator, \Countable {
    */
   public function count() {
     return count($this->items);
+  }
+
+  /**
+   * @param $id
+   * @return AbstractModel
+   * @deprecated Since: 1.4, Removal: 1.5, Reason: use ->getById() instead
+   */
+  public function get_by_id($id) {
+    return $this->getById($id);
   }
 
   /**
