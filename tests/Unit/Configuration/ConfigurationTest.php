@@ -39,7 +39,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase {
     Configuration::set('test', 'key2', TRUE);
     $this->assertTrue(Configuration::get('test', 'key1'));
     $this->assertTrue(Configuration::get('test', 'key2'));
-    Configuration::remove_key('test', 'key1');
+    Configuration::remove('test', 'key1');
     $this->assertNull(Configuration::get('test', 'key1'));
     $this->assertTrue(Configuration::get('test', 'key2'));
   }
@@ -97,7 +97,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase {
     Configuration::set('othersection', 'key3', TRUE);
     $test_section = Configuration::getSection('test');
     $this->assertSame(2, count($test_section));
-    Configuration::remove_section('test');
+    Configuration::removeSection('test');
     $this->assertNull(Configuration::getSection('test'));
     $this->assertSame(1, count(Configuration::getSection('othersection')));
   }
