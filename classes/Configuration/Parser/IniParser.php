@@ -22,17 +22,17 @@ class IniParser {
    */
   protected static function parse($config_file, $overwrite_file = NULL) {
     if (is_readable($config_file)) {
-      self::parse_file($config_file);
+      self::parseFile($config_file);
     }
     if (is_readable($overwrite_file)) {
-      self::parse_file($overwrite_file);
+      self::parseFile($overwrite_file);
     }
   }
 
   /**
    * @param string $file
    */
-  protected static function parse_file($file) {
+  protected static function parseFile($file) {
     $config = parse_ini_file($file, TRUE);
     foreach ($config as $section => $sectionConfiguration) {
       foreach ($sectionConfiguration as $key => $value) {
