@@ -13,7 +13,7 @@ class DatabaseMigrator {
   /**
    * @var string
    */
-  protected $migration_directory;
+  protected $migrationDirectory;
 
   /**
    * @var int
@@ -25,17 +25,17 @@ class DatabaseMigrator {
    */
   public function __construct() {
     $this->db = StaticDatabaseConnection::getInstance();
-    $this->migration_directory = Configuration::get('phpframework', 'db.migrator.directory');
+    $this->migrationDirectory = Configuration::get('phpframework', 'db.migrator.directory');
 
-    if (!$this->migration_directory) {
+    if (!$this->migrationDirectory) {
       throw new DatabaseMigratorException('Migration directory was not configured.', 1415085595);
     }
 
-    if(!is_dir($this->migration_directory)) {
-      throw new DatabaseMigratorException('Migration directory "' . $this->migration_directory . '" does not exist or is not a directory.', 1415085126);
+    if(!is_dir($this->migrationDirectory)) {
+      throw new DatabaseMigratorException('Migration directory "' . $this->migrationDirectory . '" does not exist or is not a directory.', 1415085126);
     }
 
-    $this->last_executed_version = $this->get_last_executed_version();
+    $this->last_executed_version = $this->getLastExecutedVersion();
 
   }
 
@@ -43,12 +43,12 @@ class DatabaseMigrator {
    * @throws DatabaseMigratorException
    */
   public function migrate() {
-    foreach ($this->get_migration_files() as $version => $file) {
+    foreach ($this->getMigrationFiles() as $version => $file) {
       if ($version > $this->last_executed_version) {
         try {
-          $this->migrate_file($file);
+          $this->migrateFile($file);
           $this->last_executed_version = $version;
-          $this->set_current_migration_version($this->last_executed_version);
+          $this->setCurrentMigrationVersion($this->last_executed_version);
         } catch (\Exception $e) {
           throw $e;
         }
@@ -59,7 +59,7 @@ class DatabaseMigrator {
   /**
    * @return int
    */
-  protected function get_last_executed_version() {
+  protected function getLastExecutedVersion() {
     if(count($this->db->query("SHOW TABLES LIKE 'migration_ver'")) < 1) {
       return 0;
     }
@@ -69,10 +69,10 @@ class DatabaseMigrator {
   /**
    * @return array
    */
-  protected function get_migration_files() {
+  protected function getMigrationFiles() {
     $migration_files = [];
     $matches = [];
-    if($handle = opendir($this->migration_directory)) {
+    if($handle = opendir($this->migrationDirectory)) {
       while($file = readdir($handle)) {
         if(preg_match('/^([0-9]+)_.*\.sql$/', $file, $matches) > 0) {
           $migration_files[(int)$matches[1]] = $file;
@@ -90,13 +90,13 @@ class DatabaseMigrator {
    * @param string $filename
    * @throws DatabaseMigratorException when any command of the file is not executable
    */
-  protected function migrate_file($filename) {
+  protected function migrateFile($filename) {
     $this->db->execute('SET autocommit = 0;');
     $this->db->execute('START TRANSACTION;');
-    $statements = $this->get_statements_from_file($filename);
+    $statements = $this->getStatementsFromFile($filename);
     foreach($statements as $statement) {
       try {
-        $this->execute_statement($statement);
+        $this->executeStatement($statement);
       } catch (DatabaseQueryException $e) {
         throw new DatabaseMigratorException($e->getMessage(), 1415089456);
       }
@@ -108,7 +108,7 @@ class DatabaseMigrator {
   /**
    * @param int $version
    */
-  protected function set_current_migration_version($version) {
+  protected function setCurrentMigrationVersion($version) {
     if(count($this->db->query("SHOW TABLES LIKE 'migration_ver'")) < 1) {
       $sql = "CREATE TABLE IF NOT EXISTS `migration_ver` (`version` int(11) NOT NULL) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;";
       $this->db->execute($sql);
@@ -123,12 +123,12 @@ class DatabaseMigrator {
   }
 
   /**
-   * @param $filename
+   * @param string $filename
    * @return array
    * @throws DatabaseMigratorException
    */
-  protected function get_statements_from_file($filename) {
-    $file = rtrim($this->migration_directory, '/') . '/' . $filename;
+  protected function getStatementsFromFile($filename) {
+    $file = rtrim($this->migrationDirectory, '/') . '/' . $filename;
     $f = @fopen($file, "r");
     if ($f === FALSE) {
       throw new DatabaseMigratorException('Unable to open file "' . $file . '"');
@@ -138,11 +138,11 @@ class DatabaseMigrator {
   }
 
   /**
-   * @param $statement
+   * @param string $statement
    * @throws DatabaseQueryException
    * @throws DatabaseMigratorException
    */
-  protected function execute_statement($statement) {
+  protected function executeStatement($statement) {
     if (strlen($statement) > 3 && substr(ltrim($statement), 0, 2) != '/*') {
       try {
         $this->db->execute($statement);

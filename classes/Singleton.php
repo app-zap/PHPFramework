@@ -15,12 +15,13 @@ namespace AppZap\PHPFramework;
  * }
  *
  * $my_singleton_object = MySingletonClass::get_instance();
- *
- * using traits requires PHP 5.4 or higher
  */
 trait Singleton {
 
-  public static function get_instance() {
+  /**
+   * @return object
+   */
+  public static function getInstance() {
     static $_instance = NULL;
     $class = get_called_class();
     return $_instance ?: $_instance = new $class;
@@ -32,6 +33,14 @@ trait Singleton {
 
   public function __wakeup() {
     throw new SingletonException('Unserializing ' . __CLASS__ . ' is not allowed.', 1412682032);
+  }
+
+  /**
+   * @return object
+   * @deprecated Since: 1.4, Removal: 1.5, Reason: Use ->getInstance() instead
+   */
+  public static function get_instance() {
+    return self::getInstance();
   }
 
 }

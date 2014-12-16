@@ -14,28 +14,43 @@ abstract class AbstractView {
   /**
    * @var string
    */
-  protected $template_name;
+  protected $templateName;
 
+  /**
+   * @var array
+   */
   protected $template_vars = [];
+
+  /**
+   * @var array
+   */
   protected $headers = [];
+
+  /**
+   * @var array
+   */
   protected $output_filters = [];
+
+  /**
+   * @var array
+   */
   protected $output_functions = [];
 
   /**
    * @var string
    */
-  protected $default_template_file_extension = 'html';
+  protected $defaultTemplateFileExtension = 'html';
 
   /**
    * @return \Twig_Environment
    */
-  abstract protected function get_rendering_engine();
+  abstract protected function getRenderingEngine();
 
   /**
-   * @param $template_name
+   * @param string $templateName
    */
-  public function set_template_name($template_name) {
-    $this->template_name = $template_name;
+  public function setTemplateName($templateName) {
+    $this->templateName = $templateName;
   }
 
   /**
@@ -75,12 +90,12 @@ abstract class AbstractView {
   /**
    * Renders the template with the previously defined variables and returns the rendered version
    *
-   * @param string $template_name Name of the template in the template directory without extension
+   * @param string $templateName Name of the template in the template directory without extension
    * @return string
    */
-  public function render($template_name = NULL) {
-    $this->send_headers();
-    $template = $this->get_template_environment($template_name);
+  public function render($templateName = NULL) {
+    $this->sendHeaders();
+    $template = $this->getTemplateEnvironment($templateName);
     return $template->render($this->template_vars);
   }
 
@@ -92,7 +107,7 @@ abstract class AbstractView {
    */
   public function write($content) {
     if(!headers_sent()) {
-      $this->send_headers();
+      $this->sendHeaders();
     }
 
     echo $content;
@@ -104,7 +119,7 @@ abstract class AbstractView {
    * @param mixed $object Object (most likely an array) to json encode
    * @param string $callback If set to string answer will be sent as JSONP output with this function
    */
-  public function json_output($object, $callback = null) {
+  public function jsonOutput($object, $callback = null) {
     if($callback !== NULL) {
       $ctype = 'text/javascript';
       $output = $callback . '(' . json_encode($object) . ');';
@@ -113,7 +128,7 @@ abstract class AbstractView {
       $output = json_encode($object);
     }
     $this->header('Content-Type', $ctype);
-    $this->send_headers();
+    $this->sendHeaders();
 
     echo $output;
   }
@@ -137,7 +152,7 @@ abstract class AbstractView {
   /**
    *
    */
-  protected function send_headers() {
+  protected function sendHeaders() {
     foreach($this->headers as $header => $value) {
       header($header . ': ' . $value);
     }
@@ -147,14 +162,33 @@ abstract class AbstractView {
    * @param string $template_name
    * @return \Twig_TemplateInterface
    */
-  protected function get_template_environment($template_name = NULL) {
+  protected function getTemplateEnvironment($template_name = NULL) {
     if (is_null($template_name)) {
-      $template_name = $this->template_name;
+      $template_name = $this->templateName;
     }
-    $template_file_extension = Configuration::get('phpframework', 'template_file_extension', $this->default_template_file_extension);
-    $template = $this->get_rendering_engine()->loadTemplate($template_name . '.' . $template_file_extension);
+    $template_file_extension = Configuration::get('phpframework', 'template_file_extension', $this->defaultTemplateFileExtension);
+    $template = $this->getRenderingEngine()->loadTemplate($template_name . '.' . $template_file_extension);
 
     return $template;
+  }
+
+  /**
+   * @param string $templateName
+   * @deprecated Since: 1.4, Removal: 1.5, Reason: Use ->setTemplateName() instead
+   */
+  public function set_template_name($templateName) {
+    $this->setTemplateName($templateName);
+  }
+
+  /**
+   * Sends an json encoded object to the browser using correct content type
+   *
+   * @param mixed $object Object (most likely an array) to json encode
+   * @param string $callback If set to string answer will be sent as JSONP output with this function
+   * @deprecated Since: 1.4, Removal: 1.5, Reason: Use ->jsonOutput() instead
+   */
+  public function json_output($object, $callback = null) {
+    $this->jsonOutput($object, $callback);
   }
 
 }

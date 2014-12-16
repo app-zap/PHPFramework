@@ -27,7 +27,7 @@ class DatabaseConnection {
       $dsn = 'mysql:host=' . $db_configuration['mysql.host'] . ';dbname=' . $db_configuration['mysql.database'];
       $this->connection = new \PDO($dsn, $db_configuration['mysql.user'], $db_configuration['mysql.password']);
       if (isset($db_configuration['charset'])) {
-        $this->set_charset($db_configuration['charset']);
+        $this->setCharset($db_configuration['charset']);
       }
     }
   }
@@ -37,7 +37,7 @@ class DatabaseConnection {
    *
    * @return bool
    */
-  public function is_connected() {
+  public function isConnected() {
     return (bool) $this->connection;
   }
 
@@ -46,7 +46,7 @@ class DatabaseConnection {
    *
    * @param string $charset Connection transfer charset
    */
-  protected function set_charset($charset) {
+  protected function setCharset($charset) {
     $sql = 'SET NAMES ' . $charset;
     $this->execute($sql);
   }
@@ -95,7 +95,7 @@ class DatabaseConnection {
    *
    * @return int
    */
-  public function last_id() {
+  public function lastId() {
     $this->connect();
     return $this->connection->lastInsertId();
   }
@@ -134,7 +134,7 @@ class DatabaseConnection {
       $values = '(id) VALUES (NULL)';
     }
     $this->execute('INSERT' . $ignore . ' INTO ' . $table . $values);
-    return $this->last_id();
+    return $this->lastId();
   }
 
   /**
@@ -343,7 +343,7 @@ class DatabaseConnection {
   }
 
   /**
-   * @param int $limit
+   * @param int $offset
    * @return string
    */
   protected function offset($offset = 0) {
@@ -397,9 +397,9 @@ class DatabaseConnection {
         $constraints[] = '(`' . $field . '` LIKE ' . implode(' OR `' . $field . '` LIKE ', $value) . ')';
       } else {
         if (is_array($value)) {
-          $constraints[] = $this->where_multiple_values($value, $query_mode, $field);
+          $constraints[] = $this->whereMultipleValues($value, $query_mode, $field);
         } else {
-          $constraints[] = $this->where_single_value($value, $query_mode, $field);
+          $constraints[] = $this->whereSingleValue($value, $query_mode, $field);
         }
       }
     }
@@ -415,7 +415,7 @@ class DatabaseConnection {
    * @param $field
    * @return array
    */
-  protected function where_multiple_values($value, $query_mode, $field) {
+  protected function whereMultipleValues($value, $query_mode, $field) {
     $value = implode(', ', array_map([$this, 'escape'], $value));
     if ($query_mode === self::QUERY_MODE_NOT) {
       $operand = 'NOT IN';
@@ -431,7 +431,7 @@ class DatabaseConnection {
    * @param $field
    * @return array
    */
-  protected function where_single_value($value, $query_mode, $field) {
+  protected function whereSingleValue($value, $query_mode, $field) {
     $value = $this->escape($value);
     switch ($query_mode) {
       case self::QUERY_MODE_LIKE:
@@ -444,6 +444,26 @@ class DatabaseConnection {
         $operand = '=';
     }
     return sprintf('`%s` %s %s', $field, $operand, $value);
+  }
+
+  /**
+   * Checks whether the connection to the database is established
+   *
+   * @return bool
+   * @deprecated Since: 1.4, Removal: 1.5, Reason: Use ->isConnected() instead
+   */
+  public function is_connected() {
+    return $this->isConnected();
+  }
+
+  /**
+   * Returns the auto increment ID of the last query
+   *
+   * @return int
+   * @deprecated Since: 1.4, Removal: 1.5, Reason: Use ->lastId() instead
+   */
+  public function last_id() {
+    return $this->lastId();
   }
 
 }

@@ -38,8 +38,8 @@ abstract class AbstractDomainRepository {
   public function __construct() {
     $this->db = StaticDatabaseConnection::getInstance();
     $this->known_items = $this->getNewCollection();
-    $this->entity_mapper = EntityMapper::get_instance();
-    $this->tablename = Nomenclature::repositoryclassname_to_tablename(get_called_class());
+    $this->entity_mapper = EntityMapper::getInstance();
+    $this->tablename = Nomenclature::repositoryClassnameToTablename(get_called_class());
   }
 
   /**
@@ -49,8 +49,8 @@ abstract class AbstractDomainRepository {
   public function findById($id) {
     $item = $this->known_items->getById($id);
     if (is_null($item)) {
-      $model = $this->create_identity_model($id);
-      $item = $this->entity_mapper->record_to_object($this->db->row($this->tablename, '*', ['id' => (int)$id]), $model);
+      $model = $this->createIdentityModel($id);
+      $item = $this->entity_mapper->recordToObject($this->db->row($this->tablename, '*', ['id' => (int)$id]), $model);
       if ($item instanceof AbstractModel) {
         $this->known_items->add($item);
       }
@@ -69,7 +69,7 @@ abstract class AbstractDomainRepository {
    * @param AbstractModel $object
    */
   public function save(AbstractModel $object) {
-    $record = $this->entity_mapper->object_to_record($object);
+    $record = $this->entity_mapper->objectToRecord($object);
     if ($record['id']) {
       $where = ['id' => (int)$record['id']];
       $this->db->update($this->tablename, $record, $where);
@@ -107,7 +107,7 @@ abstract class AbstractDomainRepository {
   protected function scalarizeWhere($where) {
     if (is_array($where)) {
       foreach ($where as $property => $value) {
-        $where[$property] = $this->entity_mapper->scalarize_value($value);
+        $where[$property] = $this->entity_mapper->scalarizeValue($value);
       }
     }
     return $where;
@@ -117,11 +117,11 @@ abstract class AbstractDomainRepository {
    * @return AbstractModelCollection
    */
   protected function getNewCollection() {
-    $collection_classname = Nomenclature::repositoryclassname_to_collectionclassname(get_called_class());
-    if (!class_exists($collection_classname)) {
-      $collection_classname = 'AppZap\\PHPFramework\\Domain\\Collection\\GenericModelCollection';
+    $collectionClassname = Nomenclature::repositoryClassnameToCollectionClassname(get_called_class());
+    if (!class_exists($collectionClassname)) {
+      $collectionClassname = 'AppZap\\PHPFramework\\Domain\\Collection\\GenericModelCollection';
     }
-    return new $collection_classname;
+    return new $collectionClassname;
   }
 
   /**
@@ -129,14 +129,14 @@ abstract class AbstractDomainRepository {
    * @return AbstractModel
    */
   protected function recordToObject($record) {
-    return $this->entity_mapper->record_to_object($record, $this->createEmptyModel());
+    return $this->entity_mapper->recordToObject($record, $this->createEmptyModel());
   }
 
   /**
    * @return AbstractModel
    */
   protected function createEmptyModel() {
-    $modelClassname = Nomenclature::repositoryclassname_to_modelclassname(get_called_class());
+    $modelClassname = Nomenclature::repositoryClassnameToModelClassname(get_called_class());
     /** @var AbstractModel $model */
     $model = new $modelClassname();
     return $model;
