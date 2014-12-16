@@ -6,7 +6,7 @@ class Request {
   /**
    * @var array
    */
-  protected $value_sources = [
+  protected $valueSources = [
     'get' => ['default' => 'get', 'fallback' => 'post'],
     'post' => ['default' => 'post', 'fallback' => 'get'],
     'head' => ['default' => 'get', 'fallback' => 'post'],
@@ -16,13 +16,13 @@ class Request {
   /**
    * @var string
    */
-  protected $request_method;
+  protected $requestMethod;
 
   public function __construct($request_method) {
-    $this->request_method = $request_method;
+    $this->requestMethod = $request_method;
     // Early exit when not defined where to read request values
-    if(!array_key_exists($this->request_method, $this->value_sources)) {
-      throw new MethodNotSupportedException('Getting request parameters of ' . $this->request_method . ' is not supported.', 1415273543);
+    if(!array_key_exists($this->requestMethod, $this->valueSources)) {
+      throw new MethodNotSupportedException('Getting request parameters of ' . $this->requestMethod . ' is not supported.', 1415273543);
     }
   }
 
@@ -38,12 +38,12 @@ class Request {
   public function get($parameter_name, $default_value = NULL, $use_strict_mode = FALSE) {
 
     try {
-      return $this->read_request_parameter($parameter_name, $this->value_sources[$this->request_method]['default']);
+      return $this->readRequestParameter($parameter_name, $this->valueSources[$this->requestMethod]['default']);
     } catch(ParameterNotFoundException $ex) {}
 
-    if(!$use_strict_mode && isset($this->value_sources[$this->request_method]['fallback'])) {
+    if(!$use_strict_mode && isset($this->valueSources[$this->requestMethod]['fallback'])) {
       try {
-        return $this->read_request_parameter($parameter_name, $this->value_sources[$this->request_method]['fallback']);
+        return $this->readRequestParameter($parameter_name, $this->valueSources[$this->requestMethod]['fallback']);
       } catch(ParameterNotFoundException $ex) {}
     }
 
@@ -83,7 +83,7 @@ class Request {
    * @throws ValueSourceNotSupportedException when the name of the source is unsupported
    * @throws ParameterNotFoundException when the parameter is not found in the source to avoid collision with other value types
    */
-  protected function read_request_parameter($parameter_name, $value_source) {
+  protected function readRequestParameter($parameter_name, $value_source) {
     $source = null;
     if($value_source == 'get') {
       $source = &$_GET;
