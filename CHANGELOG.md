@@ -19,6 +19,8 @@ All notable changes to this project will be documented in this file.
 * Deprecated `AbstractModelCollection->get_by_id()`. Use `AbstractModelCollection->getById()` instead.
 * Deprecated `AbstractModelCollection->remove_item()`. Use `AbstractModelCollection->remove()` instead.
 * Deprecated `AbstractModelCollection->set_item()`. Use `AbstractModelCollection->add()` instead.
+* Deprecated `AbstractView->json_output()`. Use `AbstractView->jsonOutput()` instead.
+* Deprecated `AbstractView->set_template_name()`. Use `AbstractView->setTemplateName()` instead.
 * Deprecated `BaseHttpAuthentication->check_authentication()`. Use `BaseHttpAuthentication->checkAuthentication()` instead.
 * Deprecated `BaseSessionInterface->clear_all()`. Use `BaseSessionInterface->clearAll()` instead.
 * Deprecated `Configuration::remove_key()`. Use `Configuration::remove()` instead.

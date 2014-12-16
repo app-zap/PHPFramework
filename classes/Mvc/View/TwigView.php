@@ -9,7 +9,7 @@ class TwigView extends AbstractView {
   /**
    * @var string
    */
-  protected $default_template_file_extension = 'twig';
+  protected $defaultTemplateFileExtension = 'twig';
 
   /**
    * @throws ApplicationPartMissingException
@@ -22,7 +22,7 @@ class TwigView extends AbstractView {
    * @return \Twig_Environment
    * @throws ApplicationPartMissingException
    */
-  protected function get_rendering_engine() {
+  protected function getRenderingEngine() {
     if (!isset($this->rendering_engine)) {
       if (!is_dir(Configuration::get('application', 'templates_directory'))) {
         throw new ApplicationPartMissingException('Template directory "' . Configuration::get('application', 'templates_directory') . '" does not exist.');
@@ -48,7 +48,7 @@ class TwigView extends AbstractView {
     if (!$htmlEscape) {
       $options = ['is_safe' => ['all']];
     }
-    $this->get_rendering_engine()->addFilter(new \Twig_SimpleFilter($name, $function, $options));
+    $this->getRenderingEngine()->addFilter(new \Twig_SimpleFilter($name, $function, $options));
   }
 
   /**
@@ -56,7 +56,7 @@ class TwigView extends AbstractView {
    * @return bool
    */
   public function has_output_filter($name) {
-    return $this->get_rendering_engine()->getFilter($name) instanceof \Twig_SimpleFilter;
+    return $this->getRenderingEngine()->getFilter($name) instanceof \Twig_SimpleFilter;
   }
 
   /**
@@ -70,7 +70,7 @@ class TwigView extends AbstractView {
     if (!$htmlEscape) {
       $options = ['is_safe' => ['all']];
     }
-    $this->get_rendering_engine()->addFunction(new \Twig_SimpleFunction($name, $function, $options));
+    $this->getRenderingEngine()->addFunction(new \Twig_SimpleFunction($name, $function, $options));
   }
 
   /**
@@ -78,7 +78,7 @@ class TwigView extends AbstractView {
    * @return bool
    */
   public function has_output_function($name) {
-    return $this->get_rendering_engine()->getFunction($name) instanceof \Twig_SimpleFunction;
+    return $this->getRenderingEngine()->getFunction($name) instanceof \Twig_SimpleFunction;
   }
 
 }
