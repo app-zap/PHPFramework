@@ -14,6 +14,43 @@ class Nomenclature {
   }
 
   /**
+   * my_field => getMyField
+   *
+   * @param string $fieldName
+   * @return string
+   */
+  public static function fieldname_to_getter($fieldName) {
+    return 'get' . str_replace(' ', '', ucwords(str_replace('_', ' ', $fieldName)));
+  }
+
+  /**
+   * my_field => setMyField
+   *
+   * @param string $fieldName
+   * @return string
+   */
+  public static function fieldname_to_setter($fieldName) {
+    return 'set' . str_replace(' ', '', ucwords(str_replace('_', ' ', $fieldName)));
+  }
+
+  /**
+   * getMyField => my_field
+   *
+   * @param string $getterMethodName
+   * @return string
+   */
+  public static function getter_to_fieldname($getterMethodName) {
+    if (strpos($getterMethodName, 'get_') === 0) {
+      // @deprecated: Since: 1.4, Removal: 1.6, Reason: Use lower camel cased getters instead
+      return substr($getterMethodName, strlen('get_'));
+    }
+    if (strpos($getterMethodName, 'get') === 0) {
+      return strtolower(preg_replace('/([^A-Z])([A-Z])/', "$1_$2", substr($getterMethodName, strlen('get'))));
+    }
+    return FALSE;
+  }
+
+  /**
    * \Vendor\MyApp\Domain\Model\Item => \Vendor\MyApp\Domain\Collection\ItemCollection
    *
    * @param $model_classname

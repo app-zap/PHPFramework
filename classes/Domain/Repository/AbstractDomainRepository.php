@@ -74,8 +74,8 @@ abstract class AbstractDomainRepository {
       $where = ['id' => (int)$record['id']];
       $this->db->update($this->tablename, $record, $where);
     } else {
-      $insert_id = $this->db->insert($this->tablename, $record);
-      $object->set_id($insert_id);
+      $insertId = $this->db->insert($this->tablename, $record);
+      $object->setId($insertId);
     }
   }
 
@@ -148,7 +148,7 @@ abstract class AbstractDomainRepository {
    */
   protected function create_identity_model($id) {
     $model = $this->create_empty_model();
-    $model->set_id($id);
+    $model->setId($id);
     $this->known_items->add($model);
     return $model;
   }

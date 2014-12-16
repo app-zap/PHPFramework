@@ -41,7 +41,7 @@ abstract class AbstractModelCollection implements \Iterator, \Countable {
     $id = (int) $id;
     foreach ($this->items as $item) {
       /** @var AbstractModel $item */
-      if ($item->get_id() === $id) {
+      if ($item->getId() === $id) {
         return $item;
       }
     }

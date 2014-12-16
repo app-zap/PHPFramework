@@ -155,10 +155,10 @@ class RouterTest extends \PHPUnit_Framework_TestCase {
   }
 
   /**
-   * @param $filename
+   * @param string $filename
    */
-  protected function load_routes_file($name) {
-    $routes_file = dirname(__FILE__) . '/_routesfiles/' . $name . '.php';
+  protected function load_routes_file($filename) {
+    $routes_file = dirname(__FILE__) . '/_routesfiles/' . $filename . '.php';
     Configuration::set('application', 'routes_file', $routes_file);
   }
 

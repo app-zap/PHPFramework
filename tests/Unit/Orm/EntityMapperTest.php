@@ -21,38 +21,38 @@ class EntityTestItem extends AbstractModel {
   /**
    * @return \DateTime
    */
-  public function get_date() {
+  public function getDate() {
     return $this->date;
   }
 
   /**
    * @param \DateTime $date
    */
-  public function set_date(\DateTime $date) {
+  public function setDate(\DateTime $date) {
     $this->date = $date;
   }
   /**
    * @return EntityTestItem
    */
-  public function get_parent() {
+  public function getParent() {
     return $this->parent;
   }
   /**
    * @param EntityTestItem $parent
    */
-  public function set_parent(EntityTestItem $parent) {
+  public function setParent(EntityTestItem $parent) {
     $this->parent = $parent;
   }
   /**
    * @return string
    */
-  public function get_title() {
+  public function getTitle() {
     return $this->title;
   }
   /**
    * @param string $title
    */
-  public function set_title($title) {
+  public function setTitle($title) {
     $this->title = $title;
   }
 }
@@ -73,12 +73,12 @@ class EntityMapperTest extends \PHPUnit_Framework_TestCase {
    */
   public function record_to_object() {
     $object = new EntityTestItem();
-    $this->assertNull($this->entityMapper->record_to_object(FALSE, $object));
+    $this->assertNull($this->entityMapper->record_to_object(NULL, $object));
     $this->entityMapper->record_to_object([
       'title' => 'qBzJtCy23R1y+c4wh57eprVW',
       'description' => 'zlMO+cTGtCJYV/eXHvoe+iBe',
     ], $object);
-    $this->assertSame('qBzJtCy23R1y+c4wh57eprVW', $object->get_title());
+    $this->assertSame('qBzJtCy23R1y+c4wh57eprVW', $object->getTitle());
   }
 
   /**
@@ -89,13 +89,13 @@ class EntityMapperTest extends \PHPUnit_Framework_TestCase {
     $timestamp = 1413182967;
     $title = '1kcfRvy6J1WsWtXvgOu/kXba';
     $object = new EntityTestItem();
-    $object->set_title($title);
-    $parent_object = new EntityTestItem();
-    $parent_object->set_id($id);
-    $object->set_parent($parent_object);
+    $object->setTitle($title);
+    $parentObject = new EntityTestItem();
+    $parentObject->setId($id);
+    $object->setParent($parentObject);
     $date = new \DateTime();
     $date->setTimestamp($timestamp);
-    $object->set_date($date);
+    $object->setDate($date);
     $record = $this->entityMapper->object_to_record($object);
     $this->assertSame((string) $timestamp, $record['date']);
     $this->assertSame((string) $id, $record['parent']);

@@ -33,9 +33,9 @@ class ModelTest extends \PHPUnit_Framework_TestCase {
    */
   public function roundtrip_properties() {
     $model = new MyModel();
-    $model->set_id(42);
+    $model->setId(42);
     $model->set_title('My Model');
-    $this->assertSame(42, $model->get_id());
+    $this->assertSame(42, $model->getId());
     $this->assertSame('My Model', $model->get_title());
   }
 

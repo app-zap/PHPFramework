@@ -95,7 +95,7 @@ class PropertyMapperTest extends \PHPUnit_Framework_TestCase {
     /** @var Item $item */
     $item = $this->fixture->map($source, 'AppZap\\PHPFramework\\Tests\\Unit\\Orm\\Item');
     $this->assertTrue($item instanceof Item);
-    $this->assertSame(1, $item->get_id());
+    $this->assertSame(1, $item->getId());
   }
 
   /**

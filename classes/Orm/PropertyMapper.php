@@ -39,13 +39,14 @@ class PropertyMapper {
 
   /**
    * @param int $source
+   * @param string $dateTimeClassName
    * @return \DateTime
    */
-  protected function mapToDateTime($source, $original_target) {
+  protected function mapToDateTime($source, $dateTimeClassName) {
     if (is_numeric($source)) {
       $timestamp = (int)$source;
       /** @var \DateTime $dateTime */
-      $dateTime = new $original_target();
+      $dateTime = new $dateTimeClassName();
       $dateTime->setTimestamp($timestamp);
       return $dateTime;
     } else {
@@ -55,16 +56,17 @@ class PropertyMapper {
 
   /**
    * @param int $source
-   * @param string $target_class
+   * @param string $targetModelClassname
    * @return AbstractModel
+   * @throws PropertyMappingException
    */
-  protected function mapToModel($source, $target_class) {
-    $repository_classname = Nomenclature::modelclassname_to_repositoryclassname($target_class);
-    if (!class_exists($repository_classname)) {
-      throw new PropertyMappingException('Repository class ' . $repository_classname . ' for model ' . $target_class . ' does not exist.', 1409745296);
+  protected function mapToModel($source, $targetModelClassname) {
+    $repositoryClassname = Nomenclature::modelclassname_to_repositoryclassname($targetModelClassname);
+    if (!class_exists($repositoryClassname)) {
+      throw new PropertyMappingException('Repository class ' . $repositoryClassname . ' for model ' . $targetModelClassname . ' does not exist.', 1409745296);
     }
     /** @var \AppZap\PHPFramework\Domain\Repository\AbstractDomainRepository $repository */
-    $repository = $repository_classname::get_instance();
+    $repository = $repositoryClassname::get_instance();
     return $repository->find_by_id((int) $source);
   }
 

@@ -8,10 +8,10 @@ use AppZap\PHPFramework\Domain\Repository\AbstractDomainRepository;
 
 class Item extends AbstractModel {
   protected $title;
-  public function get_title() {
+  public function getTitle() {
     return $this->title;
   }
-  public function set_title($title) {
+  public function setTitle($title) {
     $this->title = $title;
   }
 }
@@ -46,17 +46,17 @@ class AbstractDomainRepositoryTest extends \PHPUnit_Framework_TestCase {
    */
   public function saveAndGetById() {
     $item = new Item();
-    $item->set_title('test');
+    $item->setTitle('test');
     $this->repository->save($item);
-    $id = $item->get_id();
+    $id = $item->getId();
     /** @var Item $gotten_item */
     $gotten_item = $this->repository->find_by_id($id);
-    $this->assertSame('test', $gotten_item->get_title());
-    $gotten_item->set_title('test2');
+    $this->assertSame('test', $gotten_item->getTitle());
+    $gotten_item->setTitle('test2');
     $this->repository->save($item);
     /** @var Item $gotten_item2 */
     $gotten_item2 = $this->repository->find_by_id($id);
-    $this->assertSame('test2', $gotten_item2->get_title());
+    $this->assertSame('test2', $gotten_item2->getTitle());
   }
 
   /**
@@ -64,12 +64,12 @@ class AbstractDomainRepositoryTest extends \PHPUnit_Framework_TestCase {
    */
   public function queryOne() {
     $item = new Item();
-    $item->set_title('queryOneTest');
+    $item->setTitle('queryOneTest');
     $this->repository->save($item);
-    $id = $item->get_id();
+    $id = $item->getId();
     /** @var Item $gotten_item */
     $gotten_item = $this->repository->find_by_title('queryOneTest');
-    $this->assertSame($id, $gotten_item->get_id());
+    $this->assertSame($id, $gotten_item->getId());
   }
 
   /**
