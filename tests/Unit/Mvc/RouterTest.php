@@ -5,8 +5,8 @@ use AppZap\PHPFramework\Configuration\Configuration;
 use AppZap\PHPFramework\Mvc\Router;
 
 class RouterMock extends Router {
-  public function _enhance_regex($regex) {
-    return $this->enhance_regex($regex);
+  public function _enhanceRegex($regex) {
+    return $this->enhanceRegex($regex);
   }
 }
 
@@ -150,7 +150,7 @@ class RouterTest extends \PHPUnit_Framework_TestCase {
       '/user/?/%' => '|^/user/([a-z0-9]*)/|',
     ];
     foreach ($expressions as $before => $after) {
-      $this->assertSame($after, $router->_enhance_regex($before));
+      $this->assertSame($after, $router->_enhanceRegex($before));
     }
   }
 

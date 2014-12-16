@@ -35,11 +35,11 @@ class Router {
    * @throws InvalidHttpResponderException
    */
   public function __construct($resource) {
-    $routes_file = Configuration::get('application', 'routes_file');
-    if (!is_readable($routes_file)) {
-      throw new ApplicationPartMissingException('Routes file "' . $routes_file . '" does not exist.', 1415134009);
+    $routesFile = Configuration::get('application', 'routes_file');
+    if (!is_readable($routesFile)) {
+      throw new ApplicationPartMissingException('Routes file "' . $routesFile . '" does not exist.', 1415134009);
     }
-    $routes = include($routes_file);
+    $routes = include($routesFile);
     if (!is_array($routes)) {
       throw new InvalidHttpResponderException('The routes file did not return an array with routes', 1415135585);
     }
@@ -65,7 +65,7 @@ class Router {
   protected function route($routes, $resource) {
     $resource = ltrim($resource, '/');
     foreach ($routes as $regex => $regex_responder) {
-      $regex = $this->enhance_regex($regex);
+      $regex = $this->enhanceRegex($regex);
       if (preg_match($regex, $resource, $matches)) {
         $matches_count = count($matches);
         for ($i = 1; $i < $matches_count; $i++) {
@@ -85,7 +85,7 @@ class Router {
    * @param string $regex
    * @return string
    */
-  protected function enhance_regex($regex) {
+  protected function enhanceRegex($regex) {
     set_error_handler(function() {}, E_WARNING);
     $isRegularExpression = preg_match($regex, "") !== FALSE;
     restore_error_handler();
