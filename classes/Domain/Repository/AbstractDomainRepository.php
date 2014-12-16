@@ -38,7 +38,7 @@ abstract class AbstractDomainRepository {
   public function __construct() {
     $this->db = StaticDatabaseConnection::getInstance();
     $this->known_items = $this->getNewCollection();
-    $this->entity_mapper = EntityMapper::get_instance();
+    $this->entity_mapper = EntityMapper::getInstance();
     $this->tablename = Nomenclature::repositoryclassname_to_tablename(get_called_class());
   }
 

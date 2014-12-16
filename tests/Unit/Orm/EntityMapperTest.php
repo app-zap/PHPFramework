@@ -65,7 +65,7 @@ class EntityMapperTest extends \PHPUnit_Framework_TestCase {
   protected $entityMapper;
 
   public function setUp() {
-    $this->entityMapper = EntityMapper::get_instance();
+    $this->entityMapper = EntityMapper::getInstance();
   }
 
   /**
