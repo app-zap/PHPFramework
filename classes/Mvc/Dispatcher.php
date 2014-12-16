@@ -43,7 +43,7 @@ class Dispatcher {
   /**
    * @return string
    */
-  public function get_request_method() {
+  public function getRequestMethod() {
     return $this->request_method;
   }
 
@@ -55,7 +55,7 @@ class Dispatcher {
     $output = NULL;
     SignalSlotDispatcher::emitSignal(self::SIGNAL_START_DISPATCHING, $output, $uri, $this->request_method);
     if (is_null($output)) {
-      $output = $this->dispatch_uncached($uri);
+      $output = $this->dispatchUncached($uri);
     };
     SignalSlotDispatcher::emitSignal(self::SIGNAL_OUTPUT_READY, $output, $uri, $this->request_method);
     return $output;
@@ -100,12 +100,12 @@ class Dispatcher {
    * @param $uri
    * @return string
    */
-  protected function dispatch_uncached($uri) {
+  protected function dispatchUncached($uri) {
     $router = $this->getRouter($uri);
     if (is_callable($router->get_responder())) {
-      $output = $this->dispatch_callable($router);
+      $output = $this->dispatchCallable($router);
     } else {
-      $output = $this->dispatch_controller($router);
+      $output = $this->dispatchController($router);
     }
     return $output;
   }
@@ -114,7 +114,7 @@ class Dispatcher {
    * @param Router $router
    * @return string
    */
-  protected function dispatch_callable(Router $router) {
+  protected function dispatchCallable(Router $router) {
     return call_user_func($router->get_responder(), $router->get_parameters());
   }
 
@@ -122,7 +122,7 @@ class Dispatcher {
    * @param Router $router
    * @return string
    */
-  protected function dispatch_controller(Router $router) {
+  protected function dispatchController(Router $router) {
     $responder = $router->get_responder();
     $parameters = $router->get_parameters();
     $request = new Request($this->request_method);
@@ -150,6 +150,14 @@ class Dispatcher {
       $output = '';
     }
     return $output;
+  }
+
+  /**
+   * @return string
+   * @deprecated Since: 1.4, Removal: 1.5, Reason: use ->getRequestMethod() instead
+   */
+  public function get_request_method() {
+    return $this->getRequestMethod();
   }
 
 }

@@ -23,6 +23,7 @@ All notable changes to this project will be documented in this file.
 * Deprecated `BaseSessionInterface->clear_all()`. Use `BaseSessionInterface->clearAll()` instead.
 * Deprecated `Configuration::remove_key()`. Use `Configuration::remove()` instead.
 * Deprecated `Configuration::remove_section()`. Use `Configuration::removeSection()` instead.
+* Deprecated `Dispatcher::get_request_method()`. Use `Dispatcher::getRequestMethod()` instead.
 * Deprecated lower_camel_cased setters and getters in model classes. Use lowerCamelCased method names instead.
 
 ### Removed

@@ -80,15 +80,15 @@ class Bootstrap {
    */
   protected static function invokeDispatcher() {
     $dispatcher = new Dispatcher();
-    if ($dispatcher->get_request_method() === 'cli') {
+    if ($dispatcher->getRequestMethod() === 'cli') {
       $cli_arguments = $_SERVER['argv'];
       array_shift($cli_arguments);
       $resource = '/' . join('/', $cli_arguments);
     } else {
       $resource = $_SERVER['REQUEST_URI'];
-      $uri_path_prefix = '/' . trim(Configuration::get('phpframework', 'uri_path_prefix'), '/');
-      if ($uri_path_prefix && strpos($resource, $uri_path_prefix) === 0) {
-        $resource = substr($resource, strlen($uri_path_prefix));
+      $uriPathPrefix = '/' . trim(Configuration::get('phpframework', 'uri_path_prefix'), '/');
+      if ($uriPathPrefix && strpos($resource, $uriPathPrefix) === 0) {
+        $resource = substr($resource, strlen($uriPathPrefix));
       }
     }
     return $dispatcher->dispatch($resource);
