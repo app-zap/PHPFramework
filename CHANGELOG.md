@@ -27,6 +27,9 @@ All notable changes to this project will be documented in this file.
 * Deprecated `Configuration::remove_section()`. Use `Configuration::removeSection()` instead.
 * Deprecated `Dispatcher->get_request_method()`. Use `Dispatcher->getRequestMethod()` instead.
 * Deprecated `Dispatcher->get_request_method()`. Use `Dispatcher->getRequestMethod()` instead.
+* Deprecated `EntityMapper->object_to_record()`. Use `EntityMapper->objectToRecord()` instead.
+* Deprecated `EntityMapper->record_to_object()`. Use `EntityMapper->recordToObject()` instead.
+* Deprecated `EntityMapper->scalarize_value()`. Use `EntityMapper->scalarizeValue()` instead.
 * Deprecated `HttpStatus::get_status()` Use `HttpStatus::getStatus()` instead.
 * Deprecated `HttpStatus::send_headers()` Use `HttpStatus::sendHeaders()` instead.
 * Deprecated `HttpStatus::set_status()` Use `HttpStatus::setStatus()` instead.

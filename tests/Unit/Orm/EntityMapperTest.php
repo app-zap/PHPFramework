@@ -73,8 +73,8 @@ class EntityMapperTest extends \PHPUnit_Framework_TestCase {
    */
   public function recordToObject() {
     $object = new EntityTestItem();
-    $this->assertNull($this->entityMapper->record_to_object(NULL, $object));
-    $this->entityMapper->record_to_object([
+    $this->assertNull($this->entityMapper->recordToObject(NULL, $object));
+    $this->entityMapper->recordToObject([
       'title' => 'qBzJtCy23R1y+c4wh57eprVW',
       'description' => 'zlMO+cTGtCJYV/eXHvoe+iBe',
     ], $object);
@@ -96,7 +96,7 @@ class EntityMapperTest extends \PHPUnit_Framework_TestCase {
     $date = new \DateTime();
     $date->setTimestamp($timestamp);
     $object->setDate($date);
-    $record = $this->entityMapper->object_to_record($object);
+    $record = $this->entityMapper->objectToRecord($object);
     $this->assertSame((string) $timestamp, $record['date']);
     $this->assertSame((string) $id, $record['parent']);
     $this->assertSame($title, $record['title']);
