@@ -17,8 +17,8 @@ class TestController extends AbstractController {
   /**
    * @return array
    */
-  public function _get_implemented_methods() {
-    return $this->get_implemented_methods();
+  public function _getImplementedMethods() {
+    return $this->getImplementedMethods();
   }
 
   public function get($params) {
@@ -41,7 +41,7 @@ class AbstractControllerTest extends \PHPUnit_Framework_TestCase {
    * @test
    */
   public function implementedMethods() {
-    $implementedMethods = $this->testController->_get_implemented_methods();
+    $implementedMethods = $this->testController->_getImplementedMethods();
     $this->assertTrue(is_array($implementedMethods));
     $this->assertTrue(in_array('get', $implementedMethods));
     $this->assertSame(1, count($implementedMethods));

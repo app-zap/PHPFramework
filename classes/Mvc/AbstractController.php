@@ -61,9 +61,9 @@ abstract class AbstractController {
   /**
    * @throws \Exception
    */
-  public function handle_not_supported_method() {
+  public function handleNotSupportedMethod() {
     HttpStatus::set_status(HttpStatus::STATUS_405_METHOD_NOT_ALLOWED, [
-        HttpStatus::HEADER_FIELD_ALLOW => join(', ', $this->get_implemented_methods())
+        HttpStatus::HEADER_FIELD_ALLOW => join(', ', $this->getImplementedMethods())
     ]);
     HttpStatus::send_headers();
     throw new DispatchingInterruptedException('Request method not allowed', 1415268266);
@@ -72,7 +72,7 @@ abstract class AbstractController {
   /**
    * @return array
    */
-  protected function get_implemented_methods() {
+  protected function getImplementedMethods() {
     $methods = ['options', 'get', 'head', 'post', 'put', 'delete'];
     $implemented_methods = [];
     foreach($methods as $method) {
@@ -91,6 +91,14 @@ abstract class AbstractController {
    */
   public function getTemplateName($defaultTemplateName) {
     return $defaultTemplateName;
+  }
+
+  /**
+   * @throws \Exception
+   * @deprecated Since: 1.4, Removal: 1.5, Reason: use ->handleNotSupportedMethod() instead
+   */
+  public function handle_not_supported_method() {
+    $this->handleNotSupportedMethod();
   }
 
 }

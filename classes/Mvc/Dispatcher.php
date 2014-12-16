@@ -133,7 +133,7 @@ class Dispatcher {
       $controller = new $responder($request, $response);
       if (!method_exists($controller, $this->request_method)) {
         // Send HTTP 405 response
-        $controller->handle_not_supported_method($this->request_method);
+        $controller->handleNotSupportedMethod($this->request_method);
       }
       $default_template_name = $this->determineDefaultTemplateName($controller);
       if ($default_template_name) {
