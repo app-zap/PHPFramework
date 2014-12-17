@@ -25,6 +25,7 @@ class HttpStatus {
 
   const STATUS_500_INTERNAL_SERVER_ERROR = 500;
   const STATUS_501_NOT_IMPLEMENTED = 501;
+  const STATUS_503_SERVICE_UNAVAILABLE = 503;
 
   /**
    * @var array
