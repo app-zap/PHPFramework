@@ -49,21 +49,21 @@ abstract class AbstractModelCollection implements \Iterator, \Countable {
   }
 
   /**
-   * @return mixed
+   * @return AbstractModel
    */
   public function current() {
     return current($this->items);
   }
 
   /**
-   * @return mixed
+   * @return AbstractModel
    */
   public function next() {
     return next($this->items);
   }
 
   /**
-   * @return mixed
+   * @return string
    */
   public function key() {
     return key($this->items);
