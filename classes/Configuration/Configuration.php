@@ -25,21 +25,22 @@ class Configuration {
   /**
    * @param string $section
    * @param string $namespace
+   * @param array $defaultValues
    * @return array
    */
-  public static function getSection($section, $namespace = NULL) {
+  public static function getSection($section, $namespace = NULL, $defaultValues = []) {
     if (isset(self::$configuration[$section])) {
       if ($namespace) {
-        $filtered = [];
+        $configuration = [];
         foreach (self::$configuration[$section] as $key => $value) {
           if (strpos($key, $namespace . '.') === 0) {
-            $filtered[substr($key, strlen($namespace) + 1)] = $value;
+            $configuration[substr($key, strlen($namespace) + 1)] = $value;
           }
         }
-        return $filtered;
       } else {
-        return self::$configuration[$section];
+        $configuration = self::$configuration[$section];
       }
+      return array_merge($defaultValues, $configuration);
     } else {
       return NULL;
     }

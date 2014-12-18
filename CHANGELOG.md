@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 * A controller can implement the `getTemplateName()` method to modify the default twig template name.
+* `Configuration::getSection()` now has an optional 3rd parameter (array) `$defaultValues`
 
 ### Changed
 

@@ -102,4 +102,31 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase {
     $this->assertSame(1, count(Configuration::getSection('othersection')));
   }
 
+  /**
+   * @test
+   */
+  public function getSectionDefaultValues() {
+    Configuration::reset();
+    Configuration::set('test', 'key1', 1);
+    Configuration::set('test', 'key3', 3);
+    $configuration = Configuration::getSection('test', '', ['key1' => FALSE, 'key2' => 2]);
+    $this->assertSame(1, $configuration['key1']);
+    $this->assertSame(2, $configuration['key2']);
+    $this->assertSame(3, $configuration['key3']);
+  }
+
+  /**
+   * @test
+   */
+  public function getSectionDefaultValuesNamespace() {
+    Configuration::reset();
+    Configuration::set('test', 'ns1.key1', 1);
+    Configuration::set('test', 'ns2.key2', FALSE);
+    Configuration::set('test', 'ns1.key3', 3);
+    $configuration = Configuration::getSection('test', 'ns1', ['key1' => FALSE, 'key2' => 2]);
+    $this->assertSame(1, $configuration['key1']);
+    $this->assertSame(2, $configuration['key2']);
+    $this->assertSame(3, $configuration['key3']);
+  }
+
 }
