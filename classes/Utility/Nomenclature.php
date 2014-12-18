@@ -9,7 +9,7 @@ class Nomenclature {
    * @param $collectionClassname
    * @return string
    */
-  public static function collectionclassnameToRepositoryclassname($collectionClassname) {
+  public static function collectionClassnameToRepositoryClassname($collectionClassname) {
     return str_replace('Collection', 'Repository', $collectionClassname);
   }
 
@@ -112,7 +112,7 @@ class Nomenclature {
    * @deprecated Since: 1.4, Removal: 1.5, Reason: use ->collectionclassnameToRepositoryclassname() instead
    */
   public static function collectionclassname_to_repositoryclassname($collectionClassname) {
-    return self::collectionclassnameToRepositoryclassname($collectionClassname);
+    return self::collectionClassnameToRepositoryClassname($collectionClassname);
   }
 
   /**

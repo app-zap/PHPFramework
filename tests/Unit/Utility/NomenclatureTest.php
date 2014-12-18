@@ -22,7 +22,7 @@ class NomenclatureTest extends \PHPUnit_Framework_TestCase {
    * @test
    */
   public function collectionclassnameToRepositoryclassname() {
-    $this->assertSame($this->names['repository'], Nomenclature::collectionclassnameToRepositoryclassname($this->names['collection']));
+    $this->assertSame($this->names['repository'], Nomenclature::collectionClassnameToRepositoryClassname($this->names['collection']));
   }
 
   /**
