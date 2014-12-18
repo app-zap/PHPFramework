@@ -32,6 +32,9 @@ class MailService {
     if (!$mailConfiguration['smtp_user']) {
       return \Swift_MailTransport::newInstance();
     }
+    if ($mailConfiguration['smtp_encryption'] === 'none') {
+      $mailConfiguration['smtp_encryption'] = NULL;
+    }
     if (!$mailConfiguration['smtp_port']) {
       if ($mailConfiguration['smtp_encryption'] === 'ssl') {
         $mailConfiguration['smtp_port'] = '465';
