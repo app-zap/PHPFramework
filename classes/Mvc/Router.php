@@ -104,7 +104,7 @@ class Router {
       } else {
         $regex = substr($regex, 0, strlen($regex) - 1);
       }
-      $regex = str_replace('?', '([a-z0-9]*)', $regex);
+      $regex = str_replace('?', '([a-zA-Z0-9]*)', $regex);
       $regex = '|' . $regex . '|';
     }
     return $regex;

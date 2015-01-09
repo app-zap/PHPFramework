@@ -147,7 +147,7 @@ class RouterTest extends \PHPUnit_Framework_TestCase {
       'foo/' => '|^foo/$|',
       'foo/%' => '|^foo/|',
       '%foo/' => '|foo/$|',
-      '/user/?/%' => '|^/user/([a-z0-9]*)/|',
+      '/user/?/%' => '|^/user/([a-zA-Z0-9]*)/|',
     ];
     foreach ($expressions as $before => $after) {
       $this->assertSame($after, $router->_enhanceRegex($before));
