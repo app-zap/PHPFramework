@@ -11,6 +11,8 @@ All notable changes to this project will be documented in this file.
 
 ### Removed
 
+* Removed [numerous methods](https://github.com/app-zap/PHPFramework/commit/77137cf25a12e8a7879bac24457874ba20639248) that were deprecated and marked for removal in 1.5.
+
 ## 1.4, 2015-01-15 21:13:59
 
 ### Added
