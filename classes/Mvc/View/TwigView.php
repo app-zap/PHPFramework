@@ -81,44 +81,4 @@ class TwigView extends AbstractView {
     return $this->getRenderingEngine()->getFunction($name) instanceof \Twig_SimpleFunction;
   }
 
-  /**
-   * @param string $name Name of the filter to use in the template
-   * @param mixed $function Name of the function to execute for the value from the template
-   * @param bool $htmlEscape
-   * @deprecated Since: 1.4, Removal: 1.5, Reason: Use ->addOutputFilter() instead
-   */
-  public function add_output_filter($name, $function, $htmlEscape = FALSE) {
-    $this->addOutputFilter($name, $function, $htmlEscape);
-  }
-
-  /**
-   * @param string $name
-   * @return bool
-   * @deprecated Since: 1.4, Removal: 1.5, Reason: Use ->hasOutputFilter() instead
-   */
-  public function has_output_filter($name) {
-    return $this->hasOutputFilter($name);
-  }
-
-  /**
-   * Adds a function to use in the template
-   *
-   * @param string $name string Name of the function to use in the template
-   * @param mixed $function string Name of the function to execute for the value from the template
-   * @param bool $htmlEscape
-   * @deprecated Since: 1.4, Removal: 1.5, Reason: Use ->addOutputFunction() instead
-   */
-  public function add_output_function($name, $function, $htmlEscape = FALSE) {
-    $this->addOutputFunction($name, $function, $htmlEscape);
-  }
-
-  /**
-   * @param string $name
-   * @return bool
-   * @deprecated Since: 1.4, Removal: 1.5, Reason: Use ->hasOutputFunction() instead
-   */
-  public function has_output_function($name) {
-    return $this->hasOutputFunction($name);
-  }
-
 }

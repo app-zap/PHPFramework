@@ -55,12 +55,4 @@ class BaseHttpAuthentication {
         sha1($this->password) === $httpAuthentication[$this->name];
   }
 
-  /**
-   * @throws \Exception
-   * @deprecated Since: 1.4, Removal: 1.5, Reason: Use ->checkAuthentication() instead
-   */
-  public function check_authentication() {
-    $this->checkAuthentication();
-  }
-
 }

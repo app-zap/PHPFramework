@@ -90,29 +90,4 @@ class HttpStatus {
     self::$additionalHeaders = [];
   }
 
-  /**
-   * @param int $code
-   * @param string $options
-   * @throws \Exception
-   * @deprecated Since: 1.4, Removal: 1.5, Reason: use ->setStatus() instead
-   */
-  public static function set_status($code, $options = NULL) {
-    self::setStatus($code, $options);
-  }
-
-  /**
-   * @return int
-   * @deprecated Since: 1.4, Removal: 1.5, Reason: use ->getStatus() instead
-   */
-  public static function get_status() {
-    return self::getStatus();
-  }
-
-  /**
-   * @deprecated Since: 1.4, Removal: 1.5, Reason: use ->sendHeaders() instead
-   */
-  public static function send_headers() {
-    self::sendHeaders();
-  }
-
 }

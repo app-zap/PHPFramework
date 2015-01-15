@@ -27,12 +27,6 @@ abstract class AbstractController {
 
   /**
    * @var bool
-   * @deprecated Since: 1.4, Removal: 1.5, Reason: Use ->requireHttpAuthentication instead
-   */
-  protected $require_http_authentication = NULL;
-
-  /**
-   * @var bool
    */
   protected $requireHttpAuthentication = FALSE;
 
@@ -41,11 +35,6 @@ abstract class AbstractController {
    * @param AbstractView $response
    */
   public function __construct(Request $request, AbstractView $response) {
-    /** @noinspection PhpDeprecationInspection */
-    if ($this->require_http_authentication !== NULL) {
-      /** @noinspection PhpDeprecationInspection */
-      $this->requireHttpAuthentication = $this->require_http_authentication;
-    }
     SignalSlotDispatcher::emitSignal(self::SIGNAL_INIT_REQUEST, $request);
     SignalSlotDispatcher::emitSignal(self::SIGNAL_INIT_RESPONSE, $response);
     $this->request = $request;
@@ -102,14 +91,6 @@ abstract class AbstractController {
    */
   public function getTemplateName($defaultTemplateName) {
     return $defaultTemplateName;
-  }
-
-  /**
-   * @throws \Exception
-   * @deprecated Since: 1.4, Removal: 1.5, Reason: use ->handleNotSupportedMethod() instead
-   */
-  public function handle_not_supported_method() {
-    $this->handleNotSupportedMethod();
   }
 
 }
