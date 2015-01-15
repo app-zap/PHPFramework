@@ -152,12 +152,4 @@ class Dispatcher {
     return $output;
   }
 
-  /**
-   * @return string
-   * @deprecated Since: 1.4, Removal: 1.5, Reason: use ->getRequestMethod() instead
-   */
-  public function get_request_method() {
-    return $this->getRequestMethod();
-  }
-
 }

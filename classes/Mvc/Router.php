@@ -110,20 +110,4 @@ class Router {
     return $regex;
   }
 
-  /**
-   * @return array
-   * @deprecated Since: 1.4, Removal: 1.5, Reason: use ->getParameters() instead
-   */
-  public function get_parameters() {
-    return $this->getParameters();
-  }
-
-  /**
-   * @return mixed
-   * @deprecated Since: 1.4, Removal: 1.5, Reason: use ->getResponder() instead
-   */
-  public function get_responder() {
-    return $this->getResponder();
-  }
-
 }

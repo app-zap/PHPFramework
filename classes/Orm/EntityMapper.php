@@ -63,32 +63,4 @@ class EntityMapper {
     return (string) $value;
   }
 
-  /**
-   * @param array $record
-   * @param AbstractModel $object
-   * @return AbstractModel
-   * @deprecated Since: 1.4, Removal: 1.5, Reason: Use ->recordToObject() instead
-   */
-  public function record_to_object($record, AbstractModel $object) {
-    return $this->recordToObject($record, $object);
-  }
-
-  /**
-   * @param AbstractModel $object
-   * @return array
-   * @deprecated Since: 1.4, Removal: 1.5, Reason: Use ->objectToRecord() instead
-   */
-  public function object_to_record(AbstractModel $object) {
-    return $this->objectToRecord($object);
-  }
-
-  /**
-   * @param mixed $value
-   * @return string
-   * @deprecated Since: 1.4, Removal: 1.5, Reason: Use ->scalarizeValue() instead
-   */
-  public function scalarize_value($value) {
-    return $this->scalarizeValue($value);
-  }
-
 }

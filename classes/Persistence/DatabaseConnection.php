@@ -446,24 +446,4 @@ class DatabaseConnection {
     return sprintf('`%s` %s %s', $field, $operand, $value);
   }
 
-  /**
-   * Checks whether the connection to the database is established
-   *
-   * @return bool
-   * @deprecated Since: 1.4, Removal: 1.5, Reason: Use ->isConnected() instead
-   */
-  public function is_connected() {
-    return $this->isConnected();
-  }
-
-  /**
-   * Returns the auto increment ID of the last query
-   *
-   * @return int
-   * @deprecated Since: 1.4, Removal: 1.5, Reason: Use ->lastId() instead
-   */
-  public function last_id() {
-    return $this->lastId();
-  }
-
 }

@@ -153,48 +153,4 @@ abstract class AbstractDomainRepository {
     return $model;
   }
 
-  /**
-   * @param int $id
-   * @return AbstractModel
-   * @deprecated Since: 1.4, Removal: 1.5, Reason: use ->findById() instead
-   */
-  public function find_by_id($id) {
-    return $this->findById($id);
-  }
-
-  /**
-   * @return AbstractModelCollection
-   * @deprecated Since: 1.4, Removal: 1.5, Reason: use ->findAll() instead
-   */
-  public function find_all() {
-    return $this->findAll();
-  }
-
-  /**
-   * @param array $where
-   * @return AbstractModel
-   * @deprecated Since: 1.4, Removal: 1.5, Reason: use ->queryOne() instead
-   */
-  protected function query_one($where = NULL) {
-    return $this->queryOne($where);
-  }
-
-  /**
-   * @param array $where
-   * @return AbstractModelCollection
-   * @deprecated Since: 1.4, Removal: 1.5, Reason: use ->queryMany() instead
-   */
-  protected function query_many($where = NULL) {
-    return $this->queryMany($where);
-  }
-
-  /**
-   * @param int $id
-   * @return AbstractModel
-   * @deprecated Since: 1.4, Removal: 1.5, Reason: use ->createIdentityModel() instead
-   */
-  protected function create_identity_model($id) {
-    return $this->createIdentityModel($id);
-  }
-
 }

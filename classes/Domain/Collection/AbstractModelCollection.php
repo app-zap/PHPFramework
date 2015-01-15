@@ -91,29 +91,4 @@ abstract class AbstractModelCollection implements \Iterator, \Countable {
     return count($this->items);
   }
 
-  /**
-   * @param $id
-   * @return AbstractModel
-   * @deprecated Since: 1.4, Removal: 1.5, Reason: use ->getById() instead
-   */
-  public function get_by_id($id) {
-    return $this->getById($id);
-  }
-
-  /**
-   * @param AbstractModel $model
-   * @deprecated Since: 1.4, Removal: 1.5, Reason: use ->add() instead
-   */
-  public function set_item(AbstractModel $model) {
-    $this->add($model);
-  }
-
-  /**
-   * @param AbstractModel $model
-   * @deprecated Since: 1.4, Removal: 1.5, Reason: use ->remove() instead
-   */
-  public function remove_item(AbstractModel $model) {
-    $this->remove($model);
-  }
-
 }

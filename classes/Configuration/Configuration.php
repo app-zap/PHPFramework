@@ -84,21 +84,4 @@ class Configuration {
     self::$configuration = [];
   }
 
-  /**
-   * @param string $section
-   * @param string $key
-   * @deprecated Since: 1.4, Removal: 1.5, Reason: Use ->remove() instead
-   */
-  public static function remove_key($section, $key) {
-    self::remove($section, $key);
-  }
-
-  /**
-   * @param string $section
-   * @deprecated Since: 1.4, Removal: 1.5, Reason: Use ->removeSection() instead
-   */
-  public static function remove_section($section) {
-    self::removeSection($section);
-  }
-
 }

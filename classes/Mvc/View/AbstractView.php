@@ -172,23 +172,4 @@ abstract class AbstractView {
     return $template;
   }
 
-  /**
-   * @param string $templateName
-   * @deprecated Since: 1.4, Removal: 1.5, Reason: Use ->setTemplateName() instead
-   */
-  public function set_template_name($templateName) {
-    $this->setTemplateName($templateName);
-  }
-
-  /**
-   * Sends an json encoded object to the browser using correct content type
-   *
-   * @param mixed $object Object (most likely an array) to json encode
-   * @param string $callback If set to string answer will be sent as JSONP output with this function
-   * @deprecated Since: 1.4, Removal: 1.5, Reason: Use ->jsonOutput() instead
-   */
-  public function json_output($object, $callback = NULL) {
-    $this->jsonOutput($object, $callback);
-  }
-
 }

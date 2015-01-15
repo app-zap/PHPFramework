@@ -35,12 +35,4 @@ trait Singleton {
     throw new SingletonException('Unserializing ' . __CLASS__ . ' is not allowed.', 1412682032);
   }
 
-  /**
-   * @return object
-   * @deprecated Since: 1.4, Removal: 1.5, Reason: Use ->getInstance() instead
-   */
-  public static function get_instance() {
-    return self::getInstance();
-  }
-
 }
