@@ -10,7 +10,11 @@ class Request {
     'get' => ['default' => 'get', 'fallback' => 'post'],
     'post' => ['default' => 'post', 'fallback' => 'get'],
     'head' => ['default' => 'get', 'fallback' => 'post'],
-    'cli' => ['default' => 'cli'],
+    'cli' => ['default' => 'body'],
+    'put' => ['default' => 'body'],
+    'delete' => ['default' => 'body'],
+    'patch' => ['default' => 'body'],
+    'options' => ['default' => 'body'],
   ];
 
   /**
