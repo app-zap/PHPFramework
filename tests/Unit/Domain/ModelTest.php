@@ -13,14 +13,14 @@ class MyModel extends AbstractModel {
   /**
    * @return string
    */
-  public function get_title() {
+  public function getTitle() {
     return $this->title;
   }
 
   /**
    * @param string $title
    */
-  public function set_title($title) {
+  public function setTitle($title) {
     $this->title = $title;
   }
 
@@ -31,12 +31,12 @@ class ModelTest extends \PHPUnit_Framework_TestCase {
   /**
    * @test
    */
-  public function roundtrip_properties() {
+  public function roundtripProperties() {
     $model = new MyModel();
-    $model->set_id(42);
-    $model->set_title('My Model');
-    $this->assertSame(42, $model->get_id());
-    $this->assertSame('My Model', $model->get_title());
+    $model->setId(42);
+    $model->setTitle('My Model');
+    $this->assertSame(42, $model->getId());
+    $this->assertSame('My Model', $model->getTitle());
   }
 
 }

@@ -1,5 +1,4 @@
 <?php
-
 namespace AppZap\PHPFramework\Utility;
 
 use AppZap\PHPFramework\Configuration\Configuration;

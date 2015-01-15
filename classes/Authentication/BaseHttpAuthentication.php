@@ -34,26 +34,33 @@ class BaseHttpAuthentication {
   /**
    * @throws \Exception
    */
-  public function check_authentication() {
-    $http_authentication = Configuration::getSection('phpframework', 'authentication.http');
-    if (is_array($http_authentication) && !$this->is_authenticated()) {
-      HttpStatus::set_status(HttpStatus::STATUS_401_UNAUTHORIZED);
+  public function checkAuthentication() {
+    $httpAuthentication = Configuration::getSection('phpframework', 'authentication.http');
+    if (is_array($httpAuthentication) && !$this->isAuthenticated()) {
+      HttpStatus::setStatus(HttpStatus::STATUS_401_UNAUTHORIZED);
       header('WWW-Authenticate: Basic realm="Login"');
-      echo('Login required!');
-      exit;
+      throw new HttpAuthenticationRequiredException('HTTP authentication was required but not fulfilled.', 1415266170);
     }
   }
 
   /**
    * @return bool
    */
-  protected function is_authenticated() {
-    $http_authentication = Configuration::getSection('phpframework', 'authentication.http');
+  protected function isAuthenticated() {
+    $httpAuthentication = Configuration::getSection('phpframework', 'authentication.http');
     return
         $this->name !== NULL &&
         $this->password !== NULL &&
-        array_key_exists($this->name, $http_authentication) &&
-        sha1($this->password) === $http_authentication[$this->name];
+        array_key_exists($this->name, $httpAuthentication) &&
+        sha1($this->password) === $httpAuthentication[$this->name];
+  }
+
+  /**
+   * @throws \Exception
+   * @deprecated Since: 1.4, Removal: 1.5, Reason: Use ->checkAuthentication() instead
+   */
+  public function check_authentication() {
+    $this->checkAuthentication();
   }
 
 }

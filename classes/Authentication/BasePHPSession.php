@@ -28,7 +28,7 @@ class BasePHPSession implements BaseSessionInterface {
    * @return mixed
    * @throws BaseSessionUndefinedIndexException if $key not in $_SESSION
    */
-  public function get($key, $default = null) {
+  public function get($key, $default = NULL) {
     $key = (string)$key;
 
     if($this->exist($key)) {
@@ -66,8 +66,17 @@ class BasePHPSession implements BaseSessionInterface {
   /**
    * @return BasePHPSession
    */
-  public function clear_all() {
+  public function clearAll() {
     session_unset();
     return $this;
   }
+
+  /**
+   * @return BasePHPSession
+   * @deprecated Since 1.4, Removal: 1.5, Reason: Use ->clearAll() instead
+   */
+  public function clear_all() {
+    $this->clearAll();
+  }
+
 }

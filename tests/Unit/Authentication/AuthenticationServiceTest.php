@@ -8,13 +8,11 @@ class AuthenticationService extends \AppZap\PHPFramework\Authentication\Authenti
 }
 
 class NullSession implements BaseSessionInterface {
-  public function __construct() {
-  }
 
   public function set($key, $value) {
   }
 
-  public function get($key, $default = null) {
+  public function get($key, $default = NULL) {
     return NULL;
   }
 
@@ -25,14 +23,14 @@ class NullSession implements BaseSessionInterface {
   public function clear($key) {
   }
 
-  public function clear_all() {
+  public function clearAll() {
   }
 }
 
 class SessionNotImplementingTheInterface {
 }
 
-class AuthenticationServiceTest extends \PHPUnit_Framework_TestCase{
+class AuthenticationServiceTest extends \PHPUnit_Framework_TestCase {
 
   /**
    * @test
@@ -47,7 +45,7 @@ class AuthenticationServiceTest extends \PHPUnit_Framework_TestCase{
    * @expectedException \AppZap\PHPFramework\Authentication\BaseSessionException
    * @expectedExceptionCode 1409732473
    */
-  public function construct_with_session_class_not_implementing_the_interface() {
+  public function constructWithSessionClassNotImplementingTheInterface() {
     Configuration::set('phpframework', 'authentication.sessionclass', '\\AppZap\\PHPFramework\\Tests\\Unit\\Authentication\\SessionNotImplementingTheInterface');
     new AuthenticationService();
   }
@@ -57,7 +55,7 @@ class AuthenticationServiceTest extends \PHPUnit_Framework_TestCase{
    * @expectedException \AppZap\PHPFramework\Authentication\BaseSessionException
    * @expectedExceptionCode 1409732479
    */
-  public function construct_with_not_existing_session_class() {
+  public function constructWithNotExistingSessionClass() {
     Configuration::set('phpframework', 'authentication.sessionclass', '\\AppZap\\PHPFramework\\Tests\\Unit\\Authentication\\NotExisting');
     new AuthenticationService();
   }

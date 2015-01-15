@@ -17,20 +17,20 @@ class PropertyMapper {
       return $source;
     }
     $target = ltrim($target, '\\');
-    $original_target = $target;
+    $originalTarget = $target;
     $value = NULL;
     while(TRUE) {
       switch ($target) {
         case 'AppZap\\PHPFramework\\Domain\\Model\\AbstractModel':
-          $value = $this->mapToModel($source, $original_target);
+          $value = $this->mapToModel($source, $originalTarget);
           break(2);
         case 'DateTime':
-          $value = $this->mapToDateTime($source, $original_target);
+          $value = $this->mapToDateTime($source, $originalTarget);
           break(2);
         default:
           $target = get_parent_class($target);
           if ($target === FALSE) {
-            throw new PropertyMappingNotSupportedForTargetClassException('No conversion found for type "' . $original_target . '"', 1409745080);
+            throw new PropertyMappingException('No conversion found for type "' . $originalTarget . '"', 1409745080);
           }
       }
     }
@@ -39,13 +39,14 @@ class PropertyMapper {
 
   /**
    * @param int $source
+   * @param string $dateTimeClassName
    * @return \DateTime
    */
-  protected function mapToDateTime($source, $original_target) {
+  protected function mapToDateTime($source, $dateTimeClassName) {
     if (is_numeric($source)) {
       $timestamp = (int)$source;
       /** @var \DateTime $dateTime */
-      $dateTime = new $original_target();
+      $dateTime = new $dateTimeClassName();
       $dateTime->setTimestamp($timestamp);
       return $dateTime;
     } else {
@@ -55,20 +56,18 @@ class PropertyMapper {
 
   /**
    * @param int $source
-   * @param string $target_class
+   * @param string $targetModelClassname
    * @return AbstractModel
+   * @throws PropertyMappingException
    */
-  protected function mapToModel($source, $target_class) {
-    $repository_classname = Nomenclature::modelclassname_to_repositoryclassname($target_class);
-    if (!class_exists($repository_classname)) {
-      throw new NoRepositoryForModelFoundException('Repository class ' . $repository_classname . ' for model ' . $target_class . ' does not exist.', 1409745296);
+  protected function mapToModel($source, $targetModelClassname) {
+    $repositoryClassname = Nomenclature::modelClassnameToRepositoryClassname($targetModelClassname);
+    if (!class_exists($repositoryClassname)) {
+      throw new PropertyMappingException('Repository class ' . $repositoryClassname . ' for model ' . $targetModelClassname . ' does not exist.', 1409745296);
     }
     /** @var \AppZap\PHPFramework\Domain\Repository\AbstractDomainRepository $repository */
-    $repository = $repository_classname::get_instance();
-    return $repository->find_by_id((int) $source);
+    $repository = $repositoryClassname::getInstance();
+    return $repository->findById((int) $source);
   }
 
 }
-
-class PropertyMappingNotSupportedForTargetClassException extends \InvalidArgumentException {}
-class NoRepositoryForModelFoundException extends \InvalidArgumentException{}

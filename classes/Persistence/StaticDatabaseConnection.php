@@ -10,7 +10,6 @@ class StaticDatabaseConnection {
 
   /**
    * @return DatabaseConnection
-   * @throws DBConnectionException
    */
   public static function getInstance() {
     if(!self::$instance) {

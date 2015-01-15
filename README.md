@@ -9,16 +9,16 @@ Since the fork wide parts of the system were rewritten or heavily modified. Here
 * Support for Domain Driven Design, including Domain Model Objects, Repositories, Collections and an [ORM](https://en.wikipedia.org/wiki/Object-relational_mapping) mechanism.
 
 The fork is not compatible to the original framework and not compatible to its own previous versions.
-After the next release (2.0) we'll switch to a more backwards compatible development.
+After the next major release (2.0) we'll switch to a more backwards compatible development.
 
 # Requirements
 
-Currently the best supported setup for this framework is:
+Successfully tested with
 
 - Debian / Ubuntu Linux
-- PHP 5.4.0 or greater
-- Apache 2.2 with PHP running with mod\_php and mod\_rewrite enabled *(PHP over CGI should also work)*
-- MySQL 5.1 *(but 5.0 or even 4.x should work as well)*
+- PHP from 5.4.0 up to 5.6.2
+- Apache or nginx
+- MySQL 5.6
 
 # Setup
 
@@ -29,7 +29,7 @@ Your project `composer.json` file might look like this:
     {
       "name": "vendor/myproject",
       "require": {
-        "appzap/phpframework": "dev-develop"
+        "app-zap/phpframework": "dev-develop"
       },
       "autoload": {
         "psr-4": {
@@ -48,11 +48,10 @@ Inside your application directory use this structure:
 * `templates/` - Your [twig](http://twig.sensiolabs.org/) templates
 * `routes.php` - Returns an array with regular expression routes mapping to controller class names
 
-If you need a `.gitignore` start here:
+Start with the following `.gitignore` file:
 
-    .DS_Store
-    .idea/
     vendor/
     settings_local.ini
 
 [![Build Status](https://travis-ci.org/app-zap/PHPFramework.svg?branch=develop)](https://travis-ci.org/app-zap/PHPFramework)
+[![SensioLabsInsight](https://insight.sensiolabs.com/projects/cc3c64ed-fcd3-4be9-8f6c-ba7ad0adad11/small.png)](https://insight.sensiolabs.com/projects/cc3c64ed-fcd3-4be9-8f6c-ba7ad0adad11)

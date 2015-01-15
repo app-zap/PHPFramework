@@ -25,30 +25,31 @@ class HttpStatus {
 
   const STATUS_500_INTERNAL_SERVER_ERROR = 500;
   const STATUS_501_NOT_IMPLEMENTED = 501;
+  const STATUS_503_SERVICE_UNAVAILABLE = 503;
 
   /**
    * @var array
    */
-  protected static $additional_headers = [];
+  protected static $additionalHeaders = [];
 
   /**
    * @param int $code
    * @param string $options
    * @throws \Exception
    */
-  public static function set_status($code, $options = NULL) {
+  public static function setStatus($code, $options = NULL) {
     $code = (int) $code;
     // Status codes with optional "Location"
     if (in_array($code, [self::STATUS_201_CREATED])) {
       if (is_array($options) && array_key_exists(self::HEADER_FIELD_LOCATION, $options)) {
-        self::$additional_headers[self::HEADER_FIELD_LOCATION] = $options[self::HEADER_FIELD_LOCATION];
+        self::$additionalHeaders[self::HEADER_FIELD_LOCATION] = $options[self::HEADER_FIELD_LOCATION];
       }
     }
     // Status codes with required "Location"
     if (in_array($code, [self::STATUS_301_MOVED_PERMANENTLY, self::STATUS_307_TEMPORARY_REDIRECT])) {
       if (
           !(
-              array_key_exists(self::HEADER_FIELD_LOCATION, self::$additional_headers) ||
+              array_key_exists(self::HEADER_FIELD_LOCATION, self::$additionalHeaders) ||
               (
                   is_array($options) && array_key_exists(self::HEADER_FIELD_LOCATION, $options)
               )
@@ -57,16 +58,16 @@ class HttpStatus {
         throw new \Exception('Tried to set HTTP status code ' . $code . ' without required location field');
       }
       if (array_key_exists(self::HEADER_FIELD_LOCATION, $options)) {
-        self::$additional_headers[self::HEADER_FIELD_LOCATION] = $options[self::HEADER_FIELD_LOCATION];
+        self::$additionalHeaders[self::HEADER_FIELD_LOCATION] = $options[self::HEADER_FIELD_LOCATION];
       }
     }
     // Status codes with required "Allow"
     if (in_array($code, [self::STATUS_405_METHOD_NOT_ALLOWED])) {
-      if (!(array_key_exists(self::HEADER_FIELD_ALLOW, self::$additional_headers) || array_key_exists(self::HEADER_FIELD_ALLOW, $options))) {
+      if (!(array_key_exists(self::HEADER_FIELD_ALLOW, self::$additionalHeaders) || array_key_exists(self::HEADER_FIELD_ALLOW, $options))) {
         throw new \Exception('Tried to set HTTP status code ' . $code . ' without required allow field');
       }
       if (array_key_exists(self::HEADER_FIELD_ALLOW, $options)) {
-        self::$additional_headers[self::HEADER_FIELD_ALLOW] = $options[self::HEADER_FIELD_ALLOW];
+        self::$additionalHeaders[self::HEADER_FIELD_ALLOW] = $options[self::HEADER_FIELD_ALLOW];
       }
     }
     http_response_code($code);
@@ -75,19 +76,43 @@ class HttpStatus {
   /**
    * @return int
    */
-  public static function get_status() {
+  public static function getStatus() {
     return http_response_code();
   }
 
   /**
    *
    */
-  public static function send_headers() {
-    foreach (self::$additional_headers as $field => $value) {
+  public static function sendHeaders() {
+    foreach (self::$additionalHeaders as $field => $value) {
       header($field . ':' . $value);
     }
-    self::$additional_headers = [];
+    self::$additionalHeaders = [];
   }
 
+  /**
+   * @param int $code
+   * @param string $options
+   * @throws \Exception
+   * @deprecated Since: 1.4, Removal: 1.5, Reason: use ->setStatus() instead
+   */
+  public static function set_status($code, $options = NULL) {
+    self::setStatus($code, $options);
+  }
+
+  /**
+   * @return int
+   * @deprecated Since: 1.4, Removal: 1.5, Reason: use ->getStatus() instead
+   */
+  public static function get_status() {
+    return self::getStatus();
+  }
+
+  /**
+   * @deprecated Since: 1.4, Removal: 1.5, Reason: use ->sendHeaders() instead
+   */
+  public static function send_headers() {
+    self::sendHeaders();
+  }
 
 }

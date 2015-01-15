@@ -2,8 +2,6 @@
 namespace AppZap\PHPFramework\Mvc;
 
 use AppZap\PHPFramework\Cache\CacheFactory;
-use AppZap\PHPFramework\Configuration\Configuration;
-use AppZap\PHPFramework\Cache\Cache;
 use AppZap\PHPFramework\Mvc\View\TwigView;
 use AppZap\PHPFramework\SignalSlot\Dispatcher as SignalSlotDispatcher;
 
@@ -14,7 +12,9 @@ use AppZap\PHPFramework\SignalSlot\Dispatcher as SignalSlotDispatcher;
  */
 class Dispatcher {
 
+  const SIGNAL_CONSTRUCT = 1415092297;
   const SIGNAL_OUTPUT_READY = 1413366871;
+  const SIGNAL_START_DISPATCHING = 1415798962;
 
   /**
    * @var \Nette\Caching\Cache
@@ -24,7 +24,7 @@ class Dispatcher {
   /**
    * @var string
    */
-  protected $request_method;
+  protected $requestMethod;
 
   /**
    * @var string
@@ -35,6 +35,7 @@ class Dispatcher {
    * @throws ApplicationPartMissingException
    */
   public function __construct() {
+    SignalSlotDispatcher::emitSignal(self::SIGNAL_CONSTRUCT);
     $this->cache = CacheFactory::getCache();
     $this->determineRequestMethod();
   }
@@ -42,60 +43,21 @@ class Dispatcher {
   /**
    * @return string
    */
-  public function get_request_method() {
-    return $this->request_method;
+  public function getRequestMethod() {
+    return $this->requestMethod;
   }
 
   /**
-   * @param string $uri
+   * @param $uri
+   * @return string
    */
   public function dispatch($uri) {
-
     $output = NULL;
-    if ($this->request_method === 'get') {
-      $output = $this->cache->load('output_' . $uri);
-    }
-
-    if (is_null($output)) {
-      $router = $this->getRouter($uri);
-      $responder = $router->get_responder();
-      $parameters = $router->get_parameters();
-
-      if (is_callable($responder)) {
-        $output = call_user_func($responder, $parameters);
-      } else {
-        $request = new BaseHttpRequest($this->request_method);
-        $response = new TwigView();
-
-        $default_template_name = $this->determineDefaultTemplateName($responder);
-        if ($default_template_name) {
-          $response->set_template_name($default_template_name);
-        }
-
-        /** @var AbstractController $contoller */
-        $contoller = new $responder($request, $response);
-        if (!method_exists($contoller, $this->request_method)) {
-          // Send HTTP 405 response
-          $contoller->handle_not_supported_method($this->request_method);
-        }
-        $contoller->initialize($parameters);
-        $output = $contoller->{$this->request_method}($parameters);
-        if (is_null($output)) {
-          $output = $response->render();
-        }
-      }
-
+    SignalSlotDispatcher::emitSignal(self::SIGNAL_START_DISPATCHING, $output, $uri, $this->requestMethod);
+    if ($output === NULL) {
+      $output = $this->dispatchUncached($uri);
     };
-
-    SignalSlotDispatcher::emitSignal(self::SIGNAL_OUTPUT_READY, $output);
-
-    if (Configuration::get('phpframework', 'cache.full_output', FALSE) && $this->request_method === 'get') {
-      $this->cache->save('output_' . $uri, $output, [
-        Cache::EXPIRE => Configuration::get('phpframework', 'cache.full_output_expiration', '20 Minutes'),
-      ]);
-    }
-
-    echo $output;
+    SignalSlotDispatcher::emitSignal(self::SIGNAL_OUTPUT_READY, $output, $uri, $this->requestMethod);
     return $output;
   }
 
@@ -104,22 +66,21 @@ class Dispatcher {
    */
   protected function determineRequestMethod() {
     if (isset($_ENV['AppZap\PHPFramework\RequestMethod'])) {
-      $this->request_method = $_ENV['AppZap\PHPFramework\RequestMethod'];
-    }
-    elseif (php_sapi_name() === 'cli') {
-      $this->request_method = 'cli';
+      $this->requestMethod = $_ENV['AppZap\PHPFramework\RequestMethod'];
+    } elseif (php_sapi_name() === 'cli') {
+      $this->requestMethod = 'cli';
     } else {
-      $this->request_method = strtolower($_SERVER['REQUEST_METHOD']);
+      $this->requestMethod = strtolower($_SERVER['REQUEST_METHOD']);
     }
   }
 
   /**
-   * @param $responder_class
+   * @param AbstractController $controller
    * @return string
    */
-  protected function determineDefaultTemplateName($responder_class) {
-    if (preg_match('|\\\\([a-zA-Z0-9]{2,50})Controller$|', $responder_class, $matches)) {
-      return $matches[1];
+  protected function determineDefaultTemplateName(AbstractController $controller) {
+    if (preg_match('|\\\\([a-zA-Z0-9]{2,50})Controller$|', get_class($controller), $matches)) {
+      return $controller->getTemplateName($matches[1]);
     }
     return NULL;
   }
@@ -129,13 +90,74 @@ class Dispatcher {
    * @return Router
    */
   protected function getRouter($uri) {
-    $router = $this->cache->load('router_' . $uri . '_' . $this->request_method, function () use ($uri) {
+    $router = $this->cache->load('router_' . $uri . '_' . $this->requestMethod, function () use ($uri) {
       return new Router($uri);
     });
     return $router;
   }
 
-}
+  /**
+   * @param $uri
+   * @return string
+   */
+  protected function dispatchUncached($uri) {
+    $router = $this->getRouter($uri);
+    if (is_callable($router->getResponder())) {
+      $output = $this->dispatchCallable($router);
+    } else {
+      $output = $this->dispatchController($router);
+    }
+    return $output;
+  }
 
-class InvalidHttpResponderException extends \Exception {
+  /**
+   * @param Router $router
+   * @return string
+   */
+  protected function dispatchCallable(Router $router) {
+    return call_user_func($router->getResponder(), $router->getParameters());
+  }
+
+  /**
+   * @param Router $router
+   * @return string
+   */
+  protected function dispatchController(Router $router) {
+    $responder = $router->getResponder();
+    $parameters = $router->getParameters();
+    $request = new Request($this->requestMethod);
+    $response = new TwigView();
+
+    try {
+      /** @var AbstractController $controller */
+      $controller = new $responder($request, $response);
+      if (!method_exists($controller, $this->requestMethod)) {
+        // Send HTTP 405 response
+        $controller->handleNotSupportedMethod($this->requestMethod);
+      }
+      $defaultTemplateName = $this->determineDefaultTemplateName($controller);
+      if ($defaultTemplateName) {
+        $response->setTemplateName($defaultTemplateName);
+      }
+      $controller->setParameters($parameters);
+      $controller->initialize();
+      $output = $controller->{$this->requestMethod}($parameters);
+      if ($output === NULL) {
+        $output = $response->render();
+      }
+      return $output;
+    } catch (DispatchingInterruptedException $e) {
+      $output = '';
+    }
+    return $output;
+  }
+
+  /**
+   * @return string
+   * @deprecated Since: 1.4, Removal: 1.5, Reason: use ->getRequestMethod() instead
+   */
+  public function get_request_method() {
+    return $this->getRequestMethod();
+  }
+
 }

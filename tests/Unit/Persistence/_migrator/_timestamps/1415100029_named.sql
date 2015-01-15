@@ -1,0 +1,1 @@
+INSERT INTO `migrator_test_timestamps` (`title`) VALUES ('test3');

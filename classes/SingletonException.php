@@ -1,5 +1,4 @@
 <?php
 namespace AppZap\PHPFramework;
 
-class SingletonException extends \Exception {
-}
+class SingletonException extends \Exception {}

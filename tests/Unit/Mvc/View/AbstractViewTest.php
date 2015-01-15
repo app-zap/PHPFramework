@@ -4,7 +4,8 @@ namespace AppZap\PHPFramework\Tests\Unit\Mvc;
 use AppZap\PHPFramework\Mvc\View\AbstractView;
 
 class TestView extends AbstractView {
-
+  protected function getRenderingEngine() {
+  }
 }
 
 class AbstractViewTest extends \PHPUnit_Framework_TestCase {
@@ -21,14 +22,14 @@ class AbstractViewTest extends \PHPUnit_Framework_TestCase {
   /**
    * @test
    */
-  public function set_header() {
+  public function setHeader() {
     $this->view->header('foo', 'bar');
   }
 
   /**
    * @test
    */
-  public function template_variables() {
+  public function templateVariables() {
     $this->view->set('foo', 'bar');
     $this->assertSame('bar', $this->view->get('foo'));
     $this->assertSame('bar', $this->view->get('foo', 'baz'));
@@ -42,6 +43,13 @@ class AbstractViewTest extends \PHPUnit_Framework_TestCase {
     ob_start();
     $this->view->write('bar');
     $this->assertSame('bar', ob_get_clean());
+  }
+
+  /**
+   * @test
+   */
+  public function redirect() {
+    $this->view->redirect('/');
   }
 
 }

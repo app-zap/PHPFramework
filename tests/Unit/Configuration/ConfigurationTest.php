@@ -8,7 +8,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase {
   /**
    * @test
    */
-  public function roundtrip_single_value() {
+  public function roundtripSingleValue() {
     Configuration::set('test', 'foo', 'bar');
     $this->assertSame('bar', Configuration::get('test', 'foo'));
   }
@@ -16,7 +16,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase {
   /**
    * @test
    */
-  public function get_default_value() {
+  public function getDefaultValue() {
     Configuration::reset();
     $this->assertSame('bar', Configuration::get('test', 'foo', 'bar'));
   }
@@ -24,7 +24,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase {
   /**
    * @test
    */
-  public function reset_works() {
+  public function resetWorks() {
     Configuration::set('test', 'reset_works', TRUE);
     $this->assertTrue(Configuration::get('test', 'reset_works'));
     Configuration::reset();
@@ -34,12 +34,12 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase {
   /**
    * @test
    */
-  public function remove_key_works() {
+  public function removeKeyWorks() {
     Configuration::set('test', 'key1', TRUE);
     Configuration::set('test', 'key2', TRUE);
     $this->assertTrue(Configuration::get('test', 'key1'));
     $this->assertTrue(Configuration::get('test', 'key2'));
-    Configuration::remove_key('test', 'key1');
+    Configuration::remove('test', 'key1');
     $this->assertNull(Configuration::get('test', 'key1'));
     $this->assertTrue(Configuration::get('test', 'key2'));
   }
@@ -47,7 +47,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase {
   /**
    * @test
    */
-  public function get_section() {
+  public function getSection() {
     Configuration::reset();
     Configuration::set('test', 'key1', TRUE);
     Configuration::set('test', 'key2', TRUE);
@@ -60,7 +60,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase {
   /**
    * @test
    */
-  public function get_section_namespace() {
+  public function getSectionNamespace() {
     Configuration::reset();
     Configuration::set('test', 'key1', FALSE);
     Configuration::set('test', 'ns1.key1', TRUE);
@@ -82,7 +82,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase {
   /**
    * @test
    */
-  public function get_non_existing_section() {
+  public function getNonExistingSection() {
     Configuration::reset();
     $this->assertNull(Configuration::getSection('not_existing'));
   }
@@ -90,16 +90,43 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase {
   /**
    * @test
    */
-  public function remove_section() {
+  public function removeSection() {
     Configuration::reset();
     Configuration::set('test', 'key1', TRUE);
     Configuration::set('test', 'key2', TRUE);
     Configuration::set('othersection', 'key3', TRUE);
     $test_section = Configuration::getSection('test');
     $this->assertSame(2, count($test_section));
-    Configuration::remove_section('test');
+    Configuration::removeSection('test');
     $this->assertNull(Configuration::getSection('test'));
     $this->assertSame(1, count(Configuration::getSection('othersection')));
+  }
+
+  /**
+   * @test
+   */
+  public function getSectionDefaultValues() {
+    Configuration::reset();
+    Configuration::set('test', 'key1', 1);
+    Configuration::set('test', 'key3', 3);
+    $configuration = Configuration::getSection('test', '', ['key1' => FALSE, 'key2' => 2]);
+    $this->assertSame(1, $configuration['key1']);
+    $this->assertSame(2, $configuration['key2']);
+    $this->assertSame(3, $configuration['key3']);
+  }
+
+  /**
+   * @test
+   */
+  public function getSectionDefaultValuesNamespace() {
+    Configuration::reset();
+    Configuration::set('test', 'ns1.key1', 1);
+    Configuration::set('test', 'ns2.key2', FALSE);
+    Configuration::set('test', 'ns1.key3', 3);
+    $configuration = Configuration::getSection('test', 'ns1', ['key1' => FALSE, 'key2' => 2]);
+    $this->assertSame(1, $configuration['key1']);
+    $this->assertSame(2, $configuration['key2']);
+    $this->assertSame(3, $configuration['key3']);
   }
 
 }

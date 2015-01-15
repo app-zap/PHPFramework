@@ -2,58 +2,79 @@
 namespace AppZap\PHPFramework\Mvc\View;
 
 use AppZap\PHPFramework\Configuration\Configuration;
+use AppZap\PHPFramework\Mvc\HttpStatus;
 
 abstract class AbstractView {
 
   /**
    * @var \Twig_Environment
    */
-  protected $rendering_engine;
+  protected $renderingEngine;
 
   /**
    * @var string
    */
-  protected $template_name;
+  protected $templateName;
 
-  protected $template_vars = [];
+  /**
+   * @var array
+   */
+  protected $templateVars = [];
+
+  /**
+   * @var array
+   */
   protected $headers = [];
-  protected $output_filters = [];
-  protected $output_functions = [];
+
+  /**
+   * @var array
+   */
+  protected $outputFilters = [];
+
+  /**
+   * @var array
+   */
+  protected $outputFunctions = [];
 
   /**
    * @var string
    */
-  protected $default_template_file_extension = 'html';
+  protected $defaultTemplateFileExtension = 'html';
 
   /**
-   * @param $template_name
+   * @return \Twig_Environment
    */
-  public function set_template_name($template_name) {
-    $this->template_name = $template_name;
+  abstract protected function getRenderingEngine();
+
+  /**
+   * @param string $templateName
+   */
+  public function setTemplateName($templateName) {
+    $this->templateName = $templateName;
   }
 
   /**
    * Sets a header to the specified value for delivery when the page is rendered
    *
-   * @param string $header_name Name of the header not including the colon
-   * @param string $header_value Values of the header to send
+   * @param string $headerName Name of the header not including the colon
+   * @param string $headerValue Values of the header to send
    */
-  public function header($header_name, $header_value) {
-    $this->headers[$header_name] = $header_value;
+  public function header($headerName, $headerValue) {
+    $this->headers[$headerName] = $headerValue;
   }
 
   /**
    * Returns the value of a template value previously set
    *
-   * @param string $template_variable_name Name of the template variable
-   * @param mixed $default_value Value to be returned when the template variable was not set previously
+   * @param string $templateVariableName Name of the template variable
+   * @param mixed $defaultValue Value to be returned when the template variable was not set previously
    * @return mixed
    */
-  public function get($template_variable_name, $default_value = null) {
-    if(array_key_exists($template_variable_name, $this->template_vars)) {
-      return $this->template_vars[$template_variable_name];
+  public function get($templateVariableName, $defaultValue = NULL) {
+    if(array_key_exists($templateVariableName, $this->templateVars)) {
+      return $this->templateVars[$templateVariableName];
     }
-    return $default_value;
+    return $defaultValue;
   }
 
   /**
@@ -63,19 +84,19 @@ abstract class AbstractView {
    * @param mixed $template_variable_value Value of the template variable to set to
    */
   public function set($template_variable_name, $template_variable_value) {
-    $this->template_vars[$template_variable_name] = $template_variable_value;
+    $this->templateVars[$template_variable_name] = $template_variable_value;
   }
 
   /**
    * Renders the template with the previously defined variables and returns the rendered version
    *
-   * @param string $template_name Name of the template in the template directory without extension
+   * @param string $templateName Name of the template in the template directory without extension
    * @return string
    */
-  public function render($template_name = NULL) {
-    $this->send_headers();
-    $template = $this->get_template_environment($template_name);
-    return $template->render($this->template_vars);
+  public function render($templateName = NULL) {
+    $this->sendHeaders();
+    $template = $this->getTemplateEnvironment($templateName);
+    return $template->render($this->templateVars);
   }
 
   /**
@@ -86,7 +107,7 @@ abstract class AbstractView {
    */
   public function write($content) {
     if(!headers_sent()) {
-      $this->send_headers();
+      $this->sendHeaders();
     }
 
     echo $content;
@@ -96,10 +117,10 @@ abstract class AbstractView {
    * Sends an json encoded object to the browser using correct content type
    *
    * @param mixed $object Object (most likely an array) to json encode
-   * @param null|string $callback If set to string answer will be sent as JSONP output with this function
+   * @param string $callback If set to string answer will be sent as JSONP output with this function
    */
-  public function json_output($object, $callback = null) {
-    if($callback !== null) {
+  public function jsonOutput($object, $callback = NULL) {
+    if($callback !== NULL) {
       $ctype = 'text/javascript';
       $output = $callback . '(' . json_encode($object) . ');';
     } else {
@@ -107,29 +128,31 @@ abstract class AbstractView {
       $output = json_encode($object);
     }
     $this->header('Content-Type', $ctype);
-    $this->send_headers();
+    $this->sendHeaders();
 
-    die($output);
+    echo $output;
   }
 
   /**
    * Sets the location header including the HTTP status header for redirects
    *
    * @param string $target The target to use in location header
-   * @param int $http_code The HTTP code to use
+   * @param int $httpCode The HTTP code to use
    * @see \AppZap\PHPFramework\Mvc\HttpStatus
    */
-  public function redirect($target, $http_code = HttpStatus::STATUS_307_TEMPORARY_REDIRECT) {
-    HttpStatus::set_status($http_code, [
-      HttpStatus::HEADER_FIELD_LOCATION => $target
-    ]);
-    HttpStatus::send_headers();
+  public function redirect($target, $httpCode = HttpStatus::STATUS_307_TEMPORARY_REDIRECT) {
+    if (php_sapi_name() !== 'cli') {
+      HttpStatus::setStatus($httpCode, [
+          HttpStatus::HEADER_FIELD_LOCATION => $target
+      ]);
+      HttpStatus::sendHeaders();
+    }
   }
 
   /**
    *
    */
-  protected function send_headers() {
+  protected function sendHeaders() {
     foreach($this->headers as $header => $value) {
       header($header . ': ' . $value);
     }
@@ -139,14 +162,33 @@ abstract class AbstractView {
    * @param string $template_name
    * @return \Twig_TemplateInterface
    */
-  protected function get_template_environment($template_name = NULL) {
+  protected function getTemplateEnvironment($template_name = NULL) {
     if (is_null($template_name)) {
-      $template_name = $this->template_name;
+      $template_name = $this->templateName;
     }
-    $template_file_extension = Configuration::get('phpframework', 'template_file_extension', $this->default_template_file_extension);
-    $template = $this->rendering_engine->loadTemplate($template_name . '.' . $template_file_extension);
+    $template_file_extension = Configuration::get('phpframework', 'template_file_extension', $this->defaultTemplateFileExtension);
+    $template = $this->getRenderingEngine()->loadTemplate($template_name . '.' . $template_file_extension);
 
     return $template;
+  }
+
+  /**
+   * @param string $templateName
+   * @deprecated Since: 1.4, Removal: 1.5, Reason: Use ->setTemplateName() instead
+   */
+  public function set_template_name($templateName) {
+    $this->setTemplateName($templateName);
+  }
+
+  /**
+   * Sends an json encoded object to the browser using correct content type
+   *
+   * @param mixed $object Object (most likely an array) to json encode
+   * @param string $callback If set to string answer will be sent as JSONP output with this function
+   * @deprecated Since: 1.4, Removal: 1.5, Reason: Use ->jsonOutput() instead
+   */
+  public function json_output($object, $callback = NULL) {
+    $this->jsonOutput($object, $callback);
   }
 
 }

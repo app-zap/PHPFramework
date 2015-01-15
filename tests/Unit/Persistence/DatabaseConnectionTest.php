@@ -38,7 +38,7 @@ class DatabaseConnectionTest extends \PHPUnit_Extensions_Database_TestCase {
   /**
    * Returns the test database connection.
    *
-   * @return PHPUnit_Extensions_Database_DB_IDatabaseConnection
+   * @return \PHPUnit_Extensions_Database_DB_IDatabaseConnection
    */
   protected function getConnection() {
     return $this->createDefaultDBConnection($this->pdo);
@@ -56,17 +56,17 @@ class DatabaseConnectionTest extends \PHPUnit_Extensions_Database_TestCase {
   /**
    * @test
    */
-  public function is_connected() {
-    $this->assertFalse($this->fixture->is_connected());
+  public function isConnected() {
+    $this->assertFalse($this->fixture->isConnected());
     $this->fixture->connect();
-    $this->assertTrue($this->fixture->is_connected());
+    $this->assertTrue($this->fixture->isConnected());
   }
 
   /**
    * @test
    * @expectedException \PDOException
    */
-  public function db_connection_exception() {
+  public function dbConnectionException() {
     Configuration::set('phpframework', 'db.mysql.host', 'non_existing_host');
     $this->fixture->connect();
   }
@@ -74,16 +74,16 @@ class DatabaseConnectionTest extends \PHPUnit_Extensions_Database_TestCase {
   /**
    * @test
    */
-  public function set_charset() {
+  public function setCharset() {
     Configuration::set('phpframework', 'db.charset', 'utf8');
     $this->fixture->connect();
   }
 
   /**
    * @test
-   * @expectedException \AppZap\PHPFramework\Persistence\DBQueryException
+   * @expectedException \AppZap\PHPFramework\Persistence\DatabaseQueryException
    */
-  public function failing_query() {
+  public function failingQuery() {
     $this->fixture->query('SQL SYNTAX ERROR!');
   }
 
@@ -105,7 +105,7 @@ class DatabaseConnectionTest extends \PHPUnit_Extensions_Database_TestCase {
   /**
    * @test
    */
-  public function insert_and_update() {
+  public function insertAndUpdate() {
     $row = ['title' => 'insert_and_update_test'];
     $row['id'] = $this->fixture->insert('item', $row);
     $row['title'] = 'changed title';
@@ -138,7 +138,7 @@ class DatabaseConnectionTest extends \PHPUnit_Extensions_Database_TestCase {
   /**
    * @test
    */
-  public function min_and_max() {
+  public function minAndMax() {
     $this->fixture->insert('item', ['title' => 'foo']);
     $this->fixture->insert('item', ['title' => 'bar']);
     $this->assertGreaterThan($this->fixture->min('item', 'id'), $this->fixture->max('item', 'id'));
@@ -147,7 +147,7 @@ class DatabaseConnectionTest extends \PHPUnit_Extensions_Database_TestCase {
   /**
    * @test
    */
-  public function empty_insert() {
+  public function emptyInsert() {
     $this->fixture->insert('item', []);
   }
 
@@ -162,16 +162,16 @@ class DatabaseConnectionTest extends \PHPUnit_Extensions_Database_TestCase {
 
   /**
    * @test
-   * @expectedException \AppZap\PHPFramework\Persistence\DBQueryException
+   * @expectedException \AppZap\PHPFramework\Persistence\DatabaseQueryException
    */
-  public function insert_into_not_existing_table() {
+  public function insertIntoNotExistingTable() {
     $this->fixture->insert('not_existing_table', ['title' => 'bar']);
   }
 
   /**
    * @test
    */
-  public function value_null() {
+  public function valueNull() {
     $insert_id = $this->fixture->insert('item', []);
     $insert_id2 = $this->fixture->insert('item', ['id' => NULL]);
     $this->assertGreaterThan($insert_id, $insert_id2);
@@ -179,16 +179,17 @@ class DatabaseConnectionTest extends \PHPUnit_Extensions_Database_TestCase {
 
   /**
    * @test
-   * @expectedException \AppZap\PHPFramework\Persistence\InputException
+   * @expectedException \InvalidArgumentException
+   * @expectedExceptionCode 1409767864
    */
-  public function where_string() {
+  public function whereString() {
     $this->fixture->select('item', '*', 'id = 1');
   }
 
   /**
    * @test
    */
-  public function where_not() {
+  public function whereNot() {
     $this->fixture->insert('item', ['title' => 'foo']);
     $this->fixture->insert('item', ['title' => 'bar']);
     $row = $this->fixture->row('item', '*', ['title!' => 'foo']);
@@ -198,7 +199,7 @@ class DatabaseConnectionTest extends \PHPUnit_Extensions_Database_TestCase {
   /**
    * @test
    */
-  public function where_like() {
+  public function whereLike() {
     $insert_id = $this->fixture->insert('item', ['title' => 'fooliketestbaz']);
     $row = $this->fixture->row('item', '*', ['title?' => '%liketest%']);
     $this->assertEquals($insert_id, $row['id']);
@@ -207,7 +208,7 @@ class DatabaseConnectionTest extends \PHPUnit_Extensions_Database_TestCase {
   /**
    * @test
    */
-  public function where_multiple() {
+  public function whereMultiple() {
     $insert1 = $this->fixture->insert('item', ['title' => 'foo']);
     $insert2 = $this->fixture->insert('item', ['title' => 'bar']);
     $rows = $this->fixture->select('item', '*', ['id' => [$insert1, $insert2]], 'id ASC');
@@ -219,7 +220,7 @@ class DatabaseConnectionTest extends \PHPUnit_Extensions_Database_TestCase {
   /**
    * @test
    */
-  public function where_not_multiple() {
+  public function whereNotMultiple() {
     $insert1 = $this->fixture->insert('item', ['title' => 'wherenotmultipletest']);
     $insert2 = $this->fixture->insert('item', ['title' => 'wherenotmultipletest']);
     $insert3 = $this->fixture->insert('item', ['title' => 'wherenotmultipletest']);
@@ -231,7 +232,7 @@ class DatabaseConnectionTest extends \PHPUnit_Extensions_Database_TestCase {
   /**
    * @test
    */
-  public function where_like_multiple() {
+  public function whereLikeMultiple() {
     $this->fixture->delete('item');
     $insert1 = $this->fixture->insert('item', ['title' => 'wherelikemultipletest###']);
     $insert2 = $this->fixture->insert('item', ['title' => '###wheremultipleliketest']);
@@ -244,7 +245,7 @@ class DatabaseConnectionTest extends \PHPUnit_Extensions_Database_TestCase {
   /**
    * @test
    */
-  public function empty_where() {
+  public function emptyWhere() {
     $this->fixture->delete('item');
     $this->fixture->insert('item', ['title' => 'foo']);
     $this->fixture->insert('item', ['title' => 'bar']);

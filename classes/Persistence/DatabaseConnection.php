@@ -23,11 +23,11 @@ class DatabaseConnection {
    */
   public function connect() {
     if (!($this->connection instanceof \PDO)) {
-      $db_configuration = Configuration::getSection('phpframework', 'db');
-      $dsn = 'mysql:host=' . $db_configuration['mysql.host'] . ';dbname=' . $db_configuration['mysql.database'];
-      $this->connection = new \PDO($dsn, $db_configuration['mysql.user'], $db_configuration['mysql.password']);
-      if (isset($db_configuration['charset'])) {
-        $this->set_charset($db_configuration['charset']);
+      $dbConfiguration = Configuration::getSection('phpframework', 'db');
+      $dsn = 'mysql:host=' . $dbConfiguration['mysql.host'] . ';dbname=' . $dbConfiguration['mysql.database'];
+      $this->connection = new \PDO($dsn, $dbConfiguration['mysql.user'], $dbConfiguration['mysql.password']);
+      if (isset($dbConfiguration['charset'])) {
+        $this->setCharset($dbConfiguration['charset']);
       }
     }
   }
@@ -37,7 +37,7 @@ class DatabaseConnection {
    *
    * @return bool
    */
-  public function is_connected() {
+  public function isConnected() {
     return (bool) $this->connection;
   }
 
@@ -46,9 +46,9 @@ class DatabaseConnection {
    *
    * @param string $charset Connection transfer charset
    */
-  protected function set_charset($charset) {
+  protected function setCharset($charset) {
     $sql = 'SET NAMES ' . $charset;
-    $this->execute($sql, FALSE);
+    $this->execute($sql);
   }
 
   /**
@@ -70,23 +70,24 @@ class DatabaseConnection {
    * Executes the passed SQL statement
    *
    * @param string $sql Finally escaped SQL statement
+   * @param array $parameters
    * @return resource Result data of the query
-   * @throws DBConnectionException
-   * @throws DBQueryException
+   * @throws DatabaseQueryException
    */
-  public function execute($sql) {
+  public function execute($sql, $parameters = []) {
     $this->connect();
     // execute the query
+    $statement = $this->connection->prepare($sql);
     try {
-      $result = $this->connection->query($sql);
+      $success = $statement->execute($parameters);
     } catch(\PDOException $e) {
       // under HHVM we get a \PDOException instead of FALSE if the query fails
-      $result = FALSE;
+      $success = FALSE;
     }
-    if ($result === FALSE) {
-      throw new DBQueryException('Database query failed. Error: "' . print_r($this->connection->errorInfo(), 1) . '". Query was: "' . $sql . '"');
+    if ($success === FALSE) {
+      throw new DatabaseQueryException('Database query failed. Error: "' . print_r($statement->errorInfo(), 1) . '". Query was: "' . $statement->queryString . '". Parameters: ' . print_r($parameters, 1), 1415219261);
     }
-    return $result;
+    return $statement->fetchAll();
   }
 
   /**
@@ -94,7 +95,7 @@ class DatabaseConnection {
    *
    * @return int
    */
-  public function last_id() {
+  public function lastId() {
     $this->connect();
     return $this->connection->lastInsertId();
   }
@@ -133,7 +134,7 @@ class DatabaseConnection {
       $values = '(id) VALUES (NULL)';
     }
     $this->execute('INSERT' . $ignore . ' INTO ' . $table . $values);
-    return $this->last_id();
+    return $this->lastId();
   }
 
   /**
@@ -156,7 +157,13 @@ class DatabaseConnection {
    * @return resource
    */
   public function update($table, $input, $where) {
-    return $this->execute('UPDATE ' . $table . ' SET ' . $this->values($input) . $this->where($where));
+    $sql = sprintf(
+      'UPDATE %s SET %s%s',
+      $table,
+      $this->values($input),
+      $this->where($where)
+    );
+    return $this->execute($sql);
   }
 
   /**
@@ -166,8 +173,11 @@ class DatabaseConnection {
    * @param array $where Selector for the datasets to delete
    */
   public function delete($table, $where = NULL) {
-    $sql = 'DELETE FROM ' . $table;
-    $sql .= $this->where($where);
+    $sql = sprintf(
+        'DELETE FROM %s%s',
+        $table,
+        $this->where($where)
+    );
     $this->execute($sql);
   }
 
@@ -178,21 +188,20 @@ class DatabaseConnection {
    * @param string $select Fields to retrieve from table
    * @param array $where Selector for the datasets to select
    * @param string $order Already escaped content of order clause
-   * @param int $start First index of dataset to retrieve
+   * @param int $offset First index of dataset to retrieve
    * @param int $limit Number of entries to retrieve
    * @return array
    */
-  public function select($table, $select = '*', $where = NULL, $order = NULL, $start = NULL, $limit = NULL) {
-    $sql = 'SELECT ' . $select . ' FROM ' . $table;
-
-    $sql .= $this->where($where);
-    if ($order !== NULL) {
-      $sql .= ' ORDER BY ' . $order;
-    }
-    if ($start !== NULL && $limit !== NULL) {
-      $sql .= ' LIMIT ' . $start . ',' . $limit;
-    }
-
+  public function select($table, $select = '*', $where = NULL, $order = '', $offset = 0, $limit = NULL) {
+    $sql = sprintf(
+        'SELECT %s FROM %s%s%s%s',
+        $select,
+        $table,
+        $this->where($where),
+        $this->order($order),
+        $this->limit($limit),
+        $this->offset($offset)
+    );
     return $this->query($sql);
   }
 
@@ -217,7 +226,6 @@ class DatabaseConnection {
    * @param string $field Name of the field to return
    * @param array $where Selector for the datasets to select
    * @param string $order Already escaped content of order clause
-   * @internal param string $column Name of column to retrieve
    * @return mixed
    */
   public function field($table, $field, $where = NULL, $order = NULL) {
@@ -306,17 +314,61 @@ class DatabaseConnection {
   }
 
   /**
+   * @param string $order
+   * @return string
+   */
+  protected function order($order = '') {
+    if ($order) {
+      $order = sprintf(
+        ' ORDER BY %s',
+        $order
+      );
+    }
+    return $order;
+  }
+
+  /**
+   * @param int $limit
+   * @return string
+   */
+  protected function limit($limit = 0) {
+    if ($limit > 0) {
+      return sprintf(
+          ' LIMIT %d',
+          $limit
+      );
+    } else {
+      return '';
+    }
+  }
+
+  /**
+   * @param int $offset
+   * @return string
+   */
+  protected function offset($offset = 0) {
+    if ($offset > 0) {
+      return sprintf(
+          ' OFFSET %d',
+          $offset
+      );
+    } else {
+      return '';
+    }
+  }
+
+  /**
    * @param array $where
    * @param string $method
    * @return string
-   * @throws InputException
+   * @throws \InvalidArgumentException
    */
   protected function where($where, $method = 'AND') {
-    if (is_null($where)) {
+    if ($where === NULL) {
       return '';
     }
     if (!is_array($where)) {
-      throw new InputException('where clause has to be an associative array', 1409767864);
+      throw new \InvalidArgumentException('where clause has to be an associative array', 1409767864);
     }
     if (!count($where)) {
       return '';
@@ -328,41 +380,44 @@ class DatabaseConnection {
       // the last character of the field can modify the query mode:
       switch(substr($field, -1)) {
         case '!':
-          $query_mode = self::QUERY_MODE_NOT;
+          $queryMode = self::QUERY_MODE_NOT;
           $field = substr($field, 0, -1);
           break;
         case '?':
-          $query_mode = self::QUERY_MODE_LIKE;
+          $queryMode = self::QUERY_MODE_LIKE;
           $field = substr($field, 0, -1);
           break;
         default:
-          $query_mode = self::QUERY_MODE_REGULAR;
+          $queryMode = self::QUERY_MODE_REGULAR;
       }
 
-      if ($query_mode === self::QUERY_MODE_LIKE && is_array($value)) {
+      if ($queryMode === self::QUERY_MODE_LIKE && is_array($value)) {
         // LIKE and multiple values needs a special syntax in SQL
         $value = array_map([$this, 'escape'], $value);
         $constraints[] = '(`' . $field . '` LIKE ' . implode(' OR `' . $field . '` LIKE ', $value) . ')';
       } else {
         if (is_array($value)) {
-          $constraints[] = $this->where_multiple_values($value, $query_mode, $field);
+          $constraints[] = $this->whereMultipleValues($value, $queryMode, $field);
         } else {
-          $constraints[] = $this->where_single_value($value, $query_mode, $field);
+          $constraints[] = $this->whereSingleValue($value, $queryMode, $field);
         }
       }
     }
-    return ' WHERE ' . implode(' ' . $method . ' ', $constraints);
+    return sprintf(
+        ' WHERE %s',
+        implode(' ' . $method . ' ', $constraints)
+    );
   }
 
   /**
-   * @param $value
-   * @param $query_mode
-   * @param $field
+   * @param array $value
+   * @param int $queryMode
+   * @param string $field
    * @return array
    */
-  protected function where_multiple_values($value, $query_mode, $field) {
+  protected function whereMultipleValues($value, $queryMode, $field) {
     $value = implode(', ', array_map([$this, 'escape'], $value));
-    if ($query_mode === self::QUERY_MODE_NOT) {
+    if ($queryMode === self::QUERY_MODE_NOT) {
       $operand = 'NOT IN';
     } else {
       $operand = 'IN';
@@ -372,13 +427,13 @@ class DatabaseConnection {
 
   /**
    * @param $value
-   * @param $query_mode
+   * @param $queryMode
    * @param $field
    * @return array
    */
-  protected function where_single_value($value, $query_mode, $field) {
+  protected function whereSingleValue($value, $queryMode, $field) {
     $value = $this->escape($value);
-    switch ($query_mode) {
+    switch ($queryMode) {
       case self::QUERY_MODE_LIKE:
         $operand = 'LIKE';
         break;
@@ -391,19 +446,24 @@ class DatabaseConnection {
     return sprintf('`%s` %s %s', $field, $operand, $value);
   }
 
-}
+  /**
+   * Checks whether the connection to the database is established
+   *
+   * @return bool
+   * @deprecated Since: 1.4, Removal: 1.5, Reason: Use ->isConnected() instead
+   */
+  public function is_connected() {
+    return $this->isConnected();
+  }
 
-class DBConnectionException extends \Exception {
-}
+  /**
+   * Returns the auto increment ID of the last query
+   *
+   * @return int
+   * @deprecated Since: 1.4, Removal: 1.5, Reason: Use ->lastId() instead
+   */
+  public function last_id() {
+    return $this->lastId();
+  }
 
-class DBQueryException extends \Exception {
-}
-
-class DBDatabaseException extends \Exception {
-}
-
-class InputException extends \Exception {
-}
-
-class DBConfigException extends \Exception {
 }

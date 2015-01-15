@@ -6,7 +6,7 @@ use AppZap\PHPFramework\Bootstrap;
 class AppTest extends \PHPUnit_Framework_TestCase {
 
   public function setUp() {
-    $_ENV['AppZap\PHPFramework\ProjectRoot'] = dirname(__FILE__);
+    $_ENV['AppZap\PHPFramework\ProjectRoot'] = __DIR__;
   }
 
   /**

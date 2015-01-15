@@ -2,26 +2,28 @@
 namespace AppZap\PHPFramework;
 
 use AppZap\PHPFramework\Configuration\Configuration;
+use AppZap\PHPFramework\Configuration\DefaultConfiguration;
 use AppZap\PHPFramework\Configuration\Parser\IniParser;
+use AppZap\PHPFramework\Mvc\AbstractController;
 use AppZap\PHPFramework\Mvc\ApplicationPartMissingException;
 use AppZap\PHPFramework\Mvc\Dispatcher;
-use AppZap\PHPFramework\Persistence\SimpleMigrator;
 use AppZap\PHPFramework\SignalSlot\Dispatcher as SignalSlotDispatcher;
 
 class Bootstrap {
 
+  const SIGNAL_PLUGINSLOADED = 1415790750;
+
   /**
-   * @param $application
+   * @param string $application
+   * @return string
+   * @throws ApplicationPartMissingException
    * @throws \Exception
    */
   public static function bootstrap($application) {
     self::initializeConfiguration($application);
     self::loadPlugins();
     self::registerCoreSlots();
-    self::checkForRequiredApplicationParts();
     self::setErrorReporting();
-    self::initializeExceptionLogging();
-    self::invokeDatabaseMigrator();
     return self::invokeDispatcher();
   }
 
@@ -30,7 +32,9 @@ class Bootstrap {
    * @throws \Exception
    */
   protected static function initializeConfiguration($application) {
-    IniParser::init($application);
+    Configuration::reset();
+    DefaultConfiguration::initialize($application);
+    IniParser::initialize();
   }
 
   /**
@@ -49,22 +53,19 @@ class Bootstrap {
         }
       }
     }
-  }
-
-  protected static function registerCoreSlots() {
-    SignalSlotDispatcher::registerSlot(Dispatcher::SIGNAL_OUTPUT_READY, ['AppZap\PHPFramework\SignalSlot\CoreSlots', 'addFrameworkSignatureToOutput']);
+    SignalSlotDispatcher::emitSignal(self::SIGNAL_PLUGINSLOADED);
   }
 
   /**
-   * @throws ApplicationPartMissingException
+   *
    */
-  protected static function checkForRequiredApplicationParts() {
-    if (!is_dir(Configuration::get('application', 'templates_directory'))) {
-      throw new ApplicationPartMissingException('Template directory "' . Configuration::get('application', 'templates_directory') . '" does not exist.');
-    }
-    if (!is_readable(Configuration::get('application', 'routes_file'))) {
-      throw new ApplicationPartMissingException('Routes file "' . Configuration::get('application', 'routes_file') . '" does not exist.');
-    }
+  protected static function registerCoreSlots() {
+    SignalSlotDispatcher::registerSlot(AbstractController::SIGNAL_INIT_RESPONSE, ['AppZap\PHPFramework\SignalSlot\CoreSlots', 'contentTypeHeader']);
+    SignalSlotDispatcher::registerSlot(Dispatcher::SIGNAL_CONSTRUCT, ['AppZap\PHPFramework\SignalSlot\CoreSlots', 'invokeDatabaseMigrator']);
+    SignalSlotDispatcher::registerSlot(Dispatcher::SIGNAL_OUTPUT_READY, ['AppZap\PHPFramework\SignalSlot\CoreSlots', 'writeOutputToCache']);
+    SignalSlotDispatcher::registerSlot(Dispatcher::SIGNAL_OUTPUT_READY, ['AppZap\PHPFramework\SignalSlot\CoreSlots', 'addFrameworkSignatureToOutput']);
+    SignalSlotDispatcher::registerSlot(Dispatcher::SIGNAL_OUTPUT_READY, ['AppZap\PHPFramework\SignalSlot\CoreSlots', 'echoOutput']);
+    SignalSlotDispatcher::registerSlot(Dispatcher::SIGNAL_START_DISPATCHING, ['AppZap\PHPFramework\SignalSlot\CoreSlots', 'readOutputFromCache']);
   }
 
   /**
@@ -79,30 +80,18 @@ class Bootstrap {
   /**
    *
    */
-  protected static function initializeExceptionLogging() {
-    ExceptionLogger::initialize();
-  }
-
-  /**
-   *
-   */
-  protected static function invokeDatabaseMigrator() {
-    if (Configuration::get('phpframework', 'db.migrator.enable')) {
-      (new SimpleMigrator())->migrate();
-    }
-  }
-
-  /**
-   *
-   */
   protected static function invokeDispatcher() {
-    global $argv;
     $dispatcher = new Dispatcher();
-    if ($dispatcher->get_request_method() === 'cli') {
-      array_shift($argv);
-      $resource = '/' . join('/', $argv);
+    if ($dispatcher->getRequestMethod() === 'cli') {
+      $cliArguments = $_SERVER['argv'];
+      array_shift($cliArguments);
+      $resource = '/' . join('/', $cliArguments);
     } else {
       $resource = $_SERVER['REQUEST_URI'];
+      $uriPathPrefix = '/' . trim(Configuration::get('phpframework', 'uri_path_prefix'), '/');
+      if ($uriPathPrefix && strpos($resource, $uriPathPrefix) === 0) {
+        $resource = substr($resource, strlen($uriPathPrefix));
+      }
     }
     return $dispatcher->dispatch($resource);
   }

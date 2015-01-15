@@ -11,25 +11,41 @@ abstract class AbstractController {
   const SIGNAL_INIT_RESPONSE = 1413325748;
 
   /**
-   * @var BaseHttpRequest
+   * @var array
    */
-  protected $request = null;
+  protected $parameters;
+
+  /**
+   * @var Request
+   */
+  protected $request;
 
   /**
    * @var AbstractView
    */
-  protected $response = null;
+  protected $response;
+
+  /**
+   * @var bool
+   * @deprecated Since: 1.4, Removal: 1.5, Reason: Use ->requireHttpAuthentication instead
+   */
+  protected $require_http_authentication = NULL;
 
   /**
    * @var bool
    */
-  protected $require_http_authentication = FALSE;
+  protected $requireHttpAuthentication = FALSE;
 
   /**
-   * @param BaseHttpRequest $request
+   * @param Request $request
    * @param AbstractView $response
    */
-  public function __construct(BaseHttpRequest $request, AbstractView $response) {
+  public function __construct(Request $request, AbstractView $response) {
+    /** @noinspection PhpDeprecationInspection */
+    if ($this->require_http_authentication !== NULL) {
+      /** @noinspection PhpDeprecationInspection */
+      $this->requireHttpAuthentication = $this->require_http_authentication;
+    }
     SignalSlotDispatcher::emitSignal(self::SIGNAL_INIT_REQUEST, $request);
     SignalSlotDispatcher::emitSignal(self::SIGNAL_INIT_RESPONSE, $response);
     $this->request = $request;
@@ -37,38 +53,63 @@ abstract class AbstractController {
   }
 
   /**
-   * @param array $params
+   * @param array $parameters
    */
-  public function initialize($params) {
-    if ($this->require_http_authentication) {
-      $base_http_authentication = new BaseHttpAuthentication();
-      $base_http_authentication->check_authentication();
+  public function setParameters($parameters) {
+    $this->parameters = $parameters;
+  }
+
+  /**
+   * @throws \AppZap\PHPFramework\Authentication\HttpAuthenticationRequiredException
+   */
+  public function initialize() {
+    if ($this->requireHttpAuthentication) {
+      $baseHttpAuthentication = new BaseHttpAuthentication();
+      $baseHttpAuthentication->checkAuthentication();
     }
   }
 
   /**
    * @throws \Exception
    */
-  public function handle_not_supported_method() {
-    HttpStatus::set_status(HttpStatus::STATUS_405_METHOD_NOT_ALLOWED, [
-        HttpStatus::HEADER_FIELD_ALLOW => join(', ', $this->get_implemented_methods())
+  public function handleNotSupportedMethod() {
+    HttpStatus::setStatus(HttpStatus::STATUS_405_METHOD_NOT_ALLOWED, [
+        HttpStatus::HEADER_FIELD_ALLOW => join(', ', $this->getImplementedMethods())
     ]);
-    HttpStatus::send_headers();
-    die();
+    HttpStatus::sendHeaders();
+    throw new DispatchingInterruptedException('Request method not allowed', 1415268266);
   }
 
   /**
    * @return array
    */
-  protected function get_implemented_methods() {
+  protected function getImplementedMethods() {
     $methods = ['options', 'get', 'head', 'post', 'put', 'delete'];
-    $implemented_methods = [];
+    $implementedMethods = [];
     foreach($methods as $method) {
       if (method_exists($this, $method)) {
-        $implemented_methods[] = $method;
+        $implementedMethods[] = $method;
       }
     }
-    return $implemented_methods;
+    return $implementedMethods;
+  }
+
+  /**
+   * Can be used to alter/prefix the default template name (derived from the name of the controller)
+   *
+   * @param string $defaultTemplateName
+   * @return string
+   */
+  public function getTemplateName($defaultTemplateName) {
+    return $defaultTemplateName;
+  }
+
+  /**
+   * @throws \Exception
+   * @deprecated Since: 1.4, Removal: 1.5, Reason: use ->handleNotSupportedMethod() instead
+   */
+  public function handle_not_supported_method() {
+    $this->handleNotSupportedMethod();
   }
 
 }
