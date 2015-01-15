@@ -18,8 +18,8 @@ class DefaultConfiguration {
       throw new ApplicationPartMissingException('Application folder ' . htmlspecialchars($applicationDirectoryPath) . ' not found', 1410538265);
     }
     $applicationDirectory .= '/';
-    Configuration::set('phpframework', 'project_root', $projectRoot);
     Configuration::set('phpframework', 'db.migrator.directory', $applicationDirectory . '_sql/');
+    Configuration::set('phpframework', 'project_root', $projectRoot);
     Configuration::set('application', 'application', $application);
     Configuration::set('application', 'application_directory', $applicationDirectory);
     Configuration::set('application', 'routes_file', $applicationDirectory . 'routes.php');

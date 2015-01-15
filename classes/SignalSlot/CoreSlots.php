@@ -4,6 +4,7 @@ namespace AppZap\PHPFramework\SignalSlot;
 use AppZap\PHPFramework\Cache\Cache;
 use AppZap\PHPFramework\Cache\CacheFactory;
 use AppZap\PHPFramework\Configuration\Configuration;
+use AppZap\PHPFramework\Mvc\View\AbstractView;
 use AppZap\PHPFramework\Persistence\DatabaseMigrator;
 
 class CoreSlots {
@@ -59,6 +60,18 @@ class CoreSlots {
     if (Configuration::get('phpframework', 'echo_output', TRUE)) {
       echo $output;
     }
+  }
+
+  /**
+   * @param AbstractView $response
+   */
+  public static function contentTypeHeader(AbstractView $response) {
+    $contentType = 'text/html';
+    $charset = Configuration::get('phpframework', 'output_charset', 'utf-8');
+    if ($charset) {
+      $contentType .= '; charset=' . trim($charset);
+    }
+    $response->header('Content-Type', $contentType);
   }
 
 }

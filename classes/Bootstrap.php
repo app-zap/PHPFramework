@@ -4,6 +4,7 @@ namespace AppZap\PHPFramework;
 use AppZap\PHPFramework\Configuration\Configuration;
 use AppZap\PHPFramework\Configuration\DefaultConfiguration;
 use AppZap\PHPFramework\Configuration\Parser\IniParser;
+use AppZap\PHPFramework\Mvc\AbstractController;
 use AppZap\PHPFramework\Mvc\ApplicationPartMissingException;
 use AppZap\PHPFramework\Mvc\Dispatcher;
 use AppZap\PHPFramework\SignalSlot\Dispatcher as SignalSlotDispatcher;
@@ -59,11 +60,12 @@ class Bootstrap {
    *
    */
   protected static function registerCoreSlots() {
+    SignalSlotDispatcher::registerSlot(AbstractController::SIGNAL_INIT_RESPONSE, ['AppZap\PHPFramework\SignalSlot\CoreSlots', 'contentTypeHeader']);
     SignalSlotDispatcher::registerSlot(Dispatcher::SIGNAL_CONSTRUCT, ['AppZap\PHPFramework\SignalSlot\CoreSlots', 'invokeDatabaseMigrator']);
-    SignalSlotDispatcher::registerSlot(Dispatcher::SIGNAL_START_DISPATCHING, ['AppZap\PHPFramework\SignalSlot\CoreSlots', 'readOutputFromCache']);
     SignalSlotDispatcher::registerSlot(Dispatcher::SIGNAL_OUTPUT_READY, ['AppZap\PHPFramework\SignalSlot\CoreSlots', 'writeOutputToCache']);
     SignalSlotDispatcher::registerSlot(Dispatcher::SIGNAL_OUTPUT_READY, ['AppZap\PHPFramework\SignalSlot\CoreSlots', 'addFrameworkSignatureToOutput']);
     SignalSlotDispatcher::registerSlot(Dispatcher::SIGNAL_OUTPUT_READY, ['AppZap\PHPFramework\SignalSlot\CoreSlots', 'echoOutput']);
+    SignalSlotDispatcher::registerSlot(Dispatcher::SIGNAL_START_DISPATCHING, ['AppZap\PHPFramework\SignalSlot\CoreSlots', 'readOutputFromCache']);
   }
 
   /**
