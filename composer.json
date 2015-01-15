@@ -6,7 +6,7 @@
     "nette/caching": "2.2.*",
     "php": ">=5.4.0",
     "swiftmailer/swiftmailer": "5.3.*",
-    "twig/twig": "1.16.*"
+    "twig/twig": "1.17.*"
   },
   "require-dev": {
     "phpunit/dbunit": "1.3.*"

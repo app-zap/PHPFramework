@@ -7,15 +7,18 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 
+* Twig version is raised to 1.17
+
 ### Deprecated
 
 ### Removed
 
 * Removed [numerous methods](https://github.com/app-zap/PHPFramework/commit/77137cf25a12e8a7879bac24457874ba20639248) that were deprecated and marked for removal in 1.5.
 
-## 1.4, 2015-01-15 21:13:59
+## Version 1.4, 2015-01-15 21:13:59
 
 ### Added
+
 * [MailService](https://github.com/app-zap/PHPFramework/blob/develop/classes/Mail/MailService.php) and [MailMessage](https://github.com/app-zap/PHPFramework/blob/develop/classes/Mail/MailMessage.php)
 * A controller can implement the `getTemplateName()` method to modify the default twig template name.
 * `Configuration::getSection()` now has an optional 3rd parameter (array) `$defaultValues`
@@ -66,5 +69,3 @@ All notable changes to this project will be documented in this file.
 * Deprecated `TwigView->has_output_filter()` Use `TwigView->hasOutputFilter()` instead.
 * Deprecated `TwigView->has_output_function()` Use `TwigView->hasOutputFunction()` instead.
 * Deprecated lower_camel_cased setters and getters in model classes. Use lowerCamelCased method names instead.
-
-### Removed
