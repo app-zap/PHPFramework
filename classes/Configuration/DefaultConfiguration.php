@@ -24,7 +24,7 @@ class DefaultConfiguration {
     Configuration::set('application', 'application_directory', $applicationDirectory);
     Configuration::set('application', 'routes_file', $applicationDirectory . 'routes.php');
     Configuration::set('application', 'templates_directory', $applicationDirectory . 'templates/');
-    Configuration::set('phpframework', 'version', '1.4');
+    Configuration::set('phpframework', 'version', '1.5-dev');
   }
 
   /**
