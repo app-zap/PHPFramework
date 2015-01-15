@@ -4,9 +4,10 @@ All notable changes to this project will be documented in this file.
 ## Unreleased
 
 ### Added
-* `MailService` and `MailMessage`
+* [MailService](https://github.com/app-zap/PHPFramework/blob/develop/classes/Mail/MailService.php) and [MailMessage](https://github.com/app-zap/PHPFramework/blob/develop/classes/Mail/MailMessage.php)
 * A controller can implement the `getTemplateName()` method to modify the default twig template name.
 * `Configuration::getSection()` now has an optional 3rd parameter (array) `$defaultValues`
+* Simplified routing expressions in `routes.php`
 
 ### Changed
 
