@@ -2,8 +2,11 @@
 namespace AppZap\PHPFramework\Mvc;
 
 use AppZap\PHPFramework\Configuration\Configuration;
+use AppZap\PHPFramework\SignalSlot\Dispatcher as SignalSlotDispatcher;
 
 class Router {
+
+  const SIGNAL_ROUTE_DEFINITIONS = 1421442000;
 
   /**
    * @var array
@@ -44,6 +47,7 @@ class Router {
     $path = __DIR__ . '/../../core_routes.php';
     $path = realpath($path);
     $routes = include($path);
+    SignalSlotDispatcher::emitSignal(self::SIGNAL_ROUTE_DEFINITIONS, $routes);
     $applicationRoutesFile = Configuration::get('application', 'routes_file');
     if (is_readable($applicationRoutesFile)) {
       $applicationRoutes = include($applicationRoutesFile);
