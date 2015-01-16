@@ -11,6 +11,10 @@ class DatabaseConnection {
   const QUERY_MODE_LIKE = 1;
   const QUERY_MODE_NOT = 2;
   const QUERY_MODE_REGULAR = 3;
+  const QUERY_MODE_LESS = 4;
+  const QUERY_MODE_GREATER = 5;
+  const QUERY_MODE_LESS_OR_EQUAL = 6;
+  const QUERY_MODE_GREATER_OR_EQUAL = 7;
 
   /**
    * @var \PDO
@@ -246,7 +250,7 @@ class DatabaseConnection {
   }
 
   /**
-   * Selects the minmum of a column or false if there is no data
+   * Selects the minimum of a column or false if there is no data
    *
    * @param string $table Name of the table
    * @param string $column Name of column to retrieve
@@ -308,6 +312,9 @@ class DatabaseConnection {
    * @return string
    */
   public function escape($value) {
+    if ($value === NULL) {
+      return $value;
+    }
     $this->connect();
     $value = stripslashes($value);
     return $this->connection->quote((string)$value);
@@ -377,24 +384,57 @@ class DatabaseConnection {
     $constraints = [];
     foreach ($where AS $field => $value) {
 
-      // the last character of the field can modify the query mode:
-      switch(substr($field, -1)) {
-        case '!':
-          $queryMode = self::QUERY_MODE_NOT;
-          $field = substr($field, 0, -1);
+      switch(substr($field, -2)) {
+        case '<=':
+          $queryMode = self::QUERY_MODE_LESS_OR_EQUAL;
+          $field = substr($field, 0, -2);
           break;
-        case '?':
-          $queryMode = self::QUERY_MODE_LIKE;
-          $field = substr($field, 0, -1);
+        case '>=':
+          $queryMode = self::QUERY_MODE_GREATER_OR_EQUAL;
+          $field = substr($field, 0, -2);
           break;
         default:
-          $queryMode = self::QUERY_MODE_REGULAR;
+          switch(substr($field, -1)) {
+            case '!':
+              $queryMode = self::QUERY_MODE_NOT;
+              $field = substr($field, 0, -1);
+              break;
+            case '?':
+              $queryMode = self::QUERY_MODE_LIKE;
+              $field = substr($field, 0, -1);
+              break;
+            case '<':
+              $queryMode = self::QUERY_MODE_LESS;
+              $field = substr($field, 0, -1);
+              break;
+            case '>':
+              $queryMode = self::QUERY_MODE_GREATER;
+              $field = substr($field, 0, -1);
+              break;
+            default:
+              $queryMode = self::QUERY_MODE_REGULAR;
+          }
+      }
+
+      if ($queryMode >= self::QUERY_MODE_LESS && $queryMode <= self::QUERY_MODE_GREATER_OR_EQUAL) {
+        if (is_array($value)) {
+          $value = array_map('floatval', $value);
+        } else {
+          $value = (float) $value;
+        }
+      } else {
+        if (is_array($value)) {
+          $value = array_map([$this, 'escape'], $value);
+        } else {
+          $value = $this->escape($value);
+        }
       }
 
       if ($queryMode === self::QUERY_MODE_LIKE && is_array($value)) {
         // LIKE and multiple values needs a special syntax in SQL
-        $value = array_map([$this, 'escape'], $value);
         $constraints[] = '(`' . $field . '` LIKE ' . implode(' OR `' . $field . '` LIKE ', $value) . ')';
+      } elseif ($queryMode >= self::QUERY_MODE_LESS && $queryMode <= self::QUERY_MODE_GREATER_OR_EQUAL && is_array($value)) {
+        $constraints[] = $this->whereMultipleInequationValues($value, $queryMode, $field);
       } else {
         if (is_array($value)) {
           $constraints[] = $this->whereMultipleValues($value, $queryMode, $field);
@@ -412,13 +452,13 @@ class DatabaseConnection {
   }
 
   /**
-   * @param array $value
+   * @param array $values
    * @param int $queryMode
    * @param string $field
    * @return string
    */
-  protected function whereMultipleValues($value, $queryMode, $field) {
-    $value = implode(', ', array_map([$this, 'escape'], $value));
+  protected function whereMultipleValues($values, $queryMode, $field) {
+    $value = implode(', ', $values);
     if ($queryMode === self::QUERY_MODE_NOT) {
       $operand = 'NOT IN';
     } else {
@@ -428,19 +468,30 @@ class DatabaseConnection {
   }
 
   /**
-   * @param $value
-   * @param $queryMode
-   * @param $field
+   * @param string $value
+   * @param int $queryMode
+   * @param string $field
    * @return string
    */
   protected function whereSingleValue($value, $queryMode, $field) {
-    $value = $this->escape($value);
     switch ($queryMode) {
       case self::QUERY_MODE_LIKE:
         $operand = 'LIKE';
         break;
       case self::QUERY_MODE_NOT:
         $operand = '!=';
+        break;
+      case self::QUERY_MODE_LESS:
+        $operand = '<';
+        break;
+      case self::QUERY_MODE_LESS_OR_EQUAL:
+        $operand = '<=';
+        break;
+      case self::QUERY_MODE_GREATER:
+        $operand = '>';
+        break;
+      case self::QUERY_MODE_GREATER_OR_EQUAL:
+        $operand = '>=';
         break;
       default:
         $operand = '=';
@@ -449,8 +500,8 @@ class DatabaseConnection {
   }
 
   /**
-   * @param $queryMode
-   * @param $field
+   * @param int $queryMode
+   * @param string $field
    * @return string
    */
   protected function whereNullValue($queryMode, $field) {
@@ -463,6 +514,33 @@ class DatabaseConnection {
         $operand = 'IS';
     }
     return sprintf('`%s` %s %s', $field, $operand, 'NULL');
+  }
+
+  /**
+   * @param string $value
+   * @param int $queryMode
+   * @param string $field
+   * @return string
+   * @throws \InvalidArgumentException
+   */
+  protected function whereMultipleInequationValues($value, $queryMode, $field) {
+    switch ($queryMode) {
+      case self::QUERY_MODE_LESS:
+        $operand = '<';
+        break;
+      case self::QUERY_MODE_LESS_OR_EQUAL:
+        $operand = '<=';
+        break;
+      case self::QUERY_MODE_GREATER:
+        $operand = '>';
+        break;
+      case self::QUERY_MODE_GREATER_OR_EQUAL:
+        $operand = '>=';
+        break;
+      default:
+        throw new \InvalidArgumentException('whereMultipleInequationValues must be called with an inequation $queryMode', 1421419086);
+    }
+    return '(`' . $field . '` ' . $operand . ' ' . implode(' AND `' . $field . '` ' . $operand . ' ', $value) . ')';
   }
 
 }

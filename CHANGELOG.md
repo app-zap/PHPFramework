@@ -9,6 +9,7 @@ All notable changes to this project will be documented in this file.
 
 * Raised Twig version to 1.17
 * DatabaseConnection: Where statements can now test fields against NULL (with and without the negation operator `!`)
+* DatabaseConnection: Fields in where statements can now have inequality modifiers: <, >, <= and >=
 
 ### Deprecated
 

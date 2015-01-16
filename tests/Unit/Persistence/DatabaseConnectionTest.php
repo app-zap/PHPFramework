@@ -245,6 +245,38 @@ class DatabaseConnectionTest extends \PHPUnit_Extensions_Database_TestCase {
   /**
    * @test
    */
+  public function whereInequal() {
+    $this->fixture->delete('item');
+    $insertItems = 10;
+    for ($i = 1;$i <= $insertItems;$i++) {
+      $this->fixture->insert('item', ['title' => $i]);
+    }
+    $this->assertSame(10, $this->fixture->count('item'));
+    $this->assertSame(2, $this->fixture->count('item', ['title<' => 3]));
+    $this->assertSame(4, $this->fixture->count('item', ['title<=' => 4]));
+    $this->assertSame(5, $this->fixture->count('item', ['title>' => 5]));
+    $this->assertSame(8, $this->fixture->count('item', ['title>=' => 3]));
+  }
+
+  /**
+   * @test
+   */
+  public function whereInequalMultiple() {
+    $this->fixture->delete('item');
+    $insertItems = 10;
+    for ($i = 1;$i <= $insertItems;$i++) {
+      $this->fixture->insert('item', ['title' => $i]);
+    }
+    $this->assertSame(10, $this->fixture->count('item'));
+    $this->assertSame(2, $this->fixture->count('item', ['title<' => [3]]));
+    $this->assertSame(4, $this->fixture->count('item', ['title<=' => [4, 5]]));
+    $this->assertSame(4, $this->fixture->count('item', ['title>' => [5, 6]]));
+    $this->assertSame(8, $this->fixture->count('item', ['title>=' => [0, 3]]));
+  }
+
+  /**
+   * @test
+   */
   public function whereNull() {
     $this->fixture->delete('item');
     $this->fixture->insert('item', []);
