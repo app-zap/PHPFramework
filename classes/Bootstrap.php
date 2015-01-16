@@ -42,7 +42,7 @@ class Bootstrap {
    */
   protected static function loadPlugins() {
     $plugins = Configuration::getSection('phpframework', 'plugins');
-    if ($plugins) {
+    if (is_array($plugins)) {
       foreach ($plugins as $namespace => $enabled) {
         if ($enabled) {
           $pluginLoaderClassname = $namespace . '\PluginLoader';
