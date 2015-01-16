@@ -326,7 +326,6 @@ class DatabaseConnection {
       return $value;
     }
     $this->connect();
-    $value = stripslashes($value);
     return $this->connection->quote((string)$value);
   }
 
