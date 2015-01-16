@@ -7,7 +7,8 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 
-* Twig version is raised to 1.17
+* Raised Twig version to 1.17
+* DatabaseConnection: Where statements can now test fields against NULL (with and without the negation operator `!`)
 
 ### Deprecated
 

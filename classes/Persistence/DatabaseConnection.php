@@ -398,6 +398,8 @@ class DatabaseConnection {
       } else {
         if (is_array($value)) {
           $constraints[] = $this->whereMultipleValues($value, $queryMode, $field);
+        } elseif($value === NULL) {
+          $constraints[] = $this->whereNullValue($queryMode, $field);
         } else {
           $constraints[] = $this->whereSingleValue($value, $queryMode, $field);
         }
@@ -413,7 +415,7 @@ class DatabaseConnection {
    * @param array $value
    * @param int $queryMode
    * @param string $field
-   * @return array
+   * @return string
    */
   protected function whereMultipleValues($value, $queryMode, $field) {
     $value = implode(', ', array_map([$this, 'escape'], $value));
@@ -429,7 +431,7 @@ class DatabaseConnection {
    * @param $value
    * @param $queryMode
    * @param $field
-   * @return array
+   * @return string
    */
   protected function whereSingleValue($value, $queryMode, $field) {
     $value = $this->escape($value);
@@ -444,6 +446,23 @@ class DatabaseConnection {
         $operand = '=';
     }
     return sprintf('`%s` %s %s', $field, $operand, $value);
+  }
+
+  /**
+   * @param $queryMode
+   * @param $field
+   * @return string
+   */
+  protected function whereNullValue($queryMode, $field) {
+    switch ($queryMode) {
+      case self::QUERY_MODE_NOT:
+        $operand = 'IS NOT';
+        break;
+      case self::QUERY_MODE_LIKE:
+      default:
+        $operand = 'IS';
+    }
+    return sprintf('`%s` %s %s', $field, $operand, 'NULL');
   }
 
 }

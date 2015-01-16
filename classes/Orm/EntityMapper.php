@@ -60,7 +60,7 @@ class EntityMapper {
     } elseif ($value instanceof \DateTime) {
       $value = (string) $value->getTimestamp();
     }
-    return (string) $value;
+    return $value;
   }
 
 }

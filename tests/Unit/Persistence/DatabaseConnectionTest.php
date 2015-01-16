@@ -245,6 +245,19 @@ class DatabaseConnectionTest extends \PHPUnit_Extensions_Database_TestCase {
   /**
    * @test
    */
+  public function whereNull() {
+    $this->fixture->delete('item');
+    $this->fixture->insert('item', []);
+    $this->fixture->insert('item', []);
+    $this->fixture->insert('item', ['title' => 'foo']);
+    $this->assertSame(3, $this->fixture->count('item'));
+    $this->assertSame(2, $this->fixture->count('item', ['title' => NULL]));
+    $this->assertSame(1, $this->fixture->count('item', ['title!' => NULL]));
+  }
+
+  /**
+   * @test
+   */
   public function emptyWhere() {
     $this->fixture->delete('item');
     $this->fixture->insert('item', ['title' => 'foo']);
