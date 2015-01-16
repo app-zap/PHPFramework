@@ -21,14 +21,7 @@ class Router {
    * @throws InvalidHttpResponderException
    */
   public function __construct($resource) {
-    $routesFile = Configuration::get('application', 'routes_file');
-    if (!is_readable($routesFile)) {
-      throw new ApplicationPartMissingException('Routes file "' . $routesFile . '" does not exist.', 1415134009);
-    }
-    $routes = include($routesFile);
-    if (!is_array($routes)) {
-      throw new InvalidHttpResponderException('The routes file did not return an array with routes', 1415135585);
-    }
+    $routes = $this->collectRoutesDefinitions();
     $this->route($routes, $resource);
 
     // check if the responder is valid
@@ -41,18 +34,36 @@ class Router {
     } elseif (!is_callable($this->responder)) {
       throw new InvalidHttpResponderException('The responder must either be a class string, a callable or an array of subpaths', 1415129333);
     }
-
   }
 
   /**
-   * @param $resource
-   * @param $routes
+   * @return array
+   * @throws InvalidHttpResponderException
+   */
+  protected function collectRoutesDefinitions() {
+    $path = __DIR__ . '/../../core_routes.php';
+    $path = realpath($path);
+    $routes = include($path);
+    $applicationRoutesFile = Configuration::get('application', 'routes_file');
+    if (is_readable($applicationRoutesFile)) {
+      $applicationRoutes = include($applicationRoutesFile);
+      if (!is_array($applicationRoutes)) {
+        throw new InvalidHttpResponderException('The routes file did not return an array with routes', 1415135585);
+      }
+      $routes = array_merge($routes, $applicationRoutes);
+    }
+    return $routes;
+  }
+
+  /**
+   * @param array $routes
+   * @param string $resource
    */
   protected function route($routes, $resource) {
     $resource = ltrim($resource, '/');
     foreach ($routes as $regex => $regexResponder) {
       $regex = $this->enhanceRegex($regex);
-      if (preg_match($regex, $resource, $matches)) {
+      if ($regexResponder !== FALSE && preg_match($regex, $resource, $matches)) {
         $matchesCount = count($matches);
         for ($i = 1; $i < $matchesCount; $i++) {
           $this->parameters[] = $matches[$i];

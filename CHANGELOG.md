@@ -5,7 +5,8 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
-* DatabaseConnection: `->truncate($table)`
+* DatabaseConnection: `->truncate($table)`.
+* [!!!] The Framework now can define routes itself and does so. Overwrite the `'.'` route in your `routes.php` with a responder or with `FALSE`.
 
 ### Changed
 

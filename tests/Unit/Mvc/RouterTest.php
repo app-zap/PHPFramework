@@ -24,21 +24,11 @@ class RouterTest extends \PHPUnit_Framework_TestCase {
 
   /**
    * @test
-   * @expectedException \AppZap\PHPFramework\Mvc\ApplicationPartMissingException
-   * @expectedExceptionCode 1415134009
    */
-  public function routesfileNotSet() {
-    new Router('/');
-  }
-
-  /**
-   * @test
-   * @expectedException \AppZap\PHPFramework\Mvc\ApplicationPartMissingException
-   * @expectedExceptionCode 1415134009
-   */
-  public function routesfileMissing() {
-    $this->loadRoutesFile('this_file_doesnt_even_exist');
-    new Router('/');
+  public function defaultCoreRouting() {
+    $router = new Router('/');
+    $responder = $router->getResponder();
+    $this->assertTrue($responder instanceof \Closure);
   }
 
   /**
