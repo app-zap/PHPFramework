@@ -130,7 +130,7 @@ class DatabaseConnection {
    * @param boolean $ignore Use "INSERT IGNORE" for the query
    * @return int
    */
-  public function insert($table, $input, $ignore = FALSE) {
+  public function insert($table, $input = [], $ignore = FALSE) {
     $ignore = $ignore ? ' IGNORE' : '';
     if (count($input)) {
       $values = ' SET ' . $this->values($input);
@@ -182,6 +182,16 @@ class DatabaseConnection {
         $table,
         $this->where($where)
     );
+    $this->execute($sql);
+  }
+
+  /**
+   * Truncates a table (empties it and resets autoincrements)
+   *
+   * @param string $table
+   */
+  public function truncate($table) {
+    $sql = sprintf('TRUNCATE %s', $table);
     $this->execute($sql);
   }
 

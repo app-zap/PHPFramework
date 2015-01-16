@@ -316,7 +316,12 @@ class DatabaseConnectionTest extends \PHPUnit_Extensions_Database_TestCase {
    * @test
    */
   public function truncate() {
-    $this->fixture->query('TRUNCATE item');
+    $this->fixture->insert('item', ['title' => '1']);
+    $this->fixture->insert('item', ['title' => '2']);
+    $this->fixture->truncate('item');
+    $this->assertSame(0, $this->fixture->count('item'));
+    $this->assertEquals('1', $this->fixture->insert('item'));
+    $this->assertSame(1, $this->fixture->count('item'));
   }
 
 }

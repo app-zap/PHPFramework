@@ -5,6 +5,8 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
+* DatabaseConnection: `->truncate($table)`
+
 ### Changed
 
 * Raised Twig version to 1.17
