@@ -41,6 +41,7 @@ class Bootstrap {
    *
    */
   protected static function loadPlugins() {
+    /** @deprecated Since 1.5, Removal: 1.6, Reason: Don't activate your plugins via settings.ini anymore. Plugins should auto-initialize themselves via composer. (See https://github.com/app-zap/PHPFramework-EmptyPlugin) */
     $plugins = Configuration::getSection('phpframework', 'plugins');
     if (is_array($plugins)) {
       foreach ($plugins as $namespace => $enabled) {
