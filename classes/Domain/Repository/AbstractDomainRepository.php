@@ -80,6 +80,14 @@ abstract class AbstractDomainRepository {
   }
 
   /**
+   * @param AbstractModel $object
+   */
+  public function remove(AbstractModel $object) {
+    $this->knownItems->remove($object);
+    $this->db->delete($this->tablename, ['id' => $object->getId()]);
+  }
+
+  /**
    * @param array $where
    * @return AbstractModel
    */

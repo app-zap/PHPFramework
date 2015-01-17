@@ -17,7 +17,7 @@ class Item extends AbstractModel {
 }
 
 class ItemRepository extends AbstractDomainRepository {
-  public function find_by_title($title) {
+  public function findByTitle($title) {
     return $this->queryOne(['title' => $title]);
   }
 }
@@ -49,14 +49,14 @@ class AbstractDomainRepositoryTest extends \PHPUnit_Framework_TestCase {
     $item->setTitle('test');
     $this->repository->save($item);
     $id = $item->getId();
-    /** @var Item $gotten_item */
-    $gotten_item = $this->repository->findById($id);
-    $this->assertSame('test', $gotten_item->getTitle());
-    $gotten_item->setTitle('test2');
+    /** @var Item $gottenItem */
+    $gottenItem = $this->repository->findById($id);
+    $this->assertSame('test', $gottenItem->getTitle());
+    $gottenItem->setTitle('test2');
     $this->repository->save($item);
-    /** @var Item $gotten_item2 */
-    $gotten_item2 = $this->repository->findById($id);
-    $this->assertSame('test2', $gotten_item2->getTitle());
+    /** @var Item $gottenItem2 */
+    $gottenItem2 = $this->repository->findById($id);
+    $this->assertSame('test2', $gottenItem2->getTitle());
   }
 
   /**
@@ -67,16 +67,16 @@ class AbstractDomainRepositoryTest extends \PHPUnit_Framework_TestCase {
     $item->setTitle('queryOneTest');
     $this->repository->save($item);
     $id = $item->getId();
-    /** @var Item $gotten_item */
-    $gotten_item = $this->repository->find_by_title('queryOneTest');
-    $this->assertSame($id, $gotten_item->getId());
+    /** @var Item $gottenItem */
+    $gottenItem = $this->repository->findByTitle('queryOneTest');
+    $this->assertSame($id, $gottenItem->getId());
   }
 
   /**
    * @test
    */
   public function queryOneNotExisting() {
-    $item = $this->repository->find_by_title('ekbqGZvyAUcT0aoayxRJNBIu');
+    $item = $this->repository->findByTitle('ekbqGZvyAUcT0aoayxRJNBIu');
     $this->assertNull($item);
   }
 
@@ -104,6 +104,22 @@ class AbstractDomainRepositoryTest extends \PHPUnit_Framework_TestCase {
   public function findAll() {
     $items = $this->repository->findAll();
     $this->assertTrue($items instanceof GenericModelCollection);
+  }
+
+  /**
+   * @test
+   */
+  public function remove() {
+    $item = new Item();
+    $item->setTitle('test');
+    $this->repository->save($item);
+    $id = $item->getId();
+    /** @var Item $gottenItem */
+    $gottenItem = $this->repository->findById($id);
+    $this->assertSame('test', $gottenItem->getTitle());
+    $this->repository->remove($gottenItem);
+    $gottenItem2 = $this->repository->findById($id);
+    $this->assertNull($gottenItem2);
   }
 
 }
