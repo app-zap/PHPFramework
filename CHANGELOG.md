@@ -17,6 +17,8 @@ All notable changes to this project will be documented in this file.
 
 ### Deprecated
 
+* Activating plugins via `settings.ini` was deprecated. Plugins should auto-initialize themselves via composer. (See https://github.com/app-zap/PHPFramework-EmptyPlugin)
+
 ### Removed
 
 * Removed [numerous methods](https://github.com/app-zap/PHPFramework/commit/77137cf25a12e8a7879bac24457874ba20639248) that were deprecated and marked for removal in 1.5.
