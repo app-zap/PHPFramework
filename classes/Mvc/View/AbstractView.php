@@ -4,7 +4,7 @@ namespace AppZap\PHPFramework\Mvc\View;
 use AppZap\PHPFramework\Configuration\Configuration;
 use AppZap\PHPFramework\Mvc\HttpStatus;
 
-abstract class AbstractView {
+abstract class AbstractView implements ViewInterface {
 
   /**
    * @var \Twig_Environment
@@ -40,6 +40,11 @@ abstract class AbstractView {
    * @var string
    */
   protected $defaultTemplateFileExtension = 'html';
+
+  /**
+   * @var string
+   */
+  protected $templatesDirectory;
 
   /**
    * @return \Twig_Environment
@@ -80,11 +85,11 @@ abstract class AbstractView {
   /**
    * Sets a template value for later use in twig template while rendering
    *
-   * @param string $template_variable_name Name of the template variable
-   * @param mixed $template_variable_value Value of the template variable to set to
+   * @param string $templateVariableName Name of the template variable
+   * @param mixed $value Value of the template variable to set to
    */
-  public function set($template_variable_name, $template_variable_value) {
-    $this->templateVars[$template_variable_name] = $template_variable_value;
+  public function set($templateVariableName, $value) {
+    $this->templateVars[$templateVariableName] = $value;
   }
 
   /**
@@ -95,7 +100,8 @@ abstract class AbstractView {
    */
   public function render($templateName = NULL) {
     $this->sendHeaders();
-    $template = $this->getTemplateEnvironment($templateName);
+    $templateName = $templateName ?: $this->templateName;
+    $template = $this->loadTemplate($templateName);
     return $template->render($this->templateVars);
   }
 
@@ -104,6 +110,7 @@ abstract class AbstractView {
    * to output stream
    *
    * @param string $content Content to send to browser
+   * @deprecated Since: 1.6, Removal: 1.7
    */
   public function write($content) {
     if(!headers_sent()) {
@@ -162,14 +169,24 @@ abstract class AbstractView {
    * @param string $template_name
    * @return \Twig_TemplateInterface
    */
-  protected function getTemplateEnvironment($template_name = NULL) {
-    if (is_null($template_name)) {
-      $template_name = $this->templateName;
-    }
-    $template_file_extension = Configuration::get('phpframework', 'template_file_extension', $this->defaultTemplateFileExtension);
-    $template = $this->getRenderingEngine()->loadTemplate($template_name . '.' . $template_file_extension);
-
+  protected function loadTemplate($template_name = NULL) {
+    $templateFileExtension = Configuration::get('phpframework', 'template_file_extension', $this->defaultTemplateFileExtension);
+    $template = $this->getRenderingEngine()->loadTemplate($template_name . '.' . $templateFileExtension);
     return $template;
+  }
+
+  /**
+   * @return string
+   */
+  public function getTemplatesDirectory() {
+    return $this->templatesDirectory;
+  }
+
+  /**
+   * @param string $templatesDirectory
+   */
+  public function setTemplatesDirectory($templatesDirectory) {
+    $this->templatesDirectory = $templatesDirectory;
   }
 
 }

@@ -2,7 +2,7 @@
 namespace AppZap\PHPFramework\Mvc;
 
 use AppZap\PHPFramework\Cache\CacheFactory;
-use AppZap\PHPFramework\Mvc\View\TwigView;
+use AppZap\PHPFramework\Mvc\View\ViewFactory;
 use AppZap\PHPFramework\SignalSlot\Dispatcher as SignalSlotDispatcher;
 
 /**
@@ -32,12 +32,18 @@ class Dispatcher {
   protected $routefile;
 
   /**
+   * @var ViewFactory
+   */
+  protected $viewFactory;
+
+  /**
    * @throws ApplicationPartMissingException
    */
   public function __construct() {
     SignalSlotDispatcher::emitSignal(self::SIGNAL_CONSTRUCT);
     $this->cache = CacheFactory::getCache();
     $this->determineRequestMethod();
+    $this->viewFactory = ViewFactory::getInstance();
   }
 
   /**
@@ -126,24 +132,24 @@ class Dispatcher {
     $responder = $router->getResponder();
     $parameters = $router->getParameters();
     $request = new Request($this->requestMethod);
-    $response = new TwigView();
+    $view = $this->viewFactory->createView();
 
     try {
       /** @var AbstractController $controller */
-      $controller = new $responder($request, $response);
+      $controller = new $responder($request, $view);
       if (!method_exists($controller, $this->requestMethod)) {
         // Send HTTP 405 response
         $controller->handleNotSupportedMethod($this->requestMethod);
       }
       $defaultTemplateName = $this->determineDefaultTemplateName($controller);
       if ($defaultTemplateName) {
-        $response->setTemplateName($defaultTemplateName);
+        $view->setTemplateName($defaultTemplateName);
       }
       $controller->setParameters($parameters);
       $controller->initialize();
       $output = $controller->{$this->requestMethod}($parameters);
       if ($output === NULL) {
-        $output = $response->render();
+        $output = $view->render();
       }
       return $output;
     } catch (DispatchingInterruptedException $e) {

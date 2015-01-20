@@ -2,7 +2,7 @@
 namespace AppZap\PHPFramework\Mvc;
 
 use AppZap\PHPFramework\Authentication\BaseHttpAuthentication;
-use AppZap\PHPFramework\Mvc\View\AbstractView;
+use AppZap\PHPFramework\Mvc\View\ViewInterface;
 use AppZap\PHPFramework\SignalSlot\Dispatcher as SignalSlotDispatcher;
 
 abstract class AbstractController {
@@ -21,7 +21,7 @@ abstract class AbstractController {
   protected $request;
 
   /**
-   * @var AbstractView
+   * @var ViewInterface
    */
   protected $response;
 
@@ -32,9 +32,9 @@ abstract class AbstractController {
 
   /**
    * @param Request $request
-   * @param AbstractView $response
+   * @param ViewInterface $response
    */
-  public function __construct(Request $request, AbstractView $response) {
+  public function __construct(Request $request, ViewInterface $response) {
     SignalSlotDispatcher::emitSignal(self::SIGNAL_INIT_REQUEST, $request);
     SignalSlotDispatcher::emitSignal(self::SIGNAL_INIT_RESPONSE, $response);
     $this->request = $request;

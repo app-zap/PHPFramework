@@ -9,6 +9,8 @@ All notable changes to this project will be documented in this file.
 * [!!!] The Framework now can define routes itself and does so. Overwrite the `'.'` route in your `routes.php` with a responder or with `FALSE`.
 * Signal in the `Router` to edit the route definitions.
 * Repositories now have a `->remove()` method to delete model objects.
+* `ViewFactory` to instanciate a view object whenever needed
+* Signal in the `ViewFactory` to make implementations of other templating engines possible.
 
 ### Changed
 

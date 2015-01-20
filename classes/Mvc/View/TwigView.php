@@ -23,17 +23,18 @@ class TwigView extends AbstractView {
    * @throws ApplicationPartMissingException
    */
   protected function getRenderingEngine() {
-    if (!isset($this->renderingEngine)) {
-      if (!is_dir(Configuration::get('application', 'templates_directory'))) {
-        throw new ApplicationPartMissingException('Template directory "' . Configuration::get('application', 'templates_directory') . '" does not exist.');
-      }
-      $loader = new \Twig_Loader_Filesystem(Configuration::get('application', 'templates_directory'));
-      $options = [];
-      if (Configuration::get('phpframework', 'cache.enable')) {
-        $options['cache'] = Configuration::get('phpframework', 'cache.twig_folder', './cache/twig/');
-      }
-      $this->renderingEngine = new \Twig_Environment($loader, $options);
+    if ($this->renderingEngine instanceof \Twig_Environment) {
+      return $this->renderingEngine;
     }
+    if (!is_dir(Configuration::get('application', 'templates_directory'))) {
+      throw new ApplicationPartMissingException('Template directory "' . Configuration::get('application', 'templates_directory') . '" does not exist.');
+    }
+    $loader = new \Twig_Loader_Filesystem($this->templatesDirectory);
+    $options = [];
+    if (Configuration::get('phpframework', 'cache.enable')) {
+      $options['cache'] = Configuration::get('phpframework', 'cache.twig_folder', './cache/twig/');
+    }
+    $this->renderingEngine = new \Twig_Environment($loader, $options);
     return $this->renderingEngine;
   }
 
