@@ -33,10 +33,10 @@ abstract class AbstractDomainRepository {
   protected $db;
 
   /**
-   *
+   * @param DatabaseConnection $db
    */
-  public function __construct() {
-    $this->db = StaticDatabaseConnection::getInstance();
+  public function __construct(DatabaseConnection $db = NULL) {
+    $this->db = $db ?: StaticDatabaseConnection::getInstance();
     $this->knownItems = $this->getNewCollection();
     $this->entityMapper = EntityMapper::getInstance();
     $this->tablename = Nomenclature::repositoryClassnameToTablename(get_called_class());
@@ -69,6 +69,7 @@ abstract class AbstractDomainRepository {
    * @param AbstractModel $object
    */
   public function save(AbstractModel $object) {
+    $this->knownItems->add($object);
     $record = $this->entityMapper->objectToRecord($object);
     if ($record['id']) {
       $where = ['id' => (int)$record['id']];
