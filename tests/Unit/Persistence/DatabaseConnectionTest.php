@@ -35,9 +35,14 @@ class DatabaseConnectionTest extends \PHPUnit_Framework_TestCase {
    * @test
    */
   public function isConnected() {
-    $this->markTestIncomplete('connection is now done in setup');
+    StaticDatabaseConnection::reset();
+    $this->fixture = StaticDatabaseConnection::getInstance();
     $this->assertFalse($this->fixture->isConnected());
-    $this->fixture->connect();
+    try {
+      $this->fixture->connect();
+    } catch(\PDOException $e) {
+      $this->markTestSkipped();
+    }
     $this->assertTrue($this->fixture->isConnected());
   }
 
@@ -46,7 +51,8 @@ class DatabaseConnectionTest extends \PHPUnit_Framework_TestCase {
    * @expectedException \PDOException
    */
   public function dbConnectionException() {
-    $this->markTestIncomplete('connection is now done in setup');
+    StaticDatabaseConnection::reset();
+    $this->fixture = StaticDatabaseConnection::getInstance();
     Configuration::set('phpframework', 'db.mysql.host', 'non_existing_host');
     $this->fixture->connect();
   }
@@ -55,9 +61,14 @@ class DatabaseConnectionTest extends \PHPUnit_Framework_TestCase {
    * @test
    */
   public function setCharset() {
-    $this->markTestIncomplete('connection is now done in setup');
+    StaticDatabaseConnection::reset();
+    $this->fixture = StaticDatabaseConnection::getInstance();
     Configuration::set('phpframework', 'db.charset', 'utf8');
-    $this->fixture->connect();
+    try {
+      $this->fixture->connect();
+    } catch(\PDOException $e) {
+      $this->markTestSkipped();
+    }
   }
 
   /**
