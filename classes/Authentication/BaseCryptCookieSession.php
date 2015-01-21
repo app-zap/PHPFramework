@@ -31,7 +31,7 @@ class BaseCryptCookieSession implements BaseSessionInterface {
       throw new BaseCryptCookieSessionException('Config key "authentication.cookie.encrypt_key" must be set!', 1415264244);
     }
     if (!in_array(strlen($encryptionKey), [16, 24, 32])) {
-      throw new BaseCryptCookieSessionException('Encryption Key must of size 16, 24 or 32 ', 1421849111);
+      throw new BaseCryptCookieSessionException('Encryption key must be of size 16, 24 or 32 ', 1421849111);
     }
 
     $this->decodeCryptCookie();
@@ -66,7 +66,7 @@ class BaseCryptCookieSession implements BaseSessionInterface {
     }
     $sEncrypted = $_COOKIE[$this->cookieName];
     $data = trim(mcrypt_decrypt(MCRYPT_RIJNDAEL_256, $sSecretKey, base64_decode($sEncrypted), MCRYPT_MODE_ECB, mcrypt_create_iv(mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB), MCRYPT_RAND)));
-    $this->store = json_decode($data, true);
+    $this->store = json_decode($data, TRUE);
   }
 
   /**

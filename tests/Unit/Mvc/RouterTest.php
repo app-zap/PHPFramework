@@ -103,15 +103,13 @@ class RouterTest extends \PHPUnit_Framework_TestCase {
   public function routeToCallables() {
     $this->loadRoutesFile('callables');
     $router = new Router('/');
-    /** @var callable $responder_callable */
-    $responder_callable = $router->getResponder();
-    $this->assertTrue(is_callable($responder_callable));
-    $this->assertSame('index', call_user_func($responder_callable, $router->getParameters()));
+    $responderCallable = $router->getResponder();
+    $this->assertTrue(is_callable($responderCallable));
+    $this->assertSame('index', call_user_func($responderCallable, $router->getParameters()));
     $router = new Router('/user/42');
-    /** @var callable $responder_callable */
-    $responder_callable = $router->getResponder();
-    $this->assertTrue(is_callable($responder_callable));
-    $this->assertSame('user:42', call_user_func($responder_callable, $router->getParameters()));
+    $responderCallable = $router->getResponder();
+    $this->assertTrue(is_callable($responderCallable));
+    $this->assertSame('user:42', call_user_func($responderCallable, $router->getParameters()));
   }
 
   /**
@@ -120,10 +118,10 @@ class RouterTest extends \PHPUnit_Framework_TestCase {
   public function routeWithSubpaths() {
     $this->loadRoutesFile('subpaths');
     $router = new Router('/user/42/group/23/edit/');
-    /** @var callable $responder_callable */
-    $responder_callable = $router->getResponder();
-    $this->assertTrue(is_callable($responder_callable));
-    $this->assertSame('user:42:group:23:edit', call_user_func($responder_callable, $router->getParameters()));
+    /** @var callable $responderCallable */
+    $responderCallable = $router->getResponder();
+    $this->assertTrue(is_callable($responderCallable));
+    $this->assertSame('user:42:group:23:edit', call_user_func($responderCallable, $router->getParameters()));
   }
 
   /**
@@ -149,8 +147,8 @@ class RouterTest extends \PHPUnit_Framework_TestCase {
    * @param string $filename
    */
   protected function loadRoutesFile($filename) {
-    $routes_file = dirname(__FILE__) . '/_routesfiles/' . $filename . '.php';
-    Configuration::set('application', 'routes_file', $routes_file);
+    $routesFile = dirname(__FILE__) . '/_routesfiles/' . $filename . '.php';
+    Configuration::set('application', 'routes_file', $routesFile);
   }
 
 }

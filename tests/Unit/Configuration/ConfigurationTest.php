@@ -52,9 +52,9 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase {
     Configuration::set('test', 'key1', TRUE);
     Configuration::set('test', 'key2', TRUE);
     Configuration::set('othersection', 'key3', TRUE);
-    $test_section = Configuration::getSection('test');
-    $this->assertSame(2, count($test_section));
-    $this->assertArrayNotHasKey('key3', $test_section);
+    $testSection = Configuration::getSection('test');
+    $this->assertSame(2, count($testSection));
+    $this->assertArrayNotHasKey('key3', $testSection);
   }
 
   /**
@@ -72,11 +72,11 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase {
     Configuration::set('othersection', 'key1', FALSE);
     Configuration::set('othersection', 'ns1.key1', FALSE);
     Configuration::set('othersection', 'ns1.key2', FALSE);
-    $test_section = Configuration::getSection('test', 'ns1');
-    $this->assertTrue($test_section['key1']);
-    $this->assertFalse($test_section['key2']);
-    $test_section = Configuration::getSection('test', 'ns3.subspace1');
-    $this->assertTrue($test_section['key1']);
+    $testSection = Configuration::getSection('test', 'ns1');
+    $this->assertTrue($testSection['key1']);
+    $this->assertFalse($testSection['key2']);
+    $testSection = Configuration::getSection('test', 'ns3.subspace1');
+    $this->assertTrue($testSection['key1']);
   }
 
   /**
@@ -95,8 +95,8 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase {
     Configuration::set('test', 'key1', TRUE);
     Configuration::set('test', 'key2', TRUE);
     Configuration::set('othersection', 'key3', TRUE);
-    $test_section = Configuration::getSection('test');
-    $this->assertSame(2, count($test_section));
+    $testSection = Configuration::getSection('test');
+    $this->assertSame(2, count($testSection));
     Configuration::removeSection('test');
     $this->assertNull(Configuration::getSection('test'));
     $this->assertSame(1, count(Configuration::getSection('othersection')));

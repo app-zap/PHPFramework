@@ -44,8 +44,7 @@ class NomenclatureTest extends \PHPUnit_Framework_TestCase {
    */
   public function getterToFieldname() {
     $this->assertSame($this->names['fieldname'], Nomenclature::getterToFieldname($this->names['getter']));
-    $this->assertSame($this->names['fieldname'], Nomenclature::getterToFieldname('get_my_field'));
-    $this->assertFalse(Nomenclature::getterToFieldname('not_a_getter_method'));
+    $this->assertFalse(Nomenclature::getterToFieldname('notAGetterMethod'));
   }
 
   /**

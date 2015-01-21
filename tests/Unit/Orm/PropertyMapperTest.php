@@ -72,10 +72,10 @@ class PropertyMapperTest extends \PHPUnit_Framework_TestCase {
    */
   public function convertToClassExtendingDatetime() {
     $source = 1409744701;
-    /** @var MyDateTime $my_datetime */
-    $my_datetime = $this->fixture->map($source, '\\AppZap\\PHPFramework\\Tests\\Unit\\Orm\\MyDateTime');
-    $this->assertTrue($my_datetime instanceof MyDateTime);
-    $this->assertSame($source, $my_datetime->getTimestamp());
+    /** @var MyDateTime $myDatetime */
+    $myDatetime = $this->fixture->map($source, '\\AppZap\\PHPFramework\\Tests\\Unit\\Orm\\MyDateTime');
+    $this->assertTrue($myDatetime instanceof MyDateTime);
+    $this->assertSame($source, $myDatetime->getTimestamp());
   }
 
   /**

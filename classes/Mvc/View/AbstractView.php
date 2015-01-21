@@ -166,12 +166,12 @@ abstract class AbstractView implements ViewInterface {
   }
 
   /**
-   * @param string $template_name
+   * @param string $templateName
    * @return \Twig_TemplateInterface
    */
-  protected function loadTemplate($template_name = NULL) {
+  protected function loadTemplate($templateName = NULL) {
     $templateFileExtension = Configuration::get('phpframework', 'template_file_extension', $this->defaultTemplateFileExtension);
-    $template = $this->getRenderingEngine()->loadTemplate($template_name . '.' . $templateFileExtension);
+    $template = $this->getRenderingEngine()->loadTemplate($templateName . '.' . $templateFileExtension);
     return $template;
   }
 

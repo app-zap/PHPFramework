@@ -28,8 +28,8 @@ class GenericModelCollectionTest extends \PHPUnit_Framework_TestCase {
     $model = new MyModel();
     $model->setId(42);
     $this->collection->add($model);
-    $gotten_model = $this->collection->getById(42);
-    $this->assertSame(42, $gotten_model->getId());
+    $gottenModel = $this->collection->getById(42);
+    $this->assertSame(42, $gottenModel->getId());
   }
 
   /**
@@ -39,8 +39,8 @@ class GenericModelCollectionTest extends \PHPUnit_Framework_TestCase {
     $model = new MyModel();
     $model->setId(42);
     $this->collection->add($model);
-    $gotten_model = $this->collection->getById(43);
-    $this->assertNull($gotten_model);
+    $gottenModel = $this->collection->getById(43);
+    $this->assertNull($gottenModel);
   }
 
   /**
@@ -50,11 +50,11 @@ class GenericModelCollectionTest extends \PHPUnit_Framework_TestCase {
     $model = new MyModel();
     $model->setId(42);
     $this->collection->add($model);
-    $gotten_model = $this->collection->getById(42);
-    $this->assertSame(42, $gotten_model->getId());
-    $this->collection->remove($gotten_model);
-    $gotten_model = $this->collection->getById(43);
-    $this->assertNull($gotten_model);
+    $gottenModel = $this->collection->getById(42);
+    $this->assertSame(42, $gottenModel->getId());
+    $this->collection->remove($gottenModel);
+    $gottenModel = $this->collection->getById(43);
+    $this->assertNull($gottenModel);
   }
 
   /**

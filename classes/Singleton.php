@@ -14,7 +14,7 @@ namespace AppZap\PHPFramework;
  *  // here go the class members..
  * }
  *
- * $my_singleton_object = MySingletonClass::get_instance();
+ * $mySingletonObject = MySingletonClass::getInstance();
  */
 trait Singleton {
 

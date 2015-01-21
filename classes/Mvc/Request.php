@@ -65,9 +65,9 @@ class Request {
     $fh   = @fopen('php://input', 'r');
     if ($fh) {
       while (!feof($fh)) {
-        $s = fread($fh, 1024);
-        if (is_string($s)) {
-          $body .= $s;
+        $stream = fread($fh, 1024);
+        if (is_string($stream)) {
+          $body .= $stream;
         }
       }
       fclose($fh);

@@ -102,8 +102,8 @@ class DatabaseConnectionTest extends \PHPUnit_Framework_TestCase {
     $row['id'] = $this->fixture->insert('item', $row);
     $row['title'] = 'changed title';
     $this->fixture->update('item', $row, ['id' => $row['id']]);
-    $queried_row = $this->fixture->row('item', '*', ['id' => $row['id']]);
-    $this->assertSame($row['title'], $queried_row['title']);
+    $queriedRow = $this->fixture->row('item', '*', ['id' => $row['id']]);
+    $this->assertSame($row['title'], $queriedRow['title']);
   }
 
   /**
@@ -114,8 +114,8 @@ class DatabaseConnectionTest extends \PHPUnit_Framework_TestCase {
     $row['id'] = $this->fixture->insert('item', $row);
     $row['title'] = 'changed title';
     $this->fixture->replace('item', $row);
-    $queried_row = $this->fixture->row('item', '*', ['id' => $row['id']]);
-    $this->assertSame($row['title'], $queried_row['title']);
+    $queriedRow = $this->fixture->row('item', '*', ['id' => $row['id']]);
+    $this->assertSame($row['title'], $queriedRow['title']);
   }
 
   /**
@@ -123,8 +123,8 @@ class DatabaseConnectionTest extends \PHPUnit_Framework_TestCase {
    */
   public function field() {
     $row = ['title' => 'field_test'];
-    $insert_id = $this->fixture->insert('item', $row);
-    $this->assertEquals('field_test', $this->fixture->field('item', 'title', ['id' => $insert_id]));
+    $insertId = $this->fixture->insert('item', $row);
+    $this->assertEquals('field_test', $this->fixture->field('item', 'title', ['id' => $insertId]));
   }
 
   /**
@@ -164,9 +164,9 @@ class DatabaseConnectionTest extends \PHPUnit_Framework_TestCase {
    * @test
    */
   public function valueNull() {
-    $insert_id = $this->fixture->insert('item', []);
-    $insert_id2 = $this->fixture->insert('item', ['id' => NULL]);
-    $this->assertGreaterThan($insert_id, $insert_id2);
+    $insertId = $this->fixture->insert('item', []);
+    $insertId2 = $this->fixture->insert('item', ['id' => NULL]);
+    $this->assertGreaterThan($insertId, $insertId2);
   }
 
   /**
@@ -192,9 +192,9 @@ class DatabaseConnectionTest extends \PHPUnit_Framework_TestCase {
    * @test
    */
   public function whereLike() {
-    $insert_id = $this->fixture->insert('item', ['title' => 'fooliketestbaz']);
+    $insertId = $this->fixture->insert('item', ['title' => 'fooliketestbaz']);
     $row = $this->fixture->row('item', '*', ['title?' => '%liketest%']);
-    $this->assertEquals($insert_id, $row['id']);
+    $this->assertEquals($insertId, $row['id']);
   }
 
   /**

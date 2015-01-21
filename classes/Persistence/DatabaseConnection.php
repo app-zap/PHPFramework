@@ -220,7 +220,7 @@ class DatabaseConnection {
   }
 
   /**
-   * Select one row from table or false if there is no row
+   * Select one row from table or FALSE if there is no row
    *
    * @param string $table Name of the table
    * @param string $select Fields to retrieve from table
@@ -260,7 +260,7 @@ class DatabaseConnection {
   }
 
   /**
-   * Selects the minimum of a column or false if there is no data
+   * Selects the minimum of a column or FALSE if there is no data
    *
    * @param string $table Name of the table
    * @param string $column Name of column to retrieve
@@ -273,7 +273,7 @@ class DatabaseConnection {
   }
 
   /**
-   * Selects the maximum of a column or false if there is no data
+   * Selects the maximum of a column or FALSE if there is no data
    *
    * @param string $table Name of the table
    * @param string $column Name of column to retrieve

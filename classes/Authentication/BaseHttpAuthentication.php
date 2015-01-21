@@ -22,9 +22,9 @@ class BaseHttpAuthentication {
       $this->password = $_SERVER['PHP_AUTH_PW'];
     } elseif (isset($_ENV['HTTP_AUTHORIZATION'])) {
       if (preg_match('/^Basic\s+(.+)/i', $_ENV['HTTP_AUTHORIZATION'], $matches)) {
-        $vals = explode(':', base64_decode($matches[1]), 2);
-        $this->name = $vals[0];
-        $this->password = $vals[1];
+        $values = explode(':', base64_decode($matches[1]), 2);
+        $this->name = $values[0];
+        $this->password = $values[1];
       }
     } elseif (isset($_SERVER['HTTP_AUTHORIZATION'])) {
       list($this->name, $this->password) = explode(':', base64_decode(substr($_SERVER['HTTP_AUTHORIZATION'], 6)));

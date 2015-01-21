@@ -16,9 +16,9 @@ class Version {
     $actualMajor = (int) $versionParts[0];
     $actualMinor = (int) $versionParts[1];
     if (($actualMajor > $major) || ($actualMajor === $major && $actualMinor >= $minor)) {
-      return true;
+      return TRUE;
     } else {
-      return false;
+      return FALSE;
     }
   }
 
@@ -33,9 +33,9 @@ class Version {
     $actualMajor = (int) $versionParts[0];
     $actualMinor = (int) $versionParts[1];
     if (($actualMajor < $major) || ($actualMajor === $major && $actualMinor <= $minor)) {
-      return true;
+      return TRUE;
     } else {
-      return false;
+      return FALSE;
     }
   }
 
