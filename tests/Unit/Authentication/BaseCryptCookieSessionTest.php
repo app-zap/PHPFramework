@@ -7,7 +7,7 @@ use AppZap\PHPFramework\Configuration\Configuration;
 class BaseCryptCookieSessionTest extends \PHPUnit_Framework_TestCase {
 
   public function setUp() {
-    Configuration::set('phpframework', 'authentication.cookie.encrypt_key', '1234');
+    Configuration::set('phpframework', 'authentication.cookie.encrypt_key', '0123467890123456');
   }
 
   /**
@@ -15,8 +15,18 @@ class BaseCryptCookieSessionTest extends \PHPUnit_Framework_TestCase {
    * @expectedException \AppZap\PHPFramework\Authentication\BaseCryptCookieSessionException
    * @expectedExceptionCode 1415264244
    */
-  public function contructorWithoutSettingEncryptKey() {
+  public function constructWithoutSettingEncryptKey() {
     Configuration::set('phpframework', 'authentication.cookie.encrypt_key', NULL);
+    new BaseCryptCookieSession();
+  }
+
+  /**
+   * @test
+   * @expectedException \AppZap\PHPFramework\Authentication\BaseCryptCookieSessionException
+   * @expectedExceptionCode 1421849111
+   */
+  public function constructWithWrongKeySize() {
+    Configuration::set('phpframework', 'authentication.cookie.encrypt_key', '1234');
     new BaseCryptCookieSession();
   }
 

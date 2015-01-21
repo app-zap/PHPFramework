@@ -26,8 +26,12 @@ class BaseCryptCookieSession implements BaseSessionInterface {
   public function __construct() {
     $this->cookieName = Configuration::get('phpframework', 'authentication.cookie.name', 'SecureSessionCookie');;
 
-    if(!Configuration::get('phpframework', 'authentication.cookie.encrypt_key')) {
+    $encryptionKey = Configuration::get('phpframework', 'authentication.cookie.encrypt_key', NULL);
+    if ($encryptionKey === NULL) {
       throw new BaseCryptCookieSessionException('Config key "authentication.cookie.encrypt_key" must be set!', 1415264244);
+    }
+    if (!in_array(strlen($encryptionKey), [16, 24, 32])) {
+      throw new BaseCryptCookieSessionException('Encryption Key must of size 16, 24 or 32 ', 1421849111);
     }
 
     $this->decodeCryptCookie();
@@ -69,9 +73,10 @@ class BaseCryptCookieSession implements BaseSessionInterface {
    *
    */
   protected function encodeCryptCookie() {
-    $sSecretKey = Configuration::get('phpframework', 'authentication.cookie.encrypt_key');
-    $sDecrypted = json_encode($this->store);
-    $data = trim(base64_encode(mcrypt_encrypt(MCRYPT_RIJNDAEL_256, $sSecretKey, $sDecrypted, MCRYPT_MODE_ECB, mcrypt_create_iv(mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB), MCRYPT_RAND))));
+    $key = Configuration::get('phpframework', 'authentication.cookie.encrypt_key');
+    $plaintext = json_encode($this->store);
+    $cyphertext = mcrypt_encrypt(MCRYPT_RIJNDAEL_256, $key, $plaintext, MCRYPT_MODE_ECB, mcrypt_create_iv(mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB), MCRYPT_RAND));
+    $data = trim(base64_encode($cyphertext));
     if ($this->setCookieFunction === NULL) {
       setcookie($this->cookieName, $data, time() + 31 * 86400, '/');
     } else {
