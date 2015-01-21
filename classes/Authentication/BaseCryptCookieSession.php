@@ -16,6 +16,11 @@ class BaseCryptCookieSession implements BaseSessionInterface {
   protected $cookieName;
 
   /**
+   * @var \Callable
+   */
+  protected $setCookieFunction;
+
+  /**
    * @throws BaseCryptCookieSessionException
    */
   public function __construct() {
@@ -67,7 +72,11 @@ class BaseCryptCookieSession implements BaseSessionInterface {
     $sSecretKey = Configuration::get('phpframework', 'authentication.cookie.encrypt_key');
     $sDecrypted = json_encode($this->store);
     $data = trim(base64_encode(mcrypt_encrypt(MCRYPT_RIJNDAEL_256, $sSecretKey, $sDecrypted, MCRYPT_MODE_ECB, mcrypt_create_iv(mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB), MCRYPT_RAND))));
-    setcookie($this->cookieName, $data, time() + 31 * 86400, '/');
+    if ($this->setCookieFunction === NULL) {
+      setcookie($this->cookieName, $data, time() + 31 * 86400, '/');
+    } else {
+      call_user_func($this->setCookieFunction, $this->cookieName, $data, time() + 31 * 86400, '/');
+    }
   }
 
   /**
@@ -94,6 +103,13 @@ class BaseCryptCookieSession implements BaseSessionInterface {
   public function clearAll() {
     $this->store = [];
     $this->encodeCryptCookie();
+  }
+
+  /**
+   * @param \Callable $setCookieFunction
+   */
+  public function injectSetCookieFunction($setCookieFunction) {
+    $this->setCookieFunction = $setCookieFunction;
   }
 
 }
