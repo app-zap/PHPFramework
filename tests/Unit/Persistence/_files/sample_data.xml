@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<dataset>
-    <table name="item">
-        <column>title</column>
-        <row>
-            <value>test</value>
-        </row>
-    </table>
-</dataset>

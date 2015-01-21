@@ -37,6 +37,11 @@ class DatabaseMigratorTest extends \PHPUnit_Framework_TestCase {
     Configuration::set('phpframework', 'db.mysql.user', $user);
     $this->basePath = dirname(__FILE__);
     $this->db = StaticDatabaseConnection::getInstance();
+    try {
+      $this->db->connect();
+    } catch (\PDOException $e) {
+      $this->markTestSkipped('no database connection');
+    }
     $this->db->query('DROP TABLE IF EXISTS `migration_ver`');
     $this->db->query('DROP TABLE IF EXISTS `migrator_test_1`');
     $this->db->query('DROP TABLE IF EXISTS `migrator_test_2`');

@@ -4,15 +4,8 @@ namespace AppZap\PHPFramework\Tests\Unit\Persistence;
 use AppZap\PHPFramework\Configuration\Configuration;
 use AppZap\PHPFramework\Persistence\DatabaseConnection;
 use AppZap\PHPFramework\Persistence\StaticDatabaseConnection;
-use PHPUnit_Extensions_Database_DataSet_IDataSet;
-use PHPUnit_Extensions_Database_DB_IDatabaseConnection;
 
-class DatabaseConnectionTest extends \PHPUnit_Extensions_Database_TestCase {
-
-  /**
-   * @var
-   */
-  protected $pdo;
+class DatabaseConnectionTest extends \PHPUnit_Framework_TestCase {
 
   /**
    * @var DatabaseConnection
@@ -29,36 +22,27 @@ class DatabaseConnectionTest extends \PHPUnit_Extensions_Database_TestCase {
     Configuration::set('phpframework', 'db.mysql.host', $host);
     Configuration::set('phpframework', 'db.mysql.password', $password);
     Configuration::set('phpframework', 'db.mysql.user', $user);
-    $this->pdo = new \PDO('mysql:host=' . $host . ';dbname=' . $database . ';port=3306', $user, $password);
     StaticDatabaseConnection::reset();
     $this->fixture = StaticDatabaseConnection::getInstance();
-  }
-
-
-  /**
-   * Returns the test database connection.
-   *
-   * @return \PHPUnit_Extensions_Database_DB_IDatabaseConnection
-   */
-  protected function getConnection() {
-    return $this->createDefaultDBConnection($this->pdo);
-  }
-
-  /**
-   * Returns the test dataset.
-   *
-   * @return PHPUnit_Extensions_Database_DataSet_IDataSet
-   */
-  protected function getDataSet() {
-    return $this->createXMLDataSet(dirname(__FILE__) . '/_files/sample_data.xml');
+    try {
+      $this->fixture->connect();
+    } catch(\PDOException $e) {
+      $this->markTestSkipped();
+    }
   }
 
   /**
    * @test
    */
   public function isConnected() {
+    StaticDatabaseConnection::reset();
+    $this->fixture = StaticDatabaseConnection::getInstance();
     $this->assertFalse($this->fixture->isConnected());
-    $this->fixture->connect();
+    try {
+      $this->fixture->connect();
+    } catch(\PDOException $e) {
+      $this->markTestSkipped();
+    }
     $this->assertTrue($this->fixture->isConnected());
   }
 
@@ -67,6 +51,8 @@ class DatabaseConnectionTest extends \PHPUnit_Extensions_Database_TestCase {
    * @expectedException \PDOException
    */
   public function dbConnectionException() {
+    StaticDatabaseConnection::reset();
+    $this->fixture = StaticDatabaseConnection::getInstance();
     Configuration::set('phpframework', 'db.mysql.host', 'non_existing_host');
     $this->fixture->connect();
   }
@@ -75,8 +61,14 @@ class DatabaseConnectionTest extends \PHPUnit_Extensions_Database_TestCase {
    * @test
    */
   public function setCharset() {
+    StaticDatabaseConnection::reset();
+    $this->fixture = StaticDatabaseConnection::getInstance();
     Configuration::set('phpframework', 'db.charset', 'utf8');
-    $this->fixture->connect();
+    try {
+      $this->fixture->connect();
+    } catch(\PDOException $e) {
+      $this->markTestSkipped();
+    }
   }
 
   /**

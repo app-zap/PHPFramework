@@ -25,6 +25,11 @@ class ItemRepository extends AbstractDomainRepository {
 class AbstractDomainRepositoryTest extends \PHPUnit_Framework_TestCase {
 
   /**
+   * @var \PHPUnit_Framework_MockObject_MockObject
+   */
+  protected $databaseConnectionMock;
+
+  /**
    * @var ItemRepository
    */
   protected $repository;
@@ -38,21 +43,28 @@ class AbstractDomainRepositoryTest extends \PHPUnit_Framework_TestCase {
     Configuration::set('phpframework', 'db.mysql.host', $host);
     Configuration::set('phpframework', 'db.mysql.password', $password);
     Configuration::set('phpframework', 'db.mysql.user', $user);
-    $this->repository = ItemRepository::getInstance();
+    $this->databaseConnectionMock = $this->getMockBuilder('AppZap\PHPFramework\Persistence\DatabaseConnection')->getMock();
+    $this->repository = new ItemRepository($this->databaseConnectionMock);
   }
 
   /**
    * @test
    */
   public function saveAndGetById() {
+    $this->databaseConnectionMock->
+      expects($this->once())->
+      method('insert')->
+      with($this->equalTo('item'), $this->isType('array'))->
+      will($this->returnValue(42));
     $item = new Item();
     $item->setTitle('test');
     $this->repository->save($item);
     $id = $item->getId();
+    $this->assertEquals(42, $id, 'Mock should have assignes id 42 to $item');
     /** @var Item $gottenItem */
     $gottenItem = $this->repository->findById($id);
     $this->assertSame('test', $gottenItem->getTitle());
-    $gottenItem->setTitle('test2');
+    $item->setTitle('test2');
     $this->repository->save($item);
     /** @var Item $gottenItem2 */
     $gottenItem2 = $this->repository->findById($id);
@@ -63,6 +75,16 @@ class AbstractDomainRepositoryTest extends \PHPUnit_Framework_TestCase {
    * @test
    */
   public function queryOne() {
+    $this->databaseConnectionMock->
+      expects($this->once())->
+      method('insert')->
+      with($this->equalTo('item'), $this->isType('array'))->
+      will($this->returnValue(42));
+    $this->databaseConnectionMock->
+      expects($this->once())->
+      method('row')->
+      with($this->equalTo('item'), $this->equalTo('*'), $this->isType('array'))->
+      will($this->returnValue(['id' => '42', 'title' => 'queryOneTest']));
     $item = new Item();
     $item->setTitle('queryOneTest');
     $this->repository->save($item);
@@ -76,6 +98,11 @@ class AbstractDomainRepositoryTest extends \PHPUnit_Framework_TestCase {
    * @test
    */
   public function queryOneNotExisting() {
+    $this->databaseConnectionMock->
+      expects($this->once())->
+      method('row')->
+      with($this->equalTo('item'), $this->equalTo('*'), $this->isType('array'))->
+      will($this->returnValue(FALSE));
     $item = $this->repository->findByTitle('ekbqGZvyAUcT0aoayxRJNBIu');
     $this->assertNull($item);
   }
@@ -102,6 +129,11 @@ class AbstractDomainRepositoryTest extends \PHPUnit_Framework_TestCase {
    * @test
    */
   public function findAll() {
+    $this->databaseConnectionMock->
+      expects($this->once())->
+      method('select')->
+      with($this->equalTo('item'), $this->equalTo('*'), $this->isNull())->
+      will($this->returnValue([]));
     $items = $this->repository->findAll();
     $this->assertTrue($items instanceof GenericModelCollection);
   }
@@ -110,6 +142,11 @@ class AbstractDomainRepositoryTest extends \PHPUnit_Framework_TestCase {
    * @test
    */
   public function remove() {
+    $this->databaseConnectionMock->
+      expects($this->once())->
+      method('insert')->
+      with($this->equalTo('item'), $this->isType('array'))->
+      will($this->returnValue(42));
     $item = new Item();
     $item->setTitle('test');
     $this->repository->save($item);
