@@ -11,6 +11,7 @@ All notable changes to this project will be documented in this file.
 * Repositories now have a `->remove()` method to delete model objects.
 * `ViewFactory` to instanciate a view object whenever needed
 * Signal in the `ViewFactory` to make implementations of other templating engines possible.
+* Configure error pages for HTTP status codes in your `routes.php`.
 
 ### Changed
 

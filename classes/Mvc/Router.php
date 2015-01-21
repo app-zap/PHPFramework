@@ -2,6 +2,7 @@
 namespace AppZap\PHPFramework\Mvc;
 
 use AppZap\PHPFramework\Configuration\Configuration;
+use AppZap\PHPFramework\Http\HttpErrorException;
 use AppZap\PHPFramework\SignalSlot\Dispatcher as SignalSlotDispatcher;
 
 class Router {
@@ -20,21 +21,23 @@ class Router {
 
   /**
    * @param string $resource
-   * @throws ApplicationPartMissingException
+   * @throws HttpErrorException
    * @throws InvalidHttpResponderException
    */
   public function __construct($resource) {
     $routes = $this->collectRoutesDefinitions();
     $this->route($routes, $resource);
 
-    // check if the responder is valid
-    if (is_string($this->responder)) {
-      if (!class_exists($this->responder)) {
-        throw new InvalidHttpResponderException('Controller ' . $this->responder . ' for uri "' . $resource . '" not found!', 1415129223);
-      }
-    } elseif(!isset($this->responder)) {
-      throw new InvalidHttpResponderException('Route ' . $resource . ' could not be routed.', 1415136995);
-    } elseif (!is_callable($this->responder)) {
+    if (!isset($this->responder)) {
+      HttpStatus::setStatus(HttpStatus::STATUS_404_NOT_FOUND);
+      throw new HttpErrorException('Resource not routable', 404);
+    }
+
+    if (is_string($this->responder) && !class_exists($this->responder)) {
+      throw new InvalidHttpResponderException('Controller ' . $this->responder . ' for uri "' . $resource . '" not found!', 1415129223);
+    }
+
+    if (!is_string($this->responder) && !is_callable($this->responder)) {
       throw new InvalidHttpResponderException('The responder must either be a class string, a callable or an array of subpaths', 1415129333);
     }
   }
@@ -54,31 +57,55 @@ class Router {
       if (!is_array($applicationRoutes)) {
         throw new InvalidHttpResponderException('The routes file did not return an array with routes', 1415135585);
       }
-      $routes = array_merge($routes, $applicationRoutes);
+      $routes = $applicationRoutes + $routes;
     }
     return $routes;
   }
 
   /**
    * @param array $routes
-   * @param string $resource
+   * @param mixed $resource
    */
   protected function route($routes, $resource) {
+    if (is_int($resource)) {
+      $this->routeHttpStatusCode($routes, $resource);
+      return;
+    }
     $resource = ltrim($resource, '/');
-    foreach ($routes as $regex => $regexResponder) {
+    foreach ($routes as $regex => $responder) {
+      if ($responder === FALSE) {
+        continue;
+      }
       $regex = $this->enhanceRegex($regex);
-      if ($regexResponder !== FALSE && preg_match($regex, $resource, $matches)) {
+      if (preg_match($regex, $resource, $matches)) {
         $matchesCount = count($matches);
         for ($i = 1; $i < $matchesCount; $i++) {
           $this->parameters[] = $matches[$i];
         }
-        if (is_array($regexResponder)) {
-          $this->route($regexResponder, preg_replace($regex, '', $resource));
+        if (is_array($responder)) {
+          $this->route($responder, preg_replace($regex, '', $resource));
         } else {
-          $this->responder = $regexResponder;
+          $this->responder = $responder;
         }
         break;
       }
+    }
+  }
+
+  /**
+   * @param array $routes
+   * @param int $httpStatusCode
+   */
+  protected function routeHttpStatusCode($routes, $httpStatusCode) {
+    if (isset($routes[$httpStatusCode])) {
+      $this->responder = $routes[$httpStatusCode];
+      return;
+    }
+    // convert e.g. 405 to 400
+    $baseStatusCode = (int) floor($httpStatusCode / 100) * 100;
+    if (isset($routes[$baseStatusCode])) {
+      $this->responder = $routes[$baseStatusCode];
+      return;
     }
   }
 

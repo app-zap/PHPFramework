@@ -73,8 +73,8 @@ class RouterTest extends \PHPUnit_Framework_TestCase {
 
   /**
    * @test
-   * @expectedException \AppZap\PHPFramework\Mvc\InvalidHttpResponderException
-   * @expectedExceptionCode 1415136995
+   * @expectedException \AppZap\PHPFramework\Http\HttpErrorException
+   * @expectedExceptionCode 404
    */
   public function resourceNotRoutable() {
     $this->loadRoutesFile('classnames');
@@ -87,13 +87,14 @@ class RouterTest extends \PHPUnit_Framework_TestCase {
   public function routeToClassNames() {
     $this->loadRoutesFile('classnames');
     $router = new Router('/');
-    $responder_class = $router->getResponder();
-    $this->assertTrue(class_exists($responder_class));
-    $this->assertSame('\AppZap\PHPFramework\Tests\Mvc\Responder_Index', $responder_class);
+    $responderClass = $router->getResponder();
+    $this->assertTrue(is_string($responderClass), '$responderClass (' . gettype($responderClass) . ') should be string');
+    $this->assertTrue(class_exists($responderClass));
+    $this->assertSame('\AppZap\PHPFramework\Tests\Mvc\Responder_Index', $responderClass);
     $router = new Router('/foo');
-    $responder_class = $router->getResponder();
-    $this->assertTrue(class_exists($responder_class));
-    $this->assertSame('\AppZap\PHPFramework\Tests\Mvc\Responder_Foo', $responder_class);
+    $responderClass = $router->getResponder();
+    $this->assertTrue(class_exists($responderClass));
+    $this->assertSame('\AppZap\PHPFramework\Tests\Mvc\Responder_Foo', $responderClass);
   }
 
   /**

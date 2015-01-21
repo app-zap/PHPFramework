@@ -2,6 +2,7 @@
 namespace AppZap\PHPFramework\Mvc;
 
 use AppZap\PHPFramework\Cache\CacheFactory;
+use AppZap\PHPFramework\Http\HttpErrorException;
 use AppZap\PHPFramework\Mvc\View\ViewFactory;
 use AppZap\PHPFramework\SignalSlot\Dispatcher as SignalSlotDispatcher;
 
@@ -42,8 +43,8 @@ class Dispatcher {
   public function __construct() {
     SignalSlotDispatcher::emitSignal(self::SIGNAL_CONSTRUCT);
     $this->cache = CacheFactory::getCache();
-    $this->determineRequestMethod();
     $this->viewFactory = ViewFactory::getInstance();
+    $this->determineRequestMethod();
   }
 
   /**
@@ -103,15 +104,23 @@ class Dispatcher {
   }
 
   /**
-   * @param $uri
+   * @param string $uri
    * @return string
+   * @throws \Exception
    */
   protected function dispatchUncached($uri) {
-    $router = $this->getRouter($uri);
-    if (is_callable($router->getResponder())) {
-      $output = $this->dispatchCallable($router);
-    } else {
-      $output = $this->dispatchController($router);
+    try {
+      $router = $this->getRouter($uri);
+      if (is_callable($router->getResponder())) {
+        $output = $this->dispatchCallable($router);
+      } else {
+        $output = $this->dispatchController($router);
+      }
+    } catch (HttpErrorException $e) {
+      if (!$e->getCode()) {
+        throw new \Exception('HttpErrorException was thrown without HTTP Status code', 1421830421);
+      }
+      return $this->dispatchUncached($e->getCode());
     }
     return $output;
   }
