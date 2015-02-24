@@ -17,6 +17,9 @@ class BaseHttpAuthentication {
   protected $password;
 
   public function __construct() {
+    if (isset($_SERVER['REDIRECT_HTTP_AUTHORIZATION'])) {
+      $_SERVER['HTTP_AUTHORIZATION'] = $_SERVER['REDIRECT_HTTP_AUTHORIZATION'];
+    }
     if (isset($_SERVER['PHP_AUTH_USER']) && isset($_SERVER['PHP_AUTH_PW'])) {
       $this->name = $_SERVER['PHP_AUTH_USER'];
       $this->password = $_SERVER['PHP_AUTH_PW'];
