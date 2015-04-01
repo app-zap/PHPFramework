@@ -30,7 +30,7 @@ class Router {
 
     if (!isset($this->responder)) {
       HttpStatus::setStatus(HttpStatus::STATUS_404_NOT_FOUND);
-      throw new HttpErrorException('Resource not routable', 404);
+      throw new HttpErrorException(sprintf('%d: Resource \'%s\' not routable', 404, $resource), 404);
     }
 
     if (is_string($this->responder) && !class_exists($this->responder)) {

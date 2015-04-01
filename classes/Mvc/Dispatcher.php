@@ -120,7 +120,14 @@ class Dispatcher {
       if (!$e->getCode()) {
         throw new \Exception('HttpErrorException was thrown without HTTP Status code', 1421830421);
       }
-      return $this->dispatchUncached($e->getCode());
+      if ($uri === $e->getCode()) {
+        throw $e;
+      }
+      try {
+        $output = $this->dispatchUncached($e->getCode());
+      } catch (HttpErrorException $secondLevelException) {
+        throw $e;
+      }
     }
     return $output;
   }
