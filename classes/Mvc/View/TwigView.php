@@ -82,4 +82,14 @@ class TwigView extends AbstractView {
     return $this->getRenderingEngine()->getFunction($name) instanceof \Twig_SimpleFunction;
   }
 
+  /**
+   * @param string $templatesDirectory
+   */
+  public function setTemplatesDirectory($templatesDirectory) {
+    parent::setTemplatesDirectory($templatesDirectory);
+    if ($this->renderingEngine instanceof \Twig_Environment) {
+      $this->renderingEngine->getLoader()->addPath($templatesDirectory);
+    }
+  }
+
 }
