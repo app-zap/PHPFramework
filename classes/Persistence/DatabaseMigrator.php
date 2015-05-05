@@ -2,8 +2,11 @@
 namespace AppZap\PHPFramework\Persistence;
 
 use AppZap\PHPFramework\Configuration\Configuration;
+use AppZap\PHPFramework\SignalSlot\Dispatcher as SignalSlotDispatcher;
 
 class DatabaseMigrator {
+
+  const SIGNAL_MIGRATION_DIRECTORIES = 1430863672;
 
   /**
    * @var DatabaseConnection
@@ -11,9 +14,9 @@ class DatabaseMigrator {
   protected $db;
 
   /**
-   * @var string
+   * @var array
    */
-  protected $migrationDirectory;
+  protected $migrationDirectories;
 
   /**
    * @var int
@@ -25,14 +28,20 @@ class DatabaseMigrator {
    */
   public function __construct() {
     $this->db = StaticDatabaseConnection::getInstance();
-    $this->migrationDirectory = Configuration::get('phpframework', 'db.migrator.directory');
-
-    if (!$this->migrationDirectory) {
+    $applicationMigrationDirectory = Configuration::get('phpframework', 'db.migrator.directory');
+    if (!$applicationMigrationDirectory) {
       throw new DatabaseMigratorException('Migration directory was not configured.', 1415085595);
     }
+    $this->migrationDirectories = [
+      'application' => $applicationMigrationDirectory,
+    ];
 
-    if(!is_dir($this->migrationDirectory)) {
-      throw new DatabaseMigratorException('Migration directory "' . $this->migrationDirectory . '" does not exist or is not a directory.', 1415085126);
+    SignalSlotDispatcher::emitSignal(self::SIGNAL_MIGRATION_DIRECTORIES, $this->migrationDirectories);
+
+    foreach ($this->migrationDirectories as $context => $directory) {
+      if(!is_dir($directory)) {
+        throw new DatabaseMigratorException('Migration directory "' . $directory . '" (' . $context . ') does not exist or is not a directory.', 1415085126);
+      }
     }
 
     $this->lastExecutedVersion = $this->getLastExecutedVersion();
@@ -110,7 +119,7 @@ class DatabaseMigrator {
    */
   protected function setCurrentMigrationVersion($version) {
     if(count($this->db->query("SHOW TABLES LIKE 'migration_ver'")) < 1) {
-      $sql = "CREATE TABLE IF NOT EXISTS `migration_ver` (`version` int(11) NOT NULL) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;";
+      $sql = 'CREATE TABLE IF NOT EXISTS `migration_ver` (`context` varchar(255) NOT NULL, `version` int(11) NOT NULL) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;';
       $this->db->execute($sql);
     }
 
