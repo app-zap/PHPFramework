@@ -64,7 +64,7 @@ class DatabaseMigrator {
    * @return int
    */
   protected function getLastExecutedVersion($context) {
-    if(count($this->db->query('SHOW TABLES LIKE `migration_ver`')) < 1) {
+    if(count($this->db->query('SHOW TABLES LIKE \'migration_ver\'')) < 1) {
       return 0;
     }
     return (int)$this->db->field('migration_ver', 'version', ['context' => $context->getName()]);
@@ -114,7 +114,7 @@ class DatabaseMigrator {
    * @param DatabaseMigrationContext $context
    */
   protected function saveCurrentMigrationVersion($context) {
-    if(count($this->db->query("SHOW TABLES LIKE 'migration_ver'")) < 1) {
+    if(count($this->db->query('SHOW TABLES LIKE \'migration_ver\'')) < 1) {
       $sql = 'CREATE TABLE IF NOT EXISTS `migration_ver` (`context` varchar(255) NOT NULL, `version` int(11) NOT NULL) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;';
       $this->db->execute($sql);
     }
