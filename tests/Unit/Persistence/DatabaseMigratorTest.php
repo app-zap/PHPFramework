@@ -7,12 +7,6 @@ use AppZap\PHPFramework\Persistence\DatabaseConnection;
 use AppZap\PHPFramework\Persistence\DatabaseMigrator;
 use AppZap\PHPFramework\Persistence\StaticDatabaseConnection;
 
-class DatabaseMigratorMock extends DatabaseMigrator {
-  public function _getLastExecutedVersion() {
-    return $this->getLastExecutedVersion();
-  }
-}
-
 class DatabaseMigratorTest extends \PHPUnit_Framework_TestCase {
 
   /**
@@ -66,15 +60,6 @@ class DatabaseMigratorTest extends \PHPUnit_Framework_TestCase {
   public function failsIfDirectoryDoesntExist() {
     Configuration::set('phpframework', 'db.migrator.directory', $this->basePath . '/this/doesnt/exist/');
     new DatabaseMigrator();
-  }
-
-  /**
-   * @test
-   */
-  public function currentMigrationVersionIs0IfTableDoesntExist() {
-    Configuration::set('phpframework', 'db.migrator.directory', $this->basePath . '/_migrator/_1/');
-    $migrator = new DatabaseMigratorMock();
-    $this->assertSame(0, $migrator->_getLastExecutedVersion());
   }
 
   /**
