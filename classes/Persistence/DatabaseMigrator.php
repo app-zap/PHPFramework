@@ -16,12 +16,7 @@ class DatabaseMigrator {
   /**
    * @var array
    */
-  protected $migrationDirectories;
-
-  /**
-   * @var int
-   */
-  protected $lastExecutedVersion = 0;
+  protected $migrationContexts;
 
   /**
    * @throws DatabaseMigratorException
@@ -32,19 +27,19 @@ class DatabaseMigrator {
     if (!$applicationMigrationDirectory) {
       throw new DatabaseMigratorException('Migration directory was not configured.', 1415085595);
     }
-    $this->migrationDirectories = [
-      'application' => $applicationMigrationDirectory,
+    $this->migrationContexts = [
+      new DatabaseMigrationContext('application', $applicationMigrationDirectory),
     ];
 
-    SignalSlotDispatcher::emitSignal(self::SIGNAL_MIGRATION_DIRECTORIES, $this->migrationDirectories);
+    SignalSlotDispatcher::emitSignal(self::SIGNAL_MIGRATION_DIRECTORIES, $this->migrationContexts);
 
-    foreach ($this->migrationDirectories as $context => $directory) {
-      if(!is_dir($directory)) {
-        throw new DatabaseMigratorException('Migration directory "' . $directory . '" (' . $context . ') does not exist or is not a directory.', 1415085126);
+    foreach ($this->migrationContexts as $context) {
+      /** @var DatabaseMigrationContext $context */
+      if(!is_dir($context->getDirectory())) {
+        throw new DatabaseMigratorException('Migration directory "' . $context->getDirectory() . '" (' . $context->getName() . ') does not exist or is not a directory.', 1415085126);
       }
+      $context->setLastExecutedVersion($this->getLastExecutedVersion($context));
     }
-
-    $this->lastExecutedVersion = $this->getLastExecutedVersion();
 
   }
 
@@ -52,36 +47,37 @@ class DatabaseMigrator {
    * @throws DatabaseMigratorException
    */
   public function migrate() {
-    foreach ($this->getMigrationFiles() as $version => $file) {
-      if ($version > $this->lastExecutedVersion) {
-        try {
-          $this->migrateFile($file);
-          $this->lastExecutedVersion = $version;
-          $this->setCurrentMigrationVersion($this->lastExecutedVersion);
-        } catch (\Exception $e) {
-          throw $e;
+    foreach ($this->migrationContexts as $context) {
+      /** @var DatabaseMigrationContext $context */
+      foreach ($this->getMigrationFiles($context) as $version => $file) {
+        if ($version > $context->getLastExecutedVersion()) {
+          $this->migrateFile($context->getDirectory() . $file);
+          $context->setLastExecutedVersion($version);
+          $this->saveCurrentMigrationVersion($context);
         }
       }
     }
   }
 
   /**
+   * @param DatabaseMigrationContext $context
    * @return int
    */
-  protected function getLastExecutedVersion() {
-    if(count($this->db->query("SHOW TABLES LIKE 'migration_ver'")) < 1) {
+  protected function getLastExecutedVersion($context) {
+    if(count($this->db->query('SHOW TABLES LIKE `migration_ver`')) < 1) {
       return 0;
     }
-    return $this->db->field('migration_ver', 'version');
+    return (int)$this->db->field('migration_ver', 'version', ['context' => $context->getName()]);
   }
 
   /**
+   * @param DatabaseMigrationContext $context
    * @return array
    */
-  protected function getMigrationFiles() {
+  protected function getMigrationFiles($context) {
     $migrationFiles = [];
     $matches = [];
-    if($handle = opendir($this->migrationDirectory)) {
+    if($handle = opendir($context->getDirectory())) {
       while($file = readdir($handle)) {
         if(preg_match('/^([0-9]+)_.*\.sql$/', $file, $matches) > 0) {
           $migrationFiles[(int)$matches[1]] = $file;
@@ -115,29 +111,31 @@ class DatabaseMigrator {
   }
 
   /**
-   * @param int $version
+   * @param DatabaseMigrationContext $context
    */
-  protected function setCurrentMigrationVersion($version) {
+  protected function saveCurrentMigrationVersion($context) {
     if(count($this->db->query("SHOW TABLES LIKE 'migration_ver'")) < 1) {
       $sql = 'CREATE TABLE IF NOT EXISTS `migration_ver` (`context` varchar(255) NOT NULL, `version` int(11) NOT NULL) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;';
       $this->db->execute($sql);
     }
 
-    $data = ['version' => $version];
-    if($this->db->count('migration_ver') < 1) {
+    $data = [
+      'context' => $context->getName(),
+      'version' => $context->getLastExecutedVersion(),
+    ];
+    if($this->db->count('migration_ver', ['context' => $context->getName()]) < 1) {
       $this->db->insert('migration_ver', $data);
     } else {
-      $this->db->update('migration_ver', $data, ['version!' => '0']);
+      $this->db->update('migration_ver', $data, ['context' => $context->getName()]);
     }
   }
 
   /**
-   * @param string $filename
+   * @param string $file
    * @return array
    * @throws DatabaseMigratorException
    */
-  protected function getStatementsFromFile($filename) {
-    $file = rtrim($this->migrationDirectory, '/') . '/' . $filename;
+  protected function getStatementsFromFile($file) {
     $f = @fopen($file, "r");
     if ($f === FALSE) {
       throw new DatabaseMigratorException('Unable to open file "' . $file . '"');
