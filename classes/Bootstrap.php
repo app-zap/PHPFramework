@@ -19,7 +19,7 @@ class Bootstrap {
    * @throws ApplicationPartMissingException
    * @throws \Exception
    */
-  public static function bootstrap($application) {
+  public static function bootstrap($application = 'app') {
     self::initializeConfiguration($application);
     self::loadPlugins();
     self::registerCoreSlots();

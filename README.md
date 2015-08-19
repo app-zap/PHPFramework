@@ -33,18 +33,18 @@ Your project `composer.json` file might look like this:
       },
       "autoload": {
         "psr-4": {
-          "Vendor\\MyProject\\": "myproject/classes/"
+          "Vendor\\MyProject\\": "app/Classes/"
         }
       }
     }
 
 1. Set up your project with `$ composer update`
-1. create a sub directory for your application, e.g. `myproject`
-1. Copy the `index.php.example` from the PHPFramework folder (should be `vendor/appzap/phpframework`) to your root level as `index.php`. Set `$application` to the name of the directory you just created.
+1. create an `app` sub directory for your application
+1. Copy the `index.php.example` from the PHPFramework folder (should be `vendor/app-zap/phpframework`) to your root level as `index.php`.
 
-Inside your application directory use this structure:
+Inside your `app` directory use this structure:
 
-* `classes/` - Starting point for your [PSR-4](http://www.php-fig.org/psr/psr-4/) autoloadable classes
+* `Classes/` - Starting point for your [PSR-4](http://www.php-fig.org/psr/psr-4/) autoloadable classes
 * `templates/` - Your [twig](http://twig.sensiolabs.org/) templates
 * `routes.php` - Returns an array with regular expression routes mapping to controller class names
 
