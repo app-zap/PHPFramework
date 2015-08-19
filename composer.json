@@ -3,7 +3,7 @@
   "description": "A lightweight but powerful PHP framework",
   "license": "BSD-2-Clause",
   "require": {
-    "app-zap/phpframework-composer-installer": "*",
+    "app-zap/phpframework-composer-installer": "dev-master",
     "nette/caching": "2.2.*",
     "php": ">=5.4.0",
     "swiftmailer/swiftmailer": "5.3.*",
